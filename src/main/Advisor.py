@@ -2,13 +2,15 @@ import pandas as pd
 import numpy as np
 
 class Advisor:
-    global Total_Number_of_Card
+    global Total_Number_of_Card, LIST_SUSPECT, LIST_WEAPON, LIST_ROOM
     Total_Number_of_Card = 30
     LIST_SUSPECT = ["Miss Scarlet", "Mr. Green", "Mrs White", "Mrs Peacock", "Colonel Mustard", "Professor Plum", "Miss Peach", "Sgt. Gray", "Monsieur Brunette", "Mme. Rose"]
     LIST_WEAPON = ["Candlestick", "Knife", "Lead Pipe", "Revolver", "Rope", "Wrench", "Horseshoe", "Poison"]
     LIST_ROOM = ["Carriage House", "Conservatory", "Kitchen", "Trophy Room", "Dining Room", "Drawing Room", "Gazebo", "Courtyard", "Fountain", "Library", "Billiard Room", "Studio"]
     def __init__(self, numberOfPlayers):
         cardPerPlayer = int((Total_Number_of_Card - 3)//numberOfPlayers)
+        #self.initialize_other_players(numberOfPlayers - 1)
+
         print("You should have " + str(cardPerPlayer) + " cards in your hand\n")
         suspects, weapons, rooms = self.collectInfo(cardPerPlayer)
     
@@ -23,38 +25,40 @@ class Advisor:
                 break
             else:
                 pass
+
+    # def initialize_other_players(self, numberOtherPlayers):
+    #     self.Opponents = {}
+    #     for i in range(numberOtherPlayers):
+    #         Opponent = Player(,"opp"+ str(i))
+    #         self.Opponents.append(Opponent)
+
         
     def collectInfo(self, cardPerPlayer):
-        suspects = []
-        weapons = []
-        rooms = []
+
         while True:
             ## collect suspect
-            print("Please enter your Suspect Cards, enter 'That's all' when finished\n")
-            for i in range(0, cardPerPlayer):
-                ele = input("suspect: ")
-                if ele == "That's all":
-                    break
-                else:
-                    suspects.append(ele)
+            print("Please enter your Suspect Cards, seperated by comma, enter None if you don't have suspect cards\n")
+            txt = input("suspect(s): ")
+            if txt == "None":
+                suspects = []
+            else:
+                suspects = [x.strip() for x in txt.split(",")]
             
             ## collect weapons
-            print("Please enter your Weapon Cards, enter 'That's all' when finished\n")       
-            for i in range(0, cardPerPlayer):
-                ele = input("weapon: ")
-                if ele == "That's all":
-                    break
-                else:
-                    weapons.append(ele)
+            print("Please enter your Weapon Cards, seperated by comma, enter None if you don't have weapon cards\n")       
+            txt = input("suspect(s): ")
+            if txt == "None":
+                weapons = []
+            else:
+                weapons = [x.strip() for x in txt.split(",")]
 
             ## collect rooms
-            print("Please enter your Room Cards, enter 'That's all' when finished\n")       
-            for i in range(0, cardPerPlayer):
-                ele = input("room: ")
-                if ele == "That's all":
-                    break
-                else:
-                    rooms.append(ele)
+            print("Please enter your Room Cards, seperated by comma, enter None if you don't have room cards\n")       
+            txt = input("suspect(s): ")
+            if txt == "None":
+                rooms = []
+            else:
+                rooms = [x.strip() for x in txt.split(",")]
             
             if len(rooms) + len(weapons) + len(suspects) != cardPerPlayer:
                 print("incorrect total cards, enter again")
@@ -87,3 +91,9 @@ class Advisor:
                 self.df_room[col][0] = 0
             else:
                 self.df_room[col][0] = probab
+
+    
+    #def construct_log(self, player_Query, suspect_queried, weapon_queried, room_queried, numberOfResponce, card_givers):
+        
+
+
