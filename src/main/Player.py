@@ -26,3 +26,12 @@ class Player:
 
     def update_room_possibly_have(self, list_add, points_added):
         pass
+
+    def display_suspect_must_have(self):
+        print(self.suspect_must_have)
+    
+    def display_weapon_must_have(self):
+        print(self.weapon_must_have)
+
+    def display_room_must_have(self):
+        print(self.room_must_have)
