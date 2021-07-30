@@ -14,12 +14,13 @@ class Advisor:
         self.df_room    : a real-time df showing probability of each room
         self.players    : a list of playerObject 
         """
+
         self.suspects, self.weapons, self.rooms, self.cardsIhave = self.collectInfo()
         self.players = {"myself": self.initPlayers(self.suspects, self.weapons, self.rooms, self.cardsIhave)}
 
         self.initProbabilityTable(self.suspects, self.weapons, self.rooms)
         
-        self.initialize_other_players(numberOfPlayers - 1)
+        self.initialize_secret_and_other_players(numberOfPlayers - 1)
         self.log = self.initialize_log()
         self.turnCycle()
         
@@ -45,6 +46,8 @@ class Advisor:
                     pass
             elif action == "Exit":
                 break
+            else:
+                print("Invalid input, enter agagin")
             print("\n")
     
     def update_myturn(self):
@@ -53,38 +56,9 @@ class Advisor:
 
         response = input("Player who provides the suspect, weapon, room, enter None if nobody: ")
         suspect_giver, weapon_giver, room_giver = response.split(",")[0].strip(), response.split(",")[1].strip(), response.split(",")[2].strip() 
-
-        cardsCollected = 0
-        listOfGiver = []
-        if myQuery_suspect not in self.suspects:
-            if suspect_giver != "None":
-                cardsCollected += 1
-                listOfGiver.append(suspect_giver)
-                self.players[suspect_giver].update_suspect_must_have(myQuery_suspect)
-                #self.update_probability_table("suspect", myQuery_suspect)
-        else:
-            listOfGiver.append("myself")
-            cardsCollected += 1
-
-        if myQuery_weapon not in self.weapons:
-            if weapon_giver != "None":
-                cardsCollected += 1
-                listOfGiver.append(weapon_giver)
-                self.players[weapon_giver].update_weapon_must_have(myQuery_weapon)
-                #self.update_probability_table("weapon", myQuery_weapon)
-        else:
-            listOfGiver.append("myself")
-            cardsCollected += 1
-
-        if myQuery_room not in self.rooms:
-            if room_giver != "None":
-                cardsCollected += 1
-                listOfGiver.append(room_giver)
-                self.players[room_giver].update_room_must_have(myQuery_room)
-                #self.update_probability_table("room", myQuery_room)
-        else:
-            listOfGiver.append("myself")
-            cardsCollected += 1
+   
+        listOfGiver = [suspect_giver, weapon_giver, room_giver]
+        cardsCollected = 3 - listOfGiver.count("None")
         
         self.udpate_log("myself", myQuery_suspect, myQuery_weapon, myQuery_room, cardsCollected, listOfGiver)
 
@@ -106,22 +80,54 @@ class Advisor:
             playerMyself.update_weapon_must_have(ele)
         for ele in room_list:
             playerMyself.update_room_must_have(ele)
+        for ele in [x for x in LIST_SUSPECT if x not in suspect_list]:
+            playerMyself.update_suspect_must_not_have(ele)
+        for ele in [x for x in LIST_WEAPON if x not in weapon_list]:
+            playerMyself.update_weapon_must_not_have(ele)
+        for ele in [x for x in LIST_ROOM if x not in room_list]:
+            playerMyself.update_room_must_not_have(ele)
         return playerMyself
 
 
-    def initialize_other_players(self, numberOpponents):
-        
+    def initialize_secret_and_other_players(self, numberOpponents):
+        prob_init = 1/(numberOpponents + 1)
+
+        ## add secret agent
+        secret = Player("secret", 3)
+        self.players["secret"] = secret
+        for ele in self.suspects:
+            self.players["secret"].update_suspect_must_not_have(ele)
+        for ele in self.weapons:
+            self.players["secret"].update_weapon_must_not_have(ele)
+        for ele in self.rooms:
+            self.players["secret"].update_room_must_not_have(ele)
+        for ele in [x for x in LIST_SUSPECT if x not in self.suspects]:
+            self.players["secret"].update_suspect_possibly_have(ele, prob_init)
+        for ele in [x for x in LIST_WEAPON if x not in self.weapons]:
+            self.players["secret"].update_weapon_possibly_have(ele, prob_init)
+        for ele in [x for x in LIST_ROOM if x not in self.rooms]:
+            self.players["secret"].update_room_possibly_have(ele, prob_init)
+
         for i in range(numberOpponents):
             playerInfo = input("Enter opponent's name, # of cards, seperated by comma, if no name or #ofcards given, it will be preset by the program\n")
             name, cardQuantity = playerInfo.split(",")[0].strip(), int(playerInfo.split(",")[1].strip())
-            if name == "":
-                name = "Player_" + str(i)
-            # if not isinstance(cardQuantity, int):
-            #     cardQuantity = 
 
             opponent = Player(name, cardQuantity)
             self.players[name] = opponent
-
+            for ele in self.suspects:
+                self.players[name].update_suspect_must_not_have(ele)
+            for ele in self.weapons:
+                self.players[name].update_weapon_must_not_have(ele)
+            for ele in self.rooms:
+                self.players[name].update_room_must_not_have(ele)
+            for ele in [x for x in LIST_SUSPECT if x not in self.suspects]:
+                self.players[name].update_suspect_possibly_have(ele, prob_init)
+            for ele in [x for x in LIST_WEAPON if x not in self.weapons]:
+                self.players[name].update_weapon_possibly_have(ele, prob_init)
+            for ele in [x for x in LIST_ROOM if x not in self.rooms]:
+                self.players[name].update_room_possibly_have(ele, prob_init)
+                
+        
         
     def collectInfo(self):
 
@@ -132,7 +138,7 @@ class Advisor:
             print("\n")
 
             ## collect suspect
-            print("Please enter your Suspect Cards, seperated by comma, enter None if you don't have suspect cards\n")
+            print("Please enter your Suspect Cards, seperated by comma, enter None if you don't have suspect cards")
             txt = input("suspect(s): ")
             if txt == "None":
                 suspects = []
@@ -141,7 +147,7 @@ class Advisor:
             print("\n")
             
             ## collect weapons
-            print("Please enter your Weapon Cards, seperated by comma, enter None if you don't have weapon cards\n")       
+            print("Please enter your Weapon Cards, seperated by comma, enter None if you don't have weapon cards")       
             txt = input("weapon(s): ")
             if txt == "None":
                 weapons = []
@@ -150,7 +156,7 @@ class Advisor:
             print("\n")
 
             ## collect rooms
-            print("Please enter your Room Cards, seperated by comma, enter None if you don't have room cards\n")       
+            print("Please enter your Room Cards, seperated by comma, enter None if you don't have room cards")       
             txt = input("room(s): ")
             if txt == "None":
                 rooms = []
@@ -217,6 +223,19 @@ class Advisor:
         self.players[player_name].display_weapon_must_have()
         print("\n room must have:  ")
         self.players[player_name].display_room_must_have()
+        print("\n suspect probably have:  ")
+        self.players[player_name].display_suspect_possibly_have()
+        print("\n weapon probably have:  ")
+        self.players[player_name].display_weapon_possibly_have()
+        print("\n room probably have:  ")
+        self.players[player_name].display_room_possibly_have()
+        print("\n suspect must not have:  ")
+        self.players[player_name].display_suspect_must_not_have()
+        print("\n weapon must not have:  ")
+        self.players[player_name].display_weapon_must_not_have()
+        print("\n room must not have:  ")
+        self.players[player_name].display_room_must_not_have()
+
 
 
     def display_log(self):
@@ -234,4 +253,4 @@ class Advisor:
 
 
     #def construct_log(self, player_Query, suspect_queried, weapon_queried, room_queried, numberOfResponce, card_givers):
-        
+     
