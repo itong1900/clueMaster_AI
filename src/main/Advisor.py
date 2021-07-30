@@ -38,6 +38,8 @@ class Advisor:
                     #break
                 else:
                     print("Wrong name, enter again: ")
+                if whose_turn in self.players:
+                    self.AI_unit_update()
             elif action == "Query":
                 what_query = input("Player_Summary / Log / Probability_Table:  ")
                 if what_query == "Log":
@@ -54,7 +56,7 @@ class Advisor:
         myQuery = input("My Claim:  ")
         myQuery_suspect, myQuery_weapon, myQuery_room = myQuery.split(",")[0].strip(), myQuery.split(",")[1].strip(), myQuery.split(",")[2].strip()
 
-        response = input("Player who provides the suspect, weapon, room, enter None if nobody: ")
+        response = input("Player who provides the suspect, weapon, room, enter None if nobody, enter myself if you claim a card you own: ")
         suspect_giver, weapon_giver, room_giver = response.split(",")[0].strip(), response.split(",")[1].strip(), response.split(",")[2].strip() 
    
         listOfGiver = [suspect_giver, weapon_giver, room_giver]
@@ -241,6 +243,126 @@ class Advisor:
     def display_log(self):
         display(self.log)
 
+    def AI_unit_update(self):
+        # Retrieve info from log
+        player_makeQuery = self.log.iloc[-1,:]["player_makeQuery"]
+        claim_suspect = self.log.iloc[-1,:]["claim_suspect"]
+        claim_weapon = self.log.iloc[-1,:]["claim_weapon"]
+        claim_room = self.log.iloc[-1,:]["claim_room"]
+        cards_received = self.log.iloc[-1,:]["cards_received"]
+        card_givers = self.log.iloc[-1,:]["card_giver(s)"]
+
+        if player_makeQuery == "myself":
+            ## deal with suspect
+            if self.search_in_must_have(claim_suspect) is "None":
+                if card_givers[0] is not "None":
+                    self.players[card_givers[0]].update_suspect_must_have(claim_suspect)
+                    ## add to must_not_have in other agents, remove from their probably have list
+                    for other_agent in [x for x in self.players.keys() if x != card_givers[0]]:
+                        self.players[other_agent].update_suspect_must_not_have(claim_suspect)
+                        if claim_suspect in self.players[other_agent].suspect_possibly_have:
+                            del self.players[other_agent].suspect_possibly_have[claim_suspect]
+                else:
+                    # secret agent and related agent share the probability having this card
+                    score_adding = 1/(1+cards_received)
+                    self.players["serect"].update_suspect_possibly_have(claim_suspect, score_adding)
+                    for related_agent in card_givers:
+                        if related_agent == "None":
+                            continue
+                        self.players[related_agent].update_suspect_possibly_have(claim_suspect, score_adding)
+                    # people who doesn't give a card here have 0 probability having this card
+                    for non_related_agent in [x for x in self.players.keys() if x not in card_givers]:
+                        self.players[non_related_agent].update_suspect_must_not_have(claim_suspect)
+                        if claim_suspect in self.players[non_related_agent].suspect_possibly_have:
+                            del self.players[non_related_agent].suspect_possibly_have[claim_suspect]
+            else:
+                # sanity check
+                pass
+
+            ## deal with weapon
+            if self.search_in_must_have(claim_weapon) is "None":
+                if card_givers[1] is not "None":
+                    self.players[card_givers[1]].update_weapon_must_have(claim_weapon)
+                    ## add to must_not_have in other agents, remove from their probably have list
+                    for other_agent in [x for x in self.players.keys() if x != card_givers[1]]:
+                        self.players[other_agent].update_weapon_must_not_have(claim_weapon)
+                        if claim_weapon in self.players[other_agent].weapon_possibly_have:
+                            del self.players[other_agent].weapon_possibly_have[claim_weapon]
+                else:
+                    # secret agent and related agent share the probability having this card
+                    score_adding = 1/(1+cards_received)
+                    self.players["serect"].update_weapon_possibly_have(claim_weapon, score_adding)
+                    for related_agent in card_givers:
+                        if related_agent == "None":
+                            continue
+                        self.players[related_agent].update_weapon_possibly_have(claim_weapon, score_adding)
+                    # people who doesn't give a card here have 0 probability having this card
+                    for non_related_agent in [x for x in self.players.keys() if x not in card_givers]:
+                        self.players[non_related_agent].update_weapon_must_not_have(claim_weapon)
+                        if claim_weapon in self.players[non_related_agent].weapon_possibly_have:
+                            del self.players[non_related_agent].weapon_possibly_have[claim_weapon]
+            else:
+                # sanity check
+                pass
+
+            ## deal with room
+            if self.search_in_must_have(claim_room) is "None":
+                if card_givers[2] is not "None":
+                    self.players[card_givers[2]].update_room_must_have(claim_room)
+                    ## add to must_not_have in other agents, remove from their probably have list
+                    for other_agent in [x for x in self.players.keys() if x != card_givers[2]]:
+                        self.players[other_agent].update_room_must_not_have(claim_room)
+                        if claim_room in self.players[other_agent].room_possibly_have:
+                            del self.players[other_agent].room_possibly_have[claim_room]
+                else:
+                    # secret agent and related agent share the probability having this card
+                    score_adding = 1/(1+cards_received)
+                    self.players["serect"].update_room_possibly_have(claim_room, score_adding)
+                    for related_agent in card_givers:
+                        if related_agent == "None":
+                            continue
+                        self.players[related_agent].update_room_possibly_have(claim_room, score_adding)
+                    # people who doesn't give a card here have 0 probability having this card
+                    for non_related_agent in [x for x in self.players.keys() if x not in card_givers]:
+                        self.players[non_related_agent].update_room_must_not_have(claim_room)
+                        if claim_room in self.players[non_related_agent].room_possibly_have:
+                            del self.players[non_related_agent].room_possibly_have[claim_room]
+            else:
+                # sanity check
+                pass
+
+
+
+
+    def search_in_must_have(self, item_checking):
+        '''
+        return who has the item or None if no one has it.
+        '''
+        attribute_to_search = ""
+        
+        if item_checking in LIST_SUSPECT:
+            attribute_to_search = "suspect"
+        elif item_checking in LIST_WEAPON:
+            attribute_to_search = "weapon"
+        elif item_checking in LIST_ROOM:
+            attribute_to_search = "room"
+        
+        if attribute_to_search == "suspect":
+            for agent in self.players.keys():
+                if self.players[agent].search_suspect_must_have(item_checking):
+                    return agent
+        elif attribute_to_search == "weapon":
+            for agent in self.players.keys():
+                if self.players[agent].search_weapon_must_have(item_checking):
+                    return agent
+        elif attribute_to_search == "room":
+            for agent in self.players.keys():
+                if self.players[agent].search_room_must_have(item_checking):
+                    return agent
+
+        return "None"
+
+
 
     # def update_probability_table(df, ele_eliminated):
     #     if df == "suspect":
@@ -250,7 +372,3 @@ class Advisor:
         
     #     elif df == "room":
 
-
-
-    #def construct_log(self, player_Query, suspect_queried, weapon_queried, room_queried, numberOfResponce, card_givers):
-     

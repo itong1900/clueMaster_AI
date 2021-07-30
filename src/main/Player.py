@@ -74,3 +74,18 @@ class Player:
 
     def display_room_must_not_have(self):
         print(self.room_must_not_have)
+
+    def search_suspect_must_have(self, item_searching):
+        if item_searching in self.suspect_must_have:
+            return True
+        return False
+
+    def search_weapon_must_have(self, item_searching):
+        if item_searching in self.weapon_must_have:
+            return True
+        return False
+
+    def search_room_must_have(self, item_searching):
+        if item_searching in self.room_must_have:
+            return True
+        return False
