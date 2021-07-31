@@ -5,4 +5,8 @@
 # if __name__ == '__main__':
 #     hi()
 
-print(__name__)
+def main():
+    print("hwllo world")
+
+# if __name__ == '__main__':
+#     main()

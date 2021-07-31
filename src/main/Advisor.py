@@ -1,3 +1,7 @@
+from Player import Player
+import pandas as pd
+
+
 class Advisor:
     # CONSTANTS in Advisor class
     global Total_Number_of_Card, LIST_SUSPECT, LIST_WEAPON, LIST_ROOM
@@ -372,3 +376,5 @@ class Advisor:
         
     #     elif df == "room":
 
+if __name__ == '__main__':
+    Advisor.__init__(4)
