@@ -48,8 +48,9 @@ class Advisor:
                 what_query = input("Player_Summary / Log / Probability_Table:  ")
                 if what_query == "Log":
                     self.display_log()
-                elif what_query == "Player_Summry":
-                    pass
+                elif what_query == "Player_Summary":
+                    name = input("Player's Name: ")
+                    self.player_summary(name)
             elif action == "Exit":
                 break
             else:
@@ -141,7 +142,6 @@ class Advisor:
             ## collect number of cards
             txt = input("Please enter number of cards you have:  ")
             cardsIhave = int(txt)
-            print("\n")
 
             ## collect suspect
             print("Please enter your Suspect Cards, seperated by comma, enter None if you don't have suspect cards")
@@ -150,7 +150,6 @@ class Advisor:
                 suspects = []
             else:
                 suspects = [x.strip() for x in txt.split(",")]
-            print("\n")
             
             ## collect weapons
             print("Please enter your Weapon Cards, seperated by comma, enter None if you don't have weapon cards")       
@@ -159,7 +158,6 @@ class Advisor:
                 weapons = []
             else:
                 weapons = [x.strip() for x in txt.split(",")]
-            print("\n")
 
             ## collect rooms
             print("Please enter your Room Cards, seperated by comma, enter None if you don't have room cards")       
@@ -245,7 +243,7 @@ class Advisor:
 
 
     def display_log(self):
-        display(self.log)
+        print(self.log)
 
     def AI_unit_update(self):
         # Retrieve info from log
