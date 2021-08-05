@@ -264,7 +264,10 @@ class Advisor:
             if self.search_in_must_have(claim_suspect) == "None":
                 if card_givers[0] != "None":
                     self.players[card_givers[0]].update_suspect_must_have(claim_suspect)
-                    ## add to must_not_have in other agents, remove from their probably have list
+                    # remove the card from the possibly have of this giver
+                    if claim_suspect in self.players[card_givers[0]].suspect_possibly_have:
+                        del self.players[card_givers[0]].suspect_possibly_have[claim_suspect]
+                    # add to must_not_have in other agents, remove from their probably have list
                     for other_agent in [x for x in self.players.keys() if x != card_givers[0]]:
                         self.players[other_agent].update_suspect_must_not_have(claim_suspect)
                         if claim_suspect in self.players[other_agent].suspect_possibly_have:
@@ -290,7 +293,10 @@ class Advisor:
             if self.search_in_must_have(claim_weapon) == "None":
                 if card_givers[1] != "None":
                     self.players[card_givers[1]].update_weapon_must_have(claim_weapon)
-                    ## add to must_not_have in other agents, remove from their probably have list
+                    # remove the card from the possibly have of this giver
+                    if claim_weapon in self.players[card_givers[1]].weapon_possibly_have:
+                        del self.players[card_givers[1]].weapon_possibly_have[claim_weapon]
+                    # add to must_not_have in other agents, remove from their probably have list
                     for other_agent in [x for x in self.players.keys() if x != card_givers[1]]:
                         self.players[other_agent].update_weapon_must_not_have(claim_weapon)
                         if claim_weapon in self.players[other_agent].weapon_possibly_have:
@@ -316,7 +322,10 @@ class Advisor:
             if self.search_in_must_have(claim_room) == "None":
                 if card_givers[2] != "None":
                     self.players[card_givers[2]].update_room_must_have(claim_room)
-                    ## add to must_not_have in other agents, remove from their probably have list
+                    # remove the card from the possibly have of this giver
+                    if claim_room in self.players[card_givers[2]].room_possibly_have:
+                        del self.players[card_givers[2]].room_possibly_have[claim_room]
+                    # add to must_not_have in other agents, remove from their probably have list
                     for other_agent in [x for x in self.players.keys() if x != card_givers[2]]:
                         self.players[other_agent].update_room_must_not_have(claim_room)
                         if claim_room in self.players[other_agent].room_possibly_have:
@@ -379,5 +388,5 @@ class Advisor:
         
     #     elif df == "room":
 
-if __name__ == '__main__':
-    Advisor.__init__(4)
+# if __name__ == '__main__':
+#     Advisor.__init__(4)
