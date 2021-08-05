@@ -3,7 +3,7 @@ import pandas as pd
 
 
 class Advisor:
-    # CONSTANTS in Advisor class
+    # CONSTANTS in Advisor class, _config
     global Total_Number_of_Card, LIST_SUSPECT, LIST_WEAPON, LIST_ROOM
     Total_Number_of_Card = 30
     LIST_SUSPECT = ["Miss Scarlet", "Mr. Green", "Mrs White", "Mrs Peacock", "Colonel Mustard", "Professor Plum", "Miss Peach", "Sgt. Gray", "Monsieur Brunette", "Mme. Rose"]
@@ -97,7 +97,9 @@ class Advisor:
 
 
     def initialize_secret_and_other_players(self, numberOpponents):
-        prob_init = 1/(numberOpponents + 1)
+        secret_suspect_prob_init = 1/len([x for x in LIST_SUSPECT if x not in self.suspects])
+        secret_weapon_prob_init = 1/len([x for x in LIST_WEAPON if x not in self.weapons])
+        secret_room_prob_init = 1/len([x for x in LIST_ROOM if x not in self.rooms])
 
         ## add secret agent
         secret = Player("secret", 3)
@@ -109,18 +111,21 @@ class Advisor:
         for ele in self.rooms:
             self.players["secret"].update_room_must_not_have(ele)
         for ele in [x for x in LIST_SUSPECT if x not in self.suspects]:
-            self.players["secret"].update_suspect_possibly_have(ele, prob_init)
+            self.players["secret"].update_suspect_possibly_have(ele, secret_suspect_prob_init)
         for ele in [x for x in LIST_WEAPON if x not in self.weapons]:
-            self.players["secret"].update_weapon_possibly_have(ele, prob_init)
+            self.players["secret"].update_weapon_possibly_have(ele, secret_weapon_prob_init)
         for ele in [x for x in LIST_ROOM if x not in self.rooms]:
-            self.players["secret"].update_room_possibly_have(ele, prob_init)
+            self.players["secret"].update_room_possibly_have(ele, secret_room_prob_init)
 
+        other_prob_init = 1/(Total_Number_of_Card - self.cardsIhave - 3)
         for i in range(numberOpponents):
             playerInfo = input("Enter opponent's name, # of cards, seperated by comma, if no name or #ofcards given, it will be preset by the program\n")
             name, cardQuantity = playerInfo.split(",")[0].strip(), int(playerInfo.split(",")[1].strip())
 
             opponent = Player(name, cardQuantity)
             self.players[name] = opponent
+            this_prob_init = other_prob_init * self.players[name].numberOfCards
+
             for ele in self.suspects:
                 self.players[name].update_suspect_must_not_have(ele)
             for ele in self.weapons:
@@ -128,11 +133,11 @@ class Advisor:
             for ele in self.rooms:
                 self.players[name].update_room_must_not_have(ele)
             for ele in [x for x in LIST_SUSPECT if x not in self.suspects]:
-                self.players[name].update_suspect_possibly_have(ele, prob_init)
+                self.players[name].update_suspect_possibly_have(ele, this_prob_init)
             for ele in [x for x in LIST_WEAPON if x not in self.weapons]:
-                self.players[name].update_weapon_possibly_have(ele, prob_init)
+                self.players[name].update_weapon_possibly_have(ele, this_prob_init)
             for ele in [x for x in LIST_ROOM if x not in self.rooms]:
-                self.players[name].update_room_possibly_have(ele, prob_init)
+                self.players[name].update_room_possibly_have(ele, this_prob_init)
                 
         
         
@@ -167,7 +172,7 @@ class Advisor:
             else:
                 rooms = [x.strip() for x in txt.split(",")]
             print("\n")
-            
+
             # 
             # Data Validation
             # else:
@@ -256,8 +261,8 @@ class Advisor:
 
         if player_makeQuery == "myself":
             ## deal with suspect
-            if self.search_in_must_have(claim_suspect) is "None":
-                if card_givers[0] is not "None":
+            if self.search_in_must_have(claim_suspect) == "None":
+                if card_givers[0] != "None":
                     self.players[card_givers[0]].update_suspect_must_have(claim_suspect)
                     ## add to must_not_have in other agents, remove from their probably have list
                     for other_agent in [x for x in self.players.keys() if x != card_givers[0]]:
@@ -282,8 +287,8 @@ class Advisor:
                 pass
 
             ## deal with weapon
-            if self.search_in_must_have(claim_weapon) is "None":
-                if card_givers[1] is not "None":
+            if self.search_in_must_have(claim_weapon) == "None":
+                if card_givers[1] != "None":
                     self.players[card_givers[1]].update_weapon_must_have(claim_weapon)
                     ## add to must_not_have in other agents, remove from their probably have list
                     for other_agent in [x for x in self.players.keys() if x != card_givers[1]]:
@@ -308,8 +313,8 @@ class Advisor:
                 pass
 
             ## deal with room
-            if self.search_in_must_have(claim_room) is "None":
-                if card_givers[2] is not "None":
+            if self.search_in_must_have(claim_room) == "None":
+                if card_givers[2] != "None":
                     self.players[card_givers[2]].update_room_must_have(claim_room)
                     ## add to must_not_have in other agents, remove from their probably have list
                     for other_agent in [x for x in self.players.keys() if x != card_givers[2]]:
