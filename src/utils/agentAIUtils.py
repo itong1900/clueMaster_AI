@@ -50,8 +50,10 @@ def myself_turn_players_update(ObjectDealing ,not_in_must_have, card_giver, card
                     if related_agent == "None":
                         continue
                     playersHashmap[related_agent].update_suspect_possibly_have(claim_object, score_adding)
-                # people who doesn't give a card here have 0 probability having this card
+                # people who doesn't give a card here have 0 probability having this card, excluding the secret agent
                 for non_related_agent in [x for x in playersHashmap.keys() if x not in card_giver_list]:
+                    if non_related_agent == "secret":
+                        continue
                     playersHashmap[non_related_agent].update_suspect_must_not_have(claim_object)
                     if claim_object in playersHashmap[non_related_agent].suspect_possibly_have:
                         del playersHashmap[non_related_agent].suspect_possibly_have[claim_object]
@@ -79,8 +81,10 @@ def myself_turn_players_update(ObjectDealing ,not_in_must_have, card_giver, card
                     if related_agent == "None":
                         continue
                     playersHashmap[related_agent].update_weapon_possibly_have(claim_object, score_adding)
-                # people who doesn't give a card here have 0 probability having this card
+                # people who doesn't give a card here have 0 probability having this card, excluding the secret agent
                 for non_related_agent in [x for x in playersHashmap.keys() if x not in card_giver_list]:
+                    if non_related_agent == "secret":
+                        continue
                     playersHashmap[non_related_agent].update_weapon_must_not_have(claim_object)
                     if claim_object in playersHashmap[non_related_agent].weapon_possibly_have:
                         del playersHashmap[non_related_agent].weapon_possibly_have[claim_object]
@@ -107,8 +111,10 @@ def myself_turn_players_update(ObjectDealing ,not_in_must_have, card_giver, card
                     if related_agent == "None":
                         continue
                     playersHashmap[related_agent].update_room_possibly_have(claim_object, score_adding)
-                # people who doesn't give a card here have 0 probability having this card
+                # people who doesn't give a card here have 0 probability having this card, excluding the secret agent
                 for non_related_agent in [x for x in playersHashmap.keys() if x not in card_giver_list]:
+                    if non_related_agent == "secret":
+                        continue
                     playersHashmap[non_related_agent].update_room_must_not_have(claim_object)
                     if claim_object in playersHashmap[non_related_agent].room_possibly_have:
                         del playersHashmap[non_related_agent].room_possibly_have[claim_object]
