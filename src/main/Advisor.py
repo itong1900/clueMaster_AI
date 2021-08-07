@@ -41,14 +41,17 @@ class Advisor:
                 whose_turn = input("Whose turn is this: ")
                 if whose_turn == "myself":
                     self.update_myturn()
+                    self.AI_unit_myselfTurn_update()
                     #break
                 elif whose_turn in self.players:
                     self.update_oppoTurn(whose_turn)
                     #break
                 else:
                     print("Wrong name, enter again: ")
-                if whose_turn in self.players:
-                    self.AI_unit_update()
+                if whose_turn in self.players.keys():
+                    ## reblance some weight here
+                    pass
+                    
             elif action == "Query":
                 what_query = input("Player_Summary / Log / Probability_Table:  ")
                 if what_query == "Log":
@@ -122,7 +125,7 @@ class Advisor:
         for ele in [x for x in LIST_ROOM if x not in self.rooms]:
             self.players["secret"].update_room_possibly_have(ele, secret_room_prob_init)
 
-        other_prob_init = 1/(Total_Number_of_Card - self.cardsIhave - 3)
+        other_prob_init = 1/(Total_Number_of_Card - self.cardsIhave)
         for i in range(numberOpponents):
             playerInfo = input("Enter opponent's name, # of cards, seperated by comma, if no name or #ofcards given, it will be preset by the program\n")
             name, cardQuantity = playerInfo.split(",")[0].strip(), int(playerInfo.split(",")[1].strip())
@@ -255,7 +258,7 @@ class Advisor:
     def display_log(self):
         print(self.log)
 
-    def AI_unit_update(self):
+    def AI_unit_myselfTurn_update(self):
         # Retrieve info from log
         player_makeQuery = self.log.iloc[-1,:]["player_makeQuery"]
         claim_suspect = self.log.iloc[-1,:]["claim_suspect"]

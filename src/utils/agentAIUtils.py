@@ -74,7 +74,7 @@ def myself_turn_players_update(ObjectDealing ,not_in_must_have, card_giver, card
             else:
                 # secret agent and related agent share the probability having this card
                 score_adding = 1/(1+cards_received)
-                playersHashmap["serect"].update_weapon_possibly_have(claim_object, score_adding)
+                playersHashmap["secret"].update_weapon_possibly_have(claim_object, score_adding)
                 for related_agent in card_giver_list:
                     if related_agent == "None":
                         continue
@@ -102,7 +102,7 @@ def myself_turn_players_update(ObjectDealing ,not_in_must_have, card_giver, card
             else:
                 # secret agent and related agent share the probability having this card
                 score_adding = 1/(1+cards_received)
-                playersHashmap["serect"].update_room_possibly_have(claim_object, score_adding)
+                playersHashmap["secret"].update_room_possibly_have(claim_object, score_adding)
                 for related_agent in card_giver_list:
                     if related_agent == "None":
                         continue
@@ -117,5 +117,6 @@ def myself_turn_players_update(ObjectDealing ,not_in_must_have, card_giver, card
             pass
 
 
-    
+
+
 
