@@ -105,12 +105,27 @@ class TestAdvisor(unittest.TestCase):
         self.assertEqual(Advisor3.players["Mia"].suspect_possibly_have, {"Mrs Peacock": prob*7, "Colonel Mustard":prob*7, 
         "Professor Plum":prob*7, "Sgt. Gray":prob*7, "Monsieur Brunette":prob*7, "Mme. Rose":prob*7})
         
-        self.assertEqual(Advisor3.players["Jane"].weapon_possibly_have, {"Candlestick":prob*7, "Knife":prob*7, "Lead Pipe":prob*7, 
+        # self.assertEqual(Advisor3.players["Jane"].weapon_possibly_have, {"Candlestick":prob*7, "Knife":prob*7, "Lead Pipe":prob*7, 
+        # "Horseshoe":prob*7, "Poison":prob*7})
+        self.assertEqual(Advisor3.players["Michael"].weapon_possibly_have, {"Candlestick":prob*6, "Knife":prob*6, "Lead Pipe":prob*6, 
+        "Horseshoe":prob*6, "Poison":prob*6})
+        self.assertEqual(Advisor3.players["Mia"].weapon_possibly_have, {"Candlestick":prob*7, "Knife":prob*7, "Lead Pipe":prob*7, 
         "Horseshoe":prob*7, "Poison":prob*7})
-        # self.assertEqual(Advisor3.players["Michael"].weapon_possibly_have, {"Mrs Peacock": prob*6, "Colonel Mustard":prob*6, 
-        # "Professor Plum":prob*6, "Sgt. Gray":prob*6, "Monsieur Brunette":prob*6, "Mme. Rose":prob*6})
-        # self.assertEqual(Advisor3.players["Mia"].weapon_possibly_have, {"Mrs Peacock": prob*7, "Colonel Mustard":prob*7, 
-        # "Professor Plum":prob*7, "Sgt. Gray":prob*7, "Monsieur Brunette":prob*7, "Mme. Rose":prob*7})
+        self.assertEqual(Advisor3.players["Jane"].weapon_must_have, {"Revolver"})
+        self.assertEqual(Advisor3.players["Mia"].weapon_must_not_have, {"Revolver","Rope", "Wrench"})
+        self.assertEqual(Advisor3.players["Michael"].weapon_must_not_have, {"Revolver","Rope", "Wrench"})
+        self.assertEqual(Advisor3.players["Jane"].weapon_must_not_have, {"Rope", "Wrench"})
+
+        self.assertEqual(Advisor3.players["Jane"].room_possibly_have, {"Carriage House": prob*7, "Kitchen": prob*7, "Trophy Room": prob*7, 
+        "Dining Room": prob*7, "Drawing Room": prob*7, "Courtyard": prob*7, "Fountain": prob*7, "Library": prob*7, "Billiard Room": prob*7})
+        self.assertEqual(Advisor3.players["Michael"].room_possibly_have, {"Carriage House": prob*6, "Kitchen": prob*6, "Trophy Room": prob*6, 
+        "Dining Room": prob*6, "Drawing Room": prob*6, "Courtyard": prob*6, "Fountain": prob*6, "Library": prob*6, "Billiard Room": prob*6})
+        self.assertEqual(Advisor3.players["Mia"].room_possibly_have, {"Carriage House": prob*7, "Kitchen": prob*7, "Trophy Room": prob*7, 
+        "Dining Room": prob*7, "Drawing Room": prob*7, "Courtyard": prob*7, "Fountain": prob*7, "Library": prob*7, "Billiard Room": prob*7})
+        self.assertEqual(Advisor3.players["Mia"].room_must_have, {"Gazebo"})
+        self.assertEqual(Advisor3.players["Mia"].room_must_not_have, {"Studio", "Conservatory"})
+        self.assertEqual(Advisor3.players["Michael"].room_must_not_have, {"Studio", "Conservatory","Gazebo"})
+        self.assertEqual(Advisor3.players["Jane"].room_must_not_have, {"Studio", "Conservatory","Gazebo"})
 
 
 if __name__ == '__main__':
