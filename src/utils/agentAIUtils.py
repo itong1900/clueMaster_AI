@@ -43,7 +43,7 @@ def myself_turn_players_update(ObjectDealing ,not_in_must_have, card_giver, card
                     if claim_object in playersHashmap[other_agent].suspect_possibly_have:
                         del playersHashmap[other_agent].suspect_possibly_have[claim_object]
             else:
-                # secret agent and related agent share the probability having this card
+                # secret agent and related agent share the probability having this card, only if this card not in this agent's must_not_haves
                 score_adding = 1/(1+cards_received)
                 playersHashmap["secret"].update_suspect_possibly_have(claim_object, score_adding)
                 for related_agent in card_giver_list:
