@@ -291,7 +291,7 @@ class Advisor:
         now a turn eliminates the probability of D, and update shall be made suspect_possibly_have = {A:1/3, B:1/3, C:1/3},
         then another term add a 1/2 probability to A, then suspect_possibly_have = {A:5/6, B:1/3, C:1/3},
         then the most complicated case happens, a turn now elimates probability of C, 
-        then suspect_possibly_have = {A:5/6, B:1/3}, 
+        then suspect_possibly_have = {A:5/6, B:1/3}, base probability 1/3 -> 1/2, 
 
         Note: You can't eliminate elements meanwhile adjust a specific element in secret_possibly at the same round
         """
