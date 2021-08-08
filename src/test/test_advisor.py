@@ -134,7 +134,7 @@ class TestAdvisor(unittest.TestCase):
     "Next turn", "myself", "Mrs Peacock, Rope, Library", "Mia, Michael, Jane",
     "Next turn", "myself", "Miss Peach, Horseshoe ,Gazebo", "Michael, Jane, None",
     "Next turn", "myself", "Mme. Rose, Poison, Gazebo", "None, None, Michael", 
-    "Query", "Player_Summary", "Mia", "Exit"])
+    "Query", "Player_Summary", "secret", "Exit"])
     def test_Game4(self, mock_inputs):
         Advisor4 = Advisor(4)
         prob = 1/(30-7) 
