@@ -37,7 +37,7 @@ def myself_turn_players_update(ObjectDealing ,not_in_must_have, card_giver, card
                 # remove the card from the possibly have of this giver
                 if claim_object in playersHashmap[card_giver].suspect_possibly_have:
                     del playersHashmap[card_giver].suspect_possibly_have[claim_object]
-                # add to must_not_have in other agents, remove from their probably have list
+                # add to must_not_have in other agents, remove from their probably have list, including secret agent
                 for other_agent in [x for x in playersHashmap.keys() if x != card_giver]:
                     playersHashmap[other_agent].update_suspect_must_not_have(claim_object)
                     if claim_object in playersHashmap[other_agent].suspect_possibly_have:
@@ -68,7 +68,7 @@ def myself_turn_players_update(ObjectDealing ,not_in_must_have, card_giver, card
                 # remove the card from the possibly have of this giver
                 if claim_object in playersHashmap[card_giver].weapon_possibly_have:
                     del playersHashmap[card_giver].weapon_possibly_have[claim_object]
-                # add to must_not_have in other agents, remove from their probably have list
+                # add to must_not_have in other agents, remove from their probably have list, including secret agent
                 for other_agent in [x for x in playersHashmap.keys() if x != card_giver]:
                     playersHashmap[other_agent].update_weapon_must_not_have(claim_object)
                     if claim_object in playersHashmap[other_agent].weapon_possibly_have:
@@ -98,7 +98,7 @@ def myself_turn_players_update(ObjectDealing ,not_in_must_have, card_giver, card
                 # remove the card from the possibly have of this giver
                 if claim_object in playersHashmap[card_giver].room_possibly_have:
                     del playersHashmap[card_giver].room_possibly_have[claim_object]
-                # add to must_not_have in other agents, remove from their probably have list
+                # add to must_not_have in other agents, remove from their probably have list, including secret agent
                 for other_agent in [x for x in playersHashmap.keys() if x != card_giver]:
                     playersHashmap[other_agent].update_room_must_not_have(claim_object)
                     if claim_object in playersHashmap[other_agent].room_possibly_have:

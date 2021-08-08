@@ -1,3 +1,4 @@
+from logging import raiseExceptions
 from Player import Player
 import pandas as pd
 
@@ -36,7 +37,7 @@ class Advisor:
     
     def turnCycle(self):
         while True:
-            action = input("Next turn / Query / Exit: ")
+            action = input("Next turn / Query / magnifier / Exit: ")
             if action == "Next turn":
                 whose_turn = input("Whose turn is this: ")
                 if whose_turn == "myself":
@@ -61,6 +62,8 @@ class Advisor:
                     self.player_summary(name)
             elif action == "Exit":
                 break
+            elif action == "magnifier":
+                self.magnifierCheck()
             else:
                 print("Invalid input, enter agagin")
             print("\n")
@@ -280,6 +283,29 @@ class Advisor:
             ## deal with room
             not_in_must_have = search_in_must_have(self.players, claim_room, LIST_SUSPECT, LIST_WEAPON, LIST_ROOM) == "None"
             myself_turn_players_update("room", not_in_must_have, card_givers[2], card_givers, self.players, claim_room, cards_received)
+
+
+    def magnifierCheck(self):
+        """
+        magnifer check by other players doesn't bring extra straightforward info here, we'll skip this case
+        """
+        magnifierResult = input("Enter player you check and the card you get, separated by ,")
+        playerName, cardGot = magnifierResult.split(",")[0].strip(), magnifierResult.split(",")[1].strip() 
+        ## determine what card is this
+        if cardGot in LIST_SUSPECT:
+            if cardGot in self.players[playerName].suspect_possibly_have.keys():
+                self.players[playerName].update_suspect_must_have(cardGot)
+                del self.players[playerName].suspect_possibly_have[cardGot]
+        elif cardGot in LIST_SUSPECT:
+            if cardGot in self.players[playerName].weapon_possibly_have.keys():
+                self.players[playerName].update_weapon_must_have(cardGot)
+                del self.players[playerName].weapon_possibly_have[cardGot]
+        elif cardGot in LIST_ROOM:
+            if cardGot in self.players[playerName].room_possibly_have.keys():
+                self.players[playerName].update_room_must_have(cardGot)
+                del self.players[playerName].room_possibly_have[cardGot]
+        else:
+            raiseExceptions("invalid card type in magnifier method")
 
 
     # def update_probability_table(df, ele_eliminated):
