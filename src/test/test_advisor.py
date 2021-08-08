@@ -133,7 +133,8 @@ class TestAdvisor(unittest.TestCase):
     @patch("builtins.input", side_effect = ["7", "Miss Scarlet, Mr. Green, Mrs White", "Candlestick, Knife", "Carriage House, Conservatory","Mia, 7", "Michael, 6","Jane,7",
     "Next turn", "myself", "Mrs Peacock, Rope, Library", "Mia, Michael, Jane",
     "Next turn", "myself", "Miss Peach, Horseshoe ,Gazebo", "Michael, Jane, None",
-    "Next turn", "myself", "Mme. Rose, Poison, Gazebo", "None, None, Michael", "Query", "Player_Summary", "myself", "Exit"])
+    "Next turn", "myself", "Mme. Rose, Poison, Gazebo", "None, None, Michael", 
+    "Query", "Player_Summary", "Mia", "Exit"])
     def test_Game4(self, mock_inputs):
         Advisor4 = Advisor(4)
         prob = 1/(30-7) 
@@ -226,13 +227,11 @@ class TestAdvisor(unittest.TestCase):
                                                                         
         self.assertEqual(Advisor5.players["Mia"].suspect_must_have,{"Mrs Peacock"})
         self.assertEqual(Advisor5.players["Mia"].suspect_must_not_have, {"Miss Scarlet", "Mr. Green", "Mrs White", "Miss Peach", "Mme. Rose"})
-        # will be fix after a complete weight update function is complete, need inference because once Mme Rose add to michael must not have,
-        # secret will for sure have this one, and Mme rose will be removed from Mia's possibly have
-        # self.assertEqual(Advisor5.players["Mia"].suspect_possibly_have, {"Colonel Mustard": prob*7, "Professor Plum": prob*7, 
-        # "Sgt. Gray": prob*7, "Monsieur Brunette": prob*7})
+        self.assertEqual(Advisor5.players["Mia"].suspect_possibly_have, {"Colonel Mustard": prob*7, "Professor Plum": prob*7, 
+        "Sgt. Gray": prob*7, "Monsieur Brunette": prob*7})
         self.assertEqual(Advisor5.players["Mia"].weapon_must_have, set())
         self.assertEqual(Advisor5.players["Mia"].weapon_must_not_have, {"Candlestick", "Knife", "Rope", "Horseshoe", "Poison"})
-        #self.assertEqual(Advisor5.players["Mia"].weapon_possibly_have, {"Lead Pipe": prob*7, "Revolver":prob*7, "Wrench":prob*7})
+        self.assertEqual(Advisor5.players["Mia"].weapon_possibly_have, {"Lead Pipe": prob*7, "Revolver":prob*7, "Wrench":prob*7})
         self.assertEqual(Advisor5.players["Mia"].room_must_have, {"Kitchen"})
         self.assertEqual(Advisor5.players["Mia"].room_must_not_have, {"Carriage House", "Conservatory", "Library", "Gazebo"})
         self.assertEqual(Advisor5.players["Mia"].room_possibly_have, {"Trophy Room":prob*7, "Dining Room":prob*7, 

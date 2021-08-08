@@ -33,9 +33,9 @@ class Player:
         self.room_must_not_have.add(ele_add)
     
     def update_suspect_possibly_have(self, ele, points_added):
-        
         if ele not in self.suspect_possibly_have:
-            self.suspect_possibly_have[ele] = points_added
+            if (ele not in self.suspect_must_not_have) and (ele not in self.suspect_must_have):
+                self.suspect_possibly_have[ele] = points_added
         else:
             if self.suspect_possibly_have[ele] >= 0.5:
                 self.suspect_possibly_have[ele] += math.log(1 + points_added)
@@ -44,7 +44,8 @@ class Player:
     
     def update_weapon_possibly_have(self, ele, points_added):
         if ele not in self.weapon_possibly_have:
-            self.weapon_possibly_have[ele] = points_added
+            if (ele not in self.weapon_must_not_have) and (ele not in self.weapon_must_have):
+                self.weapon_possibly_have[ele] = points_added
         else:
             if self.weapon_possibly_have[ele] >= 0.5:
                 self.weapon_possibly_have[ele] += math.log(1 + points_added)
@@ -53,7 +54,8 @@ class Player:
 
     def update_room_possibly_have(self, ele, points_added):
         if ele not in self.room_possibly_have:
-            self.room_possibly_have[ele] = points_added
+            if (ele not in self.room_must_not_have) and (ele not in self.room_must_have):
+                self.room_possibly_have[ele] = points_added
         else:
             if self.room_possibly_have[ele] >= 0.5:
                 self.room_possibly_have[ele] += math.log(1 + points_added)
