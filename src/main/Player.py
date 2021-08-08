@@ -1,3 +1,5 @@
+import math
+
 class Player:
     def __init__(self, name, numberofCards):
         self.name = name
@@ -36,7 +38,7 @@ class Player:
             self.suspect_possibly_have[ele] = points_added
         else:
             if self.suspect_possibly_have[ele] >= 0.5:
-                pass
+                self.suspect_possibly_have[ele] += math.log(1 + points_added)
             else:
                 self.suspect_possibly_have[ele] = max(points_added, self.suspect_possibly_have[ele])
     
@@ -45,7 +47,7 @@ class Player:
             self.weapon_possibly_have[ele] = points_added
         else:
             if self.weapon_possibly_have[ele] >= 0.5:
-                pass
+                self.weapon_possibly_have[ele] += math.log(1 + points_added)
             else:
                 self.weapon_possibly_have[ele] = max(points_added, self.weapon_possibly_have[ele])
 
@@ -54,7 +56,7 @@ class Player:
             self.room_possibly_have[ele] = points_added
         else:
             if self.room_possibly_have[ele] >= 0.5:
-                pass
+                self.room_possibly_have[ele] += math.log(1 + points_added)
             else:
                 self.room_possibly_have[ele] = max(points_added, self.room_possibly_have[ele])
 
