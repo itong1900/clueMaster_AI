@@ -31,22 +31,32 @@ class Player:
         self.room_must_not_have.add(ele_add)
     
     def update_suspect_possibly_have(self, ele, points_added):
+        
         if ele not in self.suspect_possibly_have:
             self.suspect_possibly_have[ele] = points_added
         else:
-            self.suspect_possibly_have[ele] += points_added
+            if self.suspect_possibly_have[ele] >= 0.5:
+                pass
+            else:
+                self.suspect_possibly_have[ele] = max(points_added, self.suspect_possibly_have[ele])
     
     def update_weapon_possibly_have(self, ele, points_added):
         if ele not in self.weapon_possibly_have:
             self.weapon_possibly_have[ele] = points_added
         else:
-            self.weapon_possibly_have[ele] += points_added
+            if self.weapon_possibly_have[ele] >= 0.5:
+                pass
+            else:
+                self.weapon_possibly_have[ele] = max(points_added, self.weapon_possibly_have[ele])
 
     def update_room_possibly_have(self, ele, points_added):
         if ele not in self.room_possibly_have:
             self.room_possibly_have[ele] = points_added
         else:
-            self.room_possibly_have[ele] += points_added
+            if self.room_possibly_have[ele] >= 0.5:
+                pass
+            else:
+                self.room_possibly_have[ele] = max(points_added, self.room_possibly_have[ele])
 
     def display_suspect_must_have(self):
         print(self.suspect_must_have)

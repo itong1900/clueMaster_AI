@@ -11,7 +11,7 @@ from unittest import TestCase
 
 class TestAdvisor(unittest.TestCase):
     
-    
+    # Advisor 1
     @patch("builtins.input", side_effect = ["6", "Miss Peach,  Mr. Green","  Rope, Wrench", " Studio , Conservatory", " Mia ,7"," Michael ,7","Jane,7","Exit"])
     def test_Game1_setup(self, mock_inputs):
         Advisor1 = Advisor(4)
@@ -42,6 +42,7 @@ class TestAdvisor(unittest.TestCase):
         self.assertEqual(Advisor1.players["Mia"].room_possibly_have, {"Carriage House":prob*7, "Kitchen":prob*7, "Trophy Room":prob*7, "Dining Room":prob*7, 
         "Drawing Room":prob*7, "Gazebo":prob*7, "Courtyard":prob*7, "Fountain":prob*7, "Library":prob*7, "Billiard Room":prob*7})
 
+    # Advisor 2
     @patch("builtins.input", side_effect = ["7", "Miss Scarlet, Mr. Green, Mrs White, Mrs Peacock, Colonel Mustard, Professor Plum, Miss Peach",
     "None", "None", "Mia, 7", "Michael, 6","Jane,7", "Exit"])
     def test_Game2_setup(self, mock_inputs):
@@ -84,7 +85,7 @@ class TestAdvisor(unittest.TestCase):
 
         self.assertEqual(Advisor2.players["Jane"].suspect_possibly_have, {"Sgt. Gray":prob*7, "Monsieur Brunette":prob*7, "Mme. Rose":prob*7})
 
-       
+    # Advisor 3   
     # Game with 1 myself round
     @patch("builtins.input", side_effect = ["7", "Miss Scarlet, Mr. Green, Mrs White", "Rope, Wrench", "Studio, Conservatory", "Mia, 7", "Michael, 6","Jane,7", 
     "Next turn", "myself", "Miss Peach, Revolver, Gazebo", "Michael, Jane, Mia", "Exit"])
@@ -127,7 +128,7 @@ class TestAdvisor(unittest.TestCase):
         self.assertEqual(Advisor3.players["Michael"].room_must_not_have, {"Studio", "Conservatory","Gazebo"})
         self.assertEqual(Advisor3.players["Jane"].room_must_not_have, {"Studio", "Conservatory","Gazebo"})
 
-
+    # Advisor 4
     # a more complete game with clear road maps and a few myself turns with 3/2/1 cards given, include a rebalance test to secret agent.
     @patch("builtins.input", side_effect = ["7", "Miss Scarlet, Mr. Green, Mrs White", "Candlestick, Knife", "Carriage House, Conservatory","Mia, 7", "Michael, 6","Jane,7",
     "Next turn", "myself", "Mrs Peacock, Rope, Library", "Mia, Michael, Jane",
@@ -140,11 +141,11 @@ class TestAdvisor(unittest.TestCase):
         self.assertEqual(Advisor4.players["Michael"].suspect_must_have, {"Miss Peach"})
         self.assertEqual(Advisor4.players["Michael"].suspect_must_not_have, {"Miss Scarlet", "Mr. Green", "Mrs White", "Mrs Peacock"})
         self.assertEqual(Advisor4.players["Michael"].suspect_possibly_have, {"Colonel Mustard": prob*6, "Professor Plum": prob*6, 
-        "Sgt. Gray": prob*6, "Monsieur Brunette": prob*6, "Mme. Rose": prob*6 + 1/2})
+        "Sgt. Gray": prob*6, "Monsieur Brunette": prob*6, "Mme. Rose":1/2})
         self.assertEqual(Advisor4.players["Michael"].weapon_must_have, {"Rope"})
         self.assertEqual(Advisor4.players["Michael"].weapon_must_not_have, {"Candlestick", "Knife", "Horseshoe"})
         self.assertEqual(Advisor4.players["Michael"].weapon_possibly_have, {"Lead Pipe": prob*6, "Revolver": prob*6,
-        "Wrench": prob*6, "Poison": prob*6 + 1/2})
+        "Wrench": prob*6, "Poison": 1/2})
         self.assertEqual(Advisor4.players["Michael"].room_must_have, {"Gazebo"})
         self.assertEqual(Advisor4.players["Michael"].room_must_not_have, {"Carriage House", "Conservatory", "Library"})
         self.assertEqual(Advisor4.players["Michael"].room_possibly_have, {"Kitchen": prob*6, "Trophy Room": prob*6, "Dining Room": prob*6, 
@@ -185,17 +186,14 @@ class TestAdvisor(unittest.TestCase):
         self.assertEqual(Advisor4.players["secret"].room_must_not_have,{"Carriage House", "Conservatory", "Library", "Gazebo"})
 
 
-
-        # a more complete game with clear road maps and a few myself turns with 3/2/1 cards given, include a rebalance test to secret agent.
-    
-    
-    # similar to Game4, but add a test to successful hack to suspect and weapon
+    # Advisor 5
+    # similar to Game4, but add a round to test hacking to suspect and weapon
     @patch("builtins.input", side_effect = ["7", "Miss Scarlet, Mr. Green, Mrs White", "Candlestick, Knife", "Carriage House, Conservatory","Mia, 7", "Michael, 6","Jane,7",
     "Next turn", "myself", "Mrs Peacock, Rope, Library", "Mia, Michael, Jane",
     "Next turn", "myself", "Miss Peach, Horseshoe ,Gazebo", "Michael, Jane, None",
     "Next turn", "myself", "Mme. Rose, Poison, Gazebo", "None, None, Michael", 
     "Next turn", "myself", "Mme. Rose, Poison, Kitchen", "None, None, Mia",
-    "Query", "Player_Summary", "Michael", "Exit"])
+    "Query", "Player_Summary", "secret", "Exit"])
     def test_Game5(self, mock_inputs):
         Advisor5 = Advisor(4)
         prob = 1/(30-7) 
@@ -228,6 +226,8 @@ class TestAdvisor(unittest.TestCase):
                                                                         
         self.assertEqual(Advisor5.players["Mia"].suspect_must_have,{"Mrs Peacock"})
         self.assertEqual(Advisor5.players["Mia"].suspect_must_not_have, {"Miss Scarlet", "Mr. Green", "Mrs White", "Miss Peach", "Mme. Rose"})
+        # will be fix after a complete weight update function is complete, need inference because once Mme Rose add to michael must not have,
+        # secret will for sure have this one, and Mme rose will be removed from Mia's possibly have
         # self.assertEqual(Advisor5.players["Mia"].suspect_possibly_have, {"Colonel Mustard": prob*7, "Professor Plum": prob*7, 
         # "Sgt. Gray": prob*7, "Monsieur Brunette": prob*7})
         self.assertEqual(Advisor5.players["Mia"].weapon_must_have, set())
