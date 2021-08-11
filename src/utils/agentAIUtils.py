@@ -1,5 +1,8 @@
 
 
+from logging import raiseExceptions
+
+
 def search_in_must_have(playersHashMap, item_checking, LIST_SUSPECT, LIST_WEAPON, LIST_ROOM):
     '''
     return who has the item or None if no one has it.
@@ -39,9 +42,12 @@ def myself_turn_players_update(ObjectDealing ,not_in_must_have, card_giver, card
                     del playersHashmap[card_giver].suspect_possibly_have[claim_object]
                 # add to must_not_have in other agents, remove from their probably have list, including secret agent
                 for other_agent in [x for x in playersHashmap.keys() if x != card_giver]:
-                    playersHashmap[other_agent].update_suspect_must_not_have(claim_object)
+                    # the claim object can only within must not have or possibly have,              
                     if claim_object in playersHashmap[other_agent].suspect_possibly_have:
+                        playersHashmap[other_agent].update_suspect_must_not_have(claim_object)
                         del playersHashmap[other_agent].suspect_possibly_have[claim_object]
+                    elif claim_object in playersHashmap[other_agent].suspect_must_have:
+                        raiseExceptions("agent should not have this card in must have")
             else:
                 # secret agent and related agent share the probability having this card, only if this card not in this agent's must_not_haves
                 ## be aware that, the card might already in must-have or must-not-have, in that case, don't add it to possibly, bascially do nothing
@@ -71,9 +77,12 @@ def myself_turn_players_update(ObjectDealing ,not_in_must_have, card_giver, card
                     del playersHashmap[card_giver].weapon_possibly_have[claim_object]
                 # add to must_not_have in other agents, remove from their probably have list, including secret agent
                 for other_agent in [x for x in playersHashmap.keys() if x != card_giver]:
-                    playersHashmap[other_agent].update_weapon_must_not_have(claim_object)
+                    # add to must_not_have in other agents, remove from their probably have list, including secret agent
                     if claim_object in playersHashmap[other_agent].weapon_possibly_have:
+                        playersHashmap[other_agent].update_weapon_must_not_have(claim_object)
                         del playersHashmap[other_agent].weapon_possibly_have[claim_object]
+                    elif claim_object in playersHashmap[other_agent].weapon_must_have:
+                        raiseExceptions("agent should not have this card in must have")
             else:
                 # secret agent and related agent share the probability having this card
                 score_adding = 1/(1+cards_received)
@@ -101,9 +110,12 @@ def myself_turn_players_update(ObjectDealing ,not_in_must_have, card_giver, card
                     del playersHashmap[card_giver].room_possibly_have[claim_object]
                 # add to must_not_have in other agents, remove from their probably have list, including secret agent
                 for other_agent in [x for x in playersHashmap.keys() if x != card_giver]:
-                    playersHashmap[other_agent].update_room_must_not_have(claim_object)
+                    # add to must_not_have in other agents, remove from their probably have list, including secret agent
                     if claim_object in playersHashmap[other_agent].room_possibly_have:
+                        playersHashmap[other_agent].update_room_must_not_have(claim_object)
                         del playersHashmap[other_agent].room_possibly_have[claim_object]
+                    elif claim_object in playersHashmap[other_agent].suspect_must_have:
+                        raiseExceptions("agent should not have this card in must have")
             else:
                 # secret agent and related agent share the probability having this card
                 score_adding = 1/(1+cards_received)
