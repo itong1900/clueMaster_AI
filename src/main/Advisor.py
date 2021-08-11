@@ -1,4 +1,6 @@
 from logging import raiseExceptions
+
+from numpy import empty
 from Player import Player
 import pandas as pd
 
@@ -6,6 +8,7 @@ import sys
 sys.path.append("../utils/")
 from agentAIUtils import search_in_must_have
 from agentAIUtils import myself_turn_players_update
+from agentAIUtils import secret_infer_helper
 
 
 class Advisor:
@@ -25,6 +28,7 @@ class Advisor:
         self.players    : a list of playerObject 
         """
 
+        self.numberOfPlayers = numberOfPlayers
         self.suspects, self.weapons, self.rooms, self.cardsIhave = self.collectInfo()
         self.players = {"myself": self.initPlayers(self.suspects, self.weapons, self.rooms, self.cardsIhave)}
 
@@ -51,7 +55,7 @@ class Advisor:
                     print("Wrong name, enter again: ")
                 if whose_turn in self.players.keys():
                     ## reblance some weight here
-                    pass
+                    self.secret_Infer_Rebalance()
             elif action == "Query":
                 what_query = input("Player_Summary / Log / Probability_Table:  ")
                 if what_query == "Log":
@@ -63,6 +67,7 @@ class Advisor:
                 break
             elif action == "magnifier":
                 self.magnifierCheck()
+                self.secret_Infer_Rebalance()
             else:
                 print("Invalid input, enter agagin")
             print("\n")
@@ -285,21 +290,15 @@ class Advisor:
 
 
 
-    def secretRebalance(self):
+    def secret_Infer_Rebalance(self):
         """
-        This method is about relance the weight in secret agent possibly have hashmaps, it works as follows:
-        originally all elements should have equal weights, but a turn update can reduce number of the elements, 
-        and add some weight to an elements. 
-        i.e. originally,  suspect_possibly_have = {A:1/4, B:1/4, C:1/4, D:1/4}, 
-        now a turn eliminates the probability of D, and update shall be made suspect_possibly_have = {A:1/3, B:1/3, C:1/3},
-        then another term add a 1/2 probability to A, then suspect_possibly_have = {A:5/6, B:1/3, C:1/3},
-        then the most complicated case happens, a turn now elimates probability of C, 
-        then suspect_possibly_have = {A:5/6, B:1/3}, base probability 1/3 -> 1/2, 
-
-        Note: You can't eliminate elements meanwhile adjust a specific element in secret_possibly at the same round
+        This method make straight forward inferences after each round and rebalance the score of secret agent after each round.
         """
-        pass
+        secret_infer_helper("suspect", LIST_SUSPECT, self.players)
+        secret_infer_helper("weapon", LIST_WEAPON, self.players)
+        secret_infer_helper("room", LIST_ROOM, self.players)
 
+       
 
     def magnifierCheck(self):
         """

@@ -188,7 +188,7 @@ class TestAdvisor(unittest.TestCase):
 
 
     # Advisor 5
-    # similar to Game4, but add a round to test hacking to suspect and weapon
+    # similar to Game4, but add a round to test hacking to suspect and weapon, also test on the straighforward inference
     @patch("builtins.input", side_effect = ["7", "Miss Scarlet, Mr. Green, Mrs White", "Candlestick, Knife", "Carriage House, Conservatory","Mia, 7", "Michael, 6","Jane,7",
     "Next turn", "myself", "Mrs Peacock, Rope, Library", "Mia, Michael, Jane",
     "Next turn", "myself", "Miss Peach, Horseshoe ,Gazebo", "Michael, Jane, None",
@@ -236,6 +236,20 @@ class TestAdvisor(unittest.TestCase):
         self.assertEqual(Advisor5.players["Mia"].room_must_not_have, {"Carriage House", "Conservatory", "Library", "Gazebo"})
         self.assertEqual(Advisor5.players["Mia"].room_possibly_have, {"Trophy Room":prob*7, "Dining Room":prob*7, 
         "Drawing Room":prob*7, "Courtyard":prob*7, "Fountain":prob*7, "Billiard Room":prob*7, "Studio":prob*7})
+
+        self.assertEqual(Advisor5.players["secret"].suspect_must_have,{"Mme. Rose"})
+        self.assertEqual(Advisor5.players["secret"].suspect_must_not_have,{"Miss Scarlet", "Mr. Green", "Mrs White", "Mrs Peacock", 
+        "Colonel Mustard", "Professor Plum", "Miss Peach", "Sgt. Gray", "Monsieur Brunette"})
+        self.assertEqual(Advisor5.players["secret"].suspect_possibly_have,{})
+        self.assertEqual(Advisor5.players["secret"].weapon_must_have,{"Poison"})
+        self.assertEqual(Advisor5.players["secret"].weapon_must_not_have,{"Candlestick", "Knife", "Lead Pipe", "Revolver", "Rope", 
+        "Wrench", "Horseshoe"})
+        self.assertEqual(Advisor5.players["secret"].weapon_possibly_have,{})
+        self.assertEqual(Advisor5.players["secret"].room_must_have,set())
+        self.assertEqual(Advisor5.players["secret"].room_must_not_have,{'Library', 'Gazebo', 'Conservatory', 'Kitchen', 'Carriage House'})
+        self.assertEqual(Advisor5.players["secret"].room_possibly_have,{'Trophy Room': 0.1, 'Dining Room': 0.1, 'Drawing Room': 0.1, 
+        'Courtyard': 0.1, 'Fountain': 0.1, 'Billiard Room': 0.1, 'Studio': 0.1})
+        
 
 if __name__ == '__main__':
     unittest.main()
