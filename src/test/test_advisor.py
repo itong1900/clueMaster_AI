@@ -251,5 +251,19 @@ class TestAdvisor(unittest.TestCase):
         'Courtyard': 0.1, 'Fountain': 0.1, 'Billiard Room': 0.1, 'Studio': 0.1})
         
 
+    
+    # Advisor 6
+    # Parellel to Advisor5, last turn vary, test the one step forard and score changes
+    @patch("builtins.input", side_effect = ["7", "Miss Scarlet, Mr. Green, Mrs White", "Candlestick, Knife", "Carriage House, Conservatory","Mia, 7", "Michael, 6","Jane,7",
+    "Next turn", "myself", "Mrs Peacock, Rope, Library", "Mia, Michael, Jane",
+    "Next turn", "myself", "Miss Peach, Horseshoe ,Gazebo", "Michael, Jane, None",
+    "Next turn", "myself", "Mme. Rose, Poison, Gazebo", "None, None, Michael", 
+    "Next turn", "myself", "Mme. Rose, Poison, Drawing Room", "None, None, Michael",
+    "Query", "Player_Summary", "secret", "Exit"])
+    def test_Game6(self, mock_inputs):
+        Advisor6 = Advisor(4)
+        
+
+
 if __name__ == '__main__':
     unittest.main()
