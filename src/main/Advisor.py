@@ -323,13 +323,22 @@ class Advisor:
                 continue
             ## deal with suspect
             for ele in self.players[otherAgent].suspect_possibly_have.keys():
-                self.players[otherAgent].suspect_possibly_have[ele] = max(self.players[otherAgent].suspect_possibly_have[ele], base_value)
+                if self.players[otherAgent].suspect_possibly_have[ele] < 1/3:
+                    self.players[otherAgent].suspect_possibly_have[ele] = base_value
+                else:
+                    self.players[otherAgent].suspect_possibly_have[ele] = max(self.players[otherAgent].suspect_possibly_have[ele], base_value)
             ## deal with weapon
             for ele in self.players[otherAgent].weapon_possibly_have.keys():
-                self.players[otherAgent].weapon_possibly_have[ele] = max(self.players[otherAgent].weapon_possibly_have[ele], base_value)
+                if self.players[otherAgent].weapon_possibly_have[ele] < 1/3:
+                    self.players[otherAgent].weapon_possibly_have[ele] = base_value
+                else:
+                    self.players[otherAgent].weapon_possibly_have[ele] = max(self.players[otherAgent].weapon_possibly_have[ele], base_value)
             ## deal with room
             for ele in self.players[otherAgent].room_possibly_have.keys():
-                self.players[otherAgent].room_possibly_have[ele] = max(self.players[otherAgent].room_possibly_have[ele], base_value)
+                if self.players[otherAgent].room_possibly_have[ele] < 1/3:
+                    self.players[otherAgent].room_possibly_have[ele] = base_value
+                else:
+                    self.players[otherAgent].room_possibly_have[ele] = max(self.players[otherAgent].room_possibly_have[ele], base_value)
             
 
     def magnifierCheck(self):
