@@ -56,6 +56,8 @@ class Advisor:
                 if whose_turn in self.players.keys():
                     ## reblance some weight here
                     self.secret_Infer_Rebalance()
+                    self.otherAgent_Rebalance()
+                    
             elif action == "Query":
                 what_query = input("Player_Summary / Log / Probability_Table:  ")
                 if what_query == "Log":
@@ -68,6 +70,7 @@ class Advisor:
             elif action == "magnifier":
                 self.magnifierCheck()
                 self.secret_Infer_Rebalance()
+                self.otherAgent_Rebalance()
             else:
                 print("Invalid input, enter agagin")
             print("\n")
@@ -298,7 +301,36 @@ class Advisor:
         secret_infer_helper("weapon", LIST_WEAPON, self.players)
         secret_infer_helper("room", LIST_ROOM, self.players)
 
+        ## Rebalance here
+        base_value_suspect_secret = self.players["secret"].getSecretBaseValue_suspect()
+        for ele in self.players["secret"].suspect_possibly_have.keys():
+            self.players["secret"].suspect_possibly_have[ele] = max(self.players["secret"].suspect_possibly_have[ele], base_value_suspect_secret)
+
+        base_value_weapon_secret = self.players["secret"].getSecretBaseValue_weapon()
+        for ele in self.players["secret"].weapon_possibly_have.keys():
+            self.players["secret"].weapon_possibly_have[ele] = max(self.players["secret"].weapon_possibly_have[ele], base_value_weapon_secret)
+
+        base_value_room_secret = self.players["secret"].getSecretBaseValue_room()
+        for ele in self.players["secret"].room_possibly_have.keys():
+            self.players["secret"].room_possibly_have[ele] = max(self.players["secret"].room_possibly_have[ele], base_value_room_secret)
+
        
+    def otherAgent_Rebalance(self):
+        exemptPlayers = {"myself", "secret"}
+        for otherAgent in [x for x in self.players.keys() if x not in exemptPlayers]:
+            base_value = self.players[otherAgent].getBaseValue()
+            if base_value == 0:
+                continue
+            ## deal with suspect
+            for ele in self.players[otherAgent].suspect_possibly_have.keys():
+                self.players[otherAgent].suspect_possibly_have[ele] = max(self.players[otherAgent].suspect_possibly_have[ele], base_value)
+            ## deal with weapon
+            for ele in self.players[otherAgent].weapon_possibly_have.keys():
+                self.players[otherAgent].weapon_possibly_have[ele] = max(self.players[otherAgent].weapon_possibly_have[ele], base_value)
+            ## deal with room
+            for ele in self.players[otherAgent].room_possibly_have.keys():
+                self.players[otherAgent].room_possibly_have[ele] = max(self.players[otherAgent].room_possibly_have[ele], base_value)
+            
 
     def magnifierCheck(self):
         """

@@ -1,3 +1,4 @@
+from logging import raiseExceptions
 import math
 
 class Player:
@@ -38,7 +39,7 @@ class Player:
                 self.suspect_possibly_have[ele] = points_added
         else:
             if self.suspect_possibly_have[ele] >= 0.5:
-                self.suspect_possibly_have[ele] += math.log(1 + points_added)
+                self.suspect_possibly_have[ele] += math.log(1/2 + self.suspect_possibly_have[ele] + points_added, 5)
             else:
                 self.suspect_possibly_have[ele] = max(points_added, self.suspect_possibly_have[ele])
     
@@ -48,7 +49,7 @@ class Player:
                 self.weapon_possibly_have[ele] = points_added
         else:
             if self.weapon_possibly_have[ele] >= 0.5:
-                self.weapon_possibly_have[ele] += math.log(1 + points_added)
+                self.weapon_possibly_have[ele] += math.log(1/2 + self.weapon_possibly_have[ele] + points_added)
             else:
                 self.weapon_possibly_have[ele] = max(points_added, self.weapon_possibly_have[ele])
 
@@ -58,7 +59,7 @@ class Player:
                 self.room_possibly_have[ele] = points_added
         else:
             if self.room_possibly_have[ele] >= 0.5:
-                self.room_possibly_have[ele] += math.log(1 + points_added)
+                self.room_possibly_have[ele] += math.log(1/2 + self.room_possibly_have[ele] + points_added)
             else:
                 self.room_possibly_have[ele] = max(points_added, self.room_possibly_have[ele])
 
@@ -103,3 +104,31 @@ class Player:
         if item_searching in self.room_must_have:
             return True
         return False
+
+    ## Next 6 Methods to get the base value
+    def getTotal_Unknown(self):
+        result = len(self.suspect_possibly_have) + len(self.room_possibly_have) + len(self.weapon_possibly_have) 
+        if result > 0:
+            return result
+        raiseExceptions("This user is fully hacked on this category")
+
+    def getTotal_Musthave(self):
+        return len(self.suspect_must_have) + len(self.room_must_have) + len(self.weapon_must_have)
+    
+    def getBaseValue(self):
+        return (self.numberOfCards - self.getTotal_Musthave())/self.getTotal_Unknown()
+        
+    def getSecretBaseValue_suspect(self):
+        if len(self.suspect_possibly_have) != 0:
+            return 1/len(self.suspect_possibly_have)
+        return 0
+
+    def getSecretBaseValue_weapon(self):
+        if len(self.weapon_possibly_have) != 0:
+            return 1/len(self.weapon_possibly_have)
+        return 0
+
+    def getSecretBaseValue_room(self):
+        if len(self.room_possibly_have) != 0:
+            return 1/len(self.room_possibly_have)
+        return 0
