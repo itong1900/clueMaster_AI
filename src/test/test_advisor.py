@@ -146,8 +146,7 @@ class TestAdvisor(unittest.TestCase):
     "Next turn", "myself", "Mme. Rose, Poison, Gazebo", "None, None, Michael", 
     "Query", "Player_Summary", "Michael", "Exit"])
     def test_Game4(self, mock_inputs):
-        Advisor4 = Advisor(4)
-        prob = 1/(30-7) 
+        Advisor4 = Advisor(4) 
 
         self.assertEqual(Advisor4.players["Michael"].suspect_must_have, {"Miss Peach"})
         self.assertEqual(Advisor4.players["Michael"].suspect_must_not_have, {"Miss Scarlet", "Mr. Green", "Mrs White", "Mrs Peacock"})
@@ -203,82 +202,132 @@ class TestAdvisor(unittest.TestCase):
         "Courtyard": 1/8, "Fountain": 1/8, "Billiard Room": 1/8, "Studio": 1/8})
 
 
-    # # Advisor 5
-    # # similar to Game4, but add a round to test hacking to suspect and weapon, also test on the straighforward inference
-    # @patch("builtins.input", side_effect = ["7", "Miss Scarlet, Mr. Green, Mrs White", "Candlestick, Knife", "Carriage House, Conservatory","Mia, 7", "Michael, 6","Jane,7",
-    # "Next turn", "myself", "Mrs Peacock, Rope, Library", "Mia, Michael, Jane",
-    # "Next turn", "myself", "Miss Peach, Horseshoe ,Gazebo", "Michael, Jane, None",
-    # "Next turn", "myself", "Mme. Rose, Poison, Gazebo", "None, None, Michael", 
-    # "Next turn", "myself", "Mme. Rose, Poison, Kitchen", "None, None, Mia",
-    # "Query", "Player_Summary", "secret", "Exit"])
-    # def test_Game5(self, mock_inputs):
-    #     Advisor5 = Advisor(4)
-    #     prob = 1/(30-7) 
+    # Advisor 5
+    # similar to Game4, but add a round to test hacking to suspect and weapon, also test on the straighforward inference
+    @patch("builtins.input", side_effect = ["7", "Miss Scarlet, Mr. Green, Mrs White", "Candlestick, Knife", "Carriage House, Conservatory","Mia, 7", "Michael, 6","Jane,7",
+    "Next turn", "myself", "Mrs Peacock, Rope, Library", "Mia, Michael, Jane",
+    "Next turn", "myself", "Miss Peach, Horseshoe ,Gazebo", "Michael, Jane, None",
+    "Next turn", "myself", "Mme. Rose, Poison, Gazebo", "None, None, Michael", 
+    "Next turn", "myself", "Mme. Rose, Poison, Kitchen", "None, None, Mia",
+    "Query", "Player_Summary", "secret", "Exit"])
+    def test_Game5(self, mock_inputs):
+        Advisor5 = Advisor(4)
+        
+        self.assertEqual(Advisor5.players["Michael"].suspect_must_have, {"Miss Peach"})
+        self.assertEqual(Advisor5.players["Michael"].suspect_must_not_have, {"Miss Scarlet", "Mr. Green", "Mrs White", "Mrs Peacock","Mme. Rose"})
+        self.assertEqual(Advisor5.players["Michael"].suspect_possibly_have, {"Colonel Mustard": 3/14, "Professor Plum": 3/14, 
+        "Sgt. Gray": 3/14, "Monsieur Brunette": 3/14})
+        self.assertEqual(Advisor5.players["Michael"].weapon_must_have, {"Rope"})
+        self.assertEqual(Advisor5.players["Michael"].weapon_must_not_have, {"Candlestick", "Knife", "Horseshoe", "Poison"})
+        self.assertEqual(Advisor5.players["Michael"].weapon_possibly_have, {"Lead Pipe": 3/14, "Revolver": 3/14,
+        "Wrench": 3/14})
+        self.assertEqual(Advisor5.players["Michael"].room_must_have, {"Gazebo"})
+        self.assertEqual(Advisor5.players["Michael"].room_must_not_have, {"Carriage House", "Conservatory", "Library", "Kitchen"})
+        self.assertEqual(Advisor5.players["Michael"].room_possibly_have, {"Trophy Room": 3/14, "Dining Room": 3/14, 
+        "Drawing Room": 3/14, "Courtyard": 3/14, "Fountain": 3/14, "Billiard Room": 3/14, "Studio": 3/14})
 
-        # self.assertEqual(Advisor5.players["Michael"].suspect_must_have, {"Miss Peach"})
-        # self.assertEqual(Advisor5.players["Michael"].suspect_must_not_have, {"Miss Scarlet", "Mr. Green", "Mrs White", "Mrs Peacock","Mme. Rose"})
-        # self.assertEqual(Advisor5.players["Michael"].suspect_possibly_have, {"Colonel Mustard": prob*6, "Professor Plum": prob*6, 
-        # "Sgt. Gray": prob*6, "Monsieur Brunette": prob*6})
-        # self.assertEqual(Advisor5.players["Michael"].weapon_must_have, {"Rope"})
-        # self.assertEqual(Advisor5.players["Michael"].weapon_must_not_have, {"Candlestick", "Knife", "Horseshoe", "Poison"})
-        # self.assertEqual(Advisor5.players["Michael"].weapon_possibly_have, {"Lead Pipe": prob*6, "Revolver": prob*6,
-        # "Wrench": prob*6})
-        # self.assertEqual(Advisor5.players["Michael"].room_must_have, {"Gazebo"})
-        # self.assertEqual(Advisor5.players["Michael"].room_must_not_have, {"Carriage House", "Conservatory", "Library", "Kitchen"})
-        # self.assertEqual(Advisor5.players["Michael"].room_possibly_have, {"Trophy Room": prob*6, "Dining Room": prob*6, 
-        # "Drawing Room": prob*6, "Courtyard": prob*6, "Fountain": prob*6, "Billiard Room": prob*6, "Studio": prob*6})
-
-        # self.assertEqual(Advisor5.players["Jane"].suspect_must_have,set())
-        # self.assertEqual(Advisor5.players["Jane"].suspect_must_not_have, {"Miss Scarlet", "Mr. Green", "Mrs White", "Mrs Peacock", "Miss Peach", 
-        # "Mme. Rose"})
-        # self.assertEqual(Advisor5.players["Jane"].suspect_possibly_have, {"Colonel Mustard":prob*7, "Professor Plum":prob*7, 
-        # "Sgt. Gray": prob*7, "Monsieur Brunette": prob*7})
-        # self.assertEqual(Advisor5.players["Jane"].weapon_must_have, {"Horseshoe"})
-        # self.assertEqual(Advisor5.players["Jane"].weapon_must_not_have, {"Candlestick", "Knife", "Rope", "Poison"})
-        # self.assertEqual(Advisor5.players["Jane"].weapon_possibly_have, {"Lead Pipe": prob*7, "Revolver": prob*7, "Wrench": prob*7 })
-        # self.assertEqual(Advisor5.players["Jane"].room_must_have, {"Library"})
-        # self.assertEqual(Advisor5.players["Jane"].room_must_not_have, {"Carriage House", "Conservatory", "Gazebo", "Kitchen"})
-        # self.assertEqual(Advisor5.players["Jane"].room_possibly_have, {"Trophy Room":prob*7, "Dining Room":prob*7, 
-        # "Drawing Room":prob*7, "Courtyard":prob*7, "Fountain":prob*7, "Billiard Room":prob*7, "Studio":prob*7})
+        self.assertEqual(Advisor5.players["Jane"].suspect_must_have,set())
+        self.assertEqual(Advisor5.players["Jane"].suspect_must_not_have, {"Miss Scarlet", "Mr. Green", "Mrs White", "Mrs Peacock", "Miss Peach", 
+        "Mme. Rose"})
+        self.assertEqual(Advisor5.players["Jane"].suspect_possibly_have, {"Colonel Mustard":5/14, "Professor Plum":5/14, 
+        "Sgt. Gray": 5/14, "Monsieur Brunette": 5/14})
+        self.assertEqual(Advisor5.players["Jane"].weapon_must_have, {"Horseshoe"})
+        self.assertEqual(Advisor5.players["Jane"].weapon_must_not_have, {"Candlestick", "Knife", "Rope", "Poison"})
+        self.assertEqual(Advisor5.players["Jane"].weapon_possibly_have, {"Lead Pipe": 5/14, "Revolver": 5/14, "Wrench": 5/14 })
+        self.assertEqual(Advisor5.players["Jane"].room_must_have, {"Library"})
+        self.assertEqual(Advisor5.players["Jane"].room_must_not_have, {"Carriage House", "Conservatory", "Gazebo", "Kitchen"})
+        self.assertEqual(Advisor5.players["Jane"].room_possibly_have, {"Trophy Room":5/14, "Dining Room":5/14, 
+        "Drawing Room":5/14, "Courtyard":5/14, "Fountain":5/14, "Billiard Room":5/14, "Studio":5/14})
                                                                         
-        # self.assertEqual(Advisor5.players["Mia"].suspect_must_have,{"Mrs Peacock"})
-        # self.assertEqual(Advisor5.players["Mia"].suspect_must_not_have, {"Miss Scarlet", "Mr. Green", "Mrs White", "Miss Peach", "Mme. Rose"})
-        # self.assertEqual(Advisor5.players["Mia"].suspect_possibly_have, {"Colonel Mustard": prob*7, "Professor Plum": prob*7, 
-        # "Sgt. Gray": prob*7, "Monsieur Brunette": prob*7})
-        # self.assertEqual(Advisor5.players["Mia"].weapon_must_have, set())
-        # self.assertEqual(Advisor5.players["Mia"].weapon_must_not_have, {"Candlestick", "Knife", "Rope", "Horseshoe", "Poison"})
-        # self.assertEqual(Advisor5.players["Mia"].weapon_possibly_have, {"Lead Pipe": prob*7, "Revolver":prob*7, "Wrench":prob*7})
-        # self.assertEqual(Advisor5.players["Mia"].room_must_have, {"Kitchen"})
-        # self.assertEqual(Advisor5.players["Mia"].room_must_not_have, {"Carriage House", "Conservatory", "Library", "Gazebo"})
-        # self.assertEqual(Advisor5.players["Mia"].room_possibly_have, {"Trophy Room":prob*7, "Dining Room":prob*7, 
-        # "Drawing Room":prob*7, "Courtyard":prob*7, "Fountain":prob*7, "Billiard Room":prob*7, "Studio":prob*7})
+        self.assertEqual(Advisor5.players["Mia"].suspect_must_have,{"Mrs Peacock"})
+        self.assertEqual(Advisor5.players["Mia"].suspect_must_not_have, {"Miss Scarlet", "Mr. Green", "Mrs White", "Miss Peach", "Mme. Rose"})
+        self.assertEqual(Advisor5.players["Mia"].suspect_possibly_have, {"Colonel Mustard": 5/14, "Professor Plum": 5/14, 
+        "Sgt. Gray": 5/14, "Monsieur Brunette": 5/14})
+        self.assertEqual(Advisor5.players["Mia"].weapon_must_have, set())
+        self.assertEqual(Advisor5.players["Mia"].weapon_must_not_have, {"Candlestick", "Knife", "Rope", "Horseshoe", "Poison"})
+        self.assertEqual(Advisor5.players["Mia"].weapon_possibly_have, {"Lead Pipe": 5/14, "Revolver":5/14, "Wrench":5/14})
+        self.assertEqual(Advisor5.players["Mia"].room_must_have, {"Kitchen"})
+        self.assertEqual(Advisor5.players["Mia"].room_must_not_have, {"Carriage House", "Conservatory", "Library", "Gazebo"})
+        self.assertEqual(Advisor5.players["Mia"].room_possibly_have, {"Trophy Room":5/14, "Dining Room":5/14, 
+        "Drawing Room":5/14, "Courtyard":5/14, "Fountain":5/14, "Billiard Room":5/14, "Studio":5/14})
 
-        # self.assertEqual(Advisor5.players["secret"].suspect_must_have,{"Mme. Rose"})
-        # self.assertEqual(Advisor5.players["secret"].suspect_must_not_have,{"Miss Scarlet", "Mr. Green", "Mrs White", "Mrs Peacock", 
-        # "Colonel Mustard", "Professor Plum", "Miss Peach", "Sgt. Gray", "Monsieur Brunette"})
-        # self.assertEqual(Advisor5.players["secret"].suspect_possibly_have,{})
-        # self.assertEqual(Advisor5.players["secret"].weapon_must_have,{"Poison"})
-        # self.assertEqual(Advisor5.players["secret"].weapon_must_not_have,{"Candlestick", "Knife", "Lead Pipe", "Revolver", "Rope", 
-        # "Wrench", "Horseshoe"})
-        # self.assertEqual(Advisor5.players["secret"].weapon_possibly_have,{})
-        # self.assertEqual(Advisor5.players["secret"].room_must_have,set())
-        # self.assertEqual(Advisor5.players["secret"].room_must_not_have,{'Library', 'Gazebo', 'Conservatory', 'Kitchen', 'Carriage House'})
-        # self.assertEqual(Advisor5.players["secret"].room_possibly_have,{"Trophy Room": 1/7, "Dining Room": 1/7, "Drawing Room": 1/7, 
-        # "Courtyard": 1/7, "Fountain": 1/7, "Billiard Room": 1/7, "Studio": 1/7})
+        self.assertEqual(Advisor5.players["secret"].suspect_must_have,{"Mme. Rose"})
+        self.assertEqual(Advisor5.players["secret"].suspect_must_not_have,{"Miss Scarlet", "Mr. Green", "Mrs White", "Mrs Peacock", 
+        "Colonel Mustard", "Professor Plum", "Miss Peach", "Sgt. Gray", "Monsieur Brunette"})
+        self.assertEqual(Advisor5.players["secret"].suspect_possibly_have,{})
+        self.assertEqual(Advisor5.players["secret"].weapon_must_have,{"Poison"})
+        self.assertEqual(Advisor5.players["secret"].weapon_must_not_have,{"Candlestick", "Knife", "Lead Pipe", "Revolver", "Rope", 
+        "Wrench", "Horseshoe"})
+        self.assertEqual(Advisor5.players["secret"].weapon_possibly_have,{})
+        self.assertEqual(Advisor5.players["secret"].room_must_have,set())
+        self.assertEqual(Advisor5.players["secret"].room_must_not_have,{'Library', 'Gazebo', 'Conservatory', 'Kitchen', 'Carriage House'})
+        self.assertEqual(Advisor5.players["secret"].room_possibly_have,{"Trophy Room": 1/7, "Dining Room": 1/7, "Drawing Room": 1/7, 
+        "Courtyard": 1/7, "Fountain": 1/7, "Billiard Room": 1/7, "Studio": 1/7})
         
 
     
-    # # Advisor 6
-    # # Parellel to Advisor5, last turn vary, test the one step forard and score changes
-    # @patch("builtins.input", side_effect = ["7", "Miss Scarlet, Mr. Green, Mrs White", "Candlestick, Knife", "Carriage House, Conservatory","Mia, 7", "Michael, 6","Jane,7",
-    # "Next turn", "myself", "Mrs Peacock, Rope, Library", "Mia, Michael, Jane",
-    # "Next turn", "myself", "Miss Peach, Horseshoe ,Gazebo", "Michael, Jane, None",
-    # "Next turn", "myself", "Mme. Rose, Poison, Gazebo", "None, None, Michael", 
-    # "Next turn", "myself", "Mme. Rose, Poison, Drawing Room", "None, None, Michael",
-    # "Query", "Player_Summary", "secret", "Exit"])
-    # def test_Game6(self, mock_inputs):
-    #     Advisor6 = Advisor(4)
+    # Advisor 6
+    # Parellel to Advisor5, last turn vary, test the one step forard and score changes
+    @patch("builtins.input", side_effect = ["7", "Miss Scarlet, Mr. Green, Mrs White", "Candlestick, Knife", "Carriage House, Conservatory","Mia, 7", "Michael, 6","Jane,7",
+    "Next turn", "myself", "Mrs Peacock, Rope, Library", "Mia, Michael, Jane",
+    "Next turn", "myself", "Miss Peach, Horseshoe ,Gazebo", "Michael, Jane, None",
+    "Next turn", "myself", "Mme. Rose, Poison, Gazebo", "None, None, Michael", 
+    "Next turn", "myself", "Mme. Rose, Poison, Drawing Room", "None, None, Michael",
+    "Query", "Player_Summary", "secret", "Exit"])
+    def test_Game6(self, mock_inputs):
+        Advisor6 = Advisor(4)
 
+        self.assertEqual(Advisor6.players["Michael"].suspect_must_have, {"Miss Peach"})
+        self.assertEqual(Advisor6.players["Michael"].suspect_must_not_have, {"Miss Scarlet", "Mr. Green", "Mrs White", "Mrs Peacock"})
+        self.assertEqual(Advisor6.players["Michael"].suspect_possibly_have, {"Colonel Mustard": 2/16, "Professor Plum": 2/16, 
+        "Sgt. Gray": 2/16, "Monsieur Brunette": 2/16,"Mme. Rose":1/2 + math.log(3/2, 5)})
+        self.assertEqual(Advisor6.players["Michael"].weapon_must_have, {"Rope"})
+        self.assertEqual(Advisor6.players["Michael"].weapon_must_not_have, {"Candlestick", "Knife", "Horseshoe"})
+        self.assertEqual(Advisor6.players["Michael"].weapon_possibly_have, {"Lead Pipe": 2/16, "Revolver": 2/16,
+        "Wrench": 2/16, "Poison": 1/2 + math.log(3/2, 5)})
+        self.assertEqual(Advisor6.players["Michael"].room_must_have, {"Gazebo", "Drawing Room"})
+        self.assertEqual(Advisor6.players["Michael"].room_must_not_have, {"Carriage House", "Conservatory", "Library"})
+        self.assertEqual(Advisor6.players["Michael"].room_possibly_have, {"Kitchen": 2/16, "Trophy Room": 2/16, "Dining Room": 2/16, 
+        "Courtyard": 2/16, "Fountain": 2/16, "Billiard Room": 2/16, "Studio": 2/16})
+
+        self.assertEqual(Advisor6.players["Jane"].suspect_must_have,set())
+        self.assertEqual(Advisor6.players["Jane"].suspect_must_not_have, {"Miss Scarlet", "Mr. Green", "Mrs White", "Mrs Peacock", "Miss Peach", 
+        "Mme. Rose"})
+        self.assertEqual(Advisor6.players["Jane"].suspect_possibly_have, {"Colonel Mustard":5/14, "Professor Plum":5/14, 
+        "Sgt. Gray": 5/14, "Monsieur Brunette": 5/14})
+        self.assertEqual(Advisor6.players["Jane"].weapon_must_have, {"Horseshoe"})
+        self.assertEqual(Advisor6.players["Jane"].weapon_must_not_have, {"Candlestick", "Knife", "Rope", "Poison"})
+        self.assertEqual(Advisor6.players["Jane"].weapon_possibly_have, {"Lead Pipe": 5/14, "Revolver": 5/14, "Wrench": 5/14 })
+        self.assertEqual(Advisor6.players["Jane"].room_must_have, {"Library"})
+        self.assertEqual(Advisor6.players["Jane"].room_must_not_have, {"Carriage House", "Conservatory", "Gazebo", "Drawing Room"})
+        self.assertEqual(Advisor6.players["Jane"].room_possibly_have, {"Kitchen":5/14, "Trophy Room":5/14, "Dining Room":5/14, 
+        "Courtyard":5/14, "Fountain":5/14, "Billiard Room":5/14, "Studio":5/14})
+                                                                        
+        self.assertEqual(Advisor6.players["Mia"].suspect_must_have,{"Mrs Peacock"})
+        self.assertEqual(Advisor6.players["Mia"].suspect_must_not_have, {"Miss Scarlet", "Mr. Green", "Mrs White", "Miss Peach", "Mme. Rose"})
+        self.assertEqual(Advisor6.players["Mia"].suspect_possibly_have, {"Colonel Mustard": 6/14, "Professor Plum": 6/14, 
+        "Sgt. Gray": 6/14, "Monsieur Brunette": 6/14})
+        self.assertEqual(Advisor6.players["Mia"].weapon_must_have, set())
+        self.assertEqual(Advisor6.players["Mia"].weapon_must_not_have, {"Candlestick", "Knife", "Rope", "Horseshoe", "Poison"})
+        self.assertEqual(Advisor6.players["Mia"].weapon_possibly_have, {"Lead Pipe": 6/14, "Revolver":6/14, "Wrench":6/14})
+        self.assertEqual(Advisor6.players["Mia"].room_must_have, set())
+        self.assertEqual(Advisor6.players["Mia"].room_must_not_have, {"Carriage House", "Conservatory", "Library", "Gazebo","Drawing Room"})
+        self.assertEqual(Advisor6.players["Mia"].room_possibly_have, {"Kitchen":6/14, "Trophy Room":6/14, "Dining Room":6/14, 
+        "Courtyard":6/14, "Fountain":6/14, "Billiard Room":6/14, "Studio":6/14})
+
+        self.assertEqual(Advisor6.players["secret"].suspect_must_have,set())
+        self.assertEqual(Advisor6.players["secret"].suspect_must_not_have,{"Miss Scarlet", "Mr. Green", "Mrs White", "Mrs Peacock", 
+        "Miss Peach"})
+        self.assertEqual(Advisor6.players["secret"].suspect_possibly_have,{"Colonel Mustard":1/5, "Professor Plum":1/5, "Sgt. Gray":1/5, 
+        "Monsieur Brunette":1/5, "Mme. Rose":1/2 + math.log(3/2, 5)})
+        self.assertEqual(Advisor6.players["secret"].weapon_must_have,set())
+        self.assertEqual(Advisor6.players["secret"].weapon_must_not_have,{"Candlestick", "Knife", "Rope", "Horseshoe"})
+        self.assertEqual(Advisor6.players["secret"].weapon_possibly_have,{"Lead Pipe": 1/4, "Revolver": 1/4, "Wrench": 1/4,
+        "Poison":1/2 + math.log(3/2, 5)})
+        self.assertEqual(Advisor6.players["secret"].room_must_have,set())
+        self.assertEqual(Advisor6.players["secret"].room_must_not_have,{"Carriage House", "Conservatory", "Library", "Gazebo", "Drawing Room"})
+        self.assertEqual(Advisor6.players["secret"].room_possibly_have,{"Kitchen": 1/7, "Trophy Room": 1/7, "Dining Room": 1/7, 
+        "Courtyard": 1/7, "Fountain": 1/7, "Billiard Room": 1/7, "Studio": 1/7})
 
 
 if __name__ == '__main__':

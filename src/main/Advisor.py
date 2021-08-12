@@ -134,14 +134,14 @@ class Advisor:
             self.players["secret"].update_weapon_possibly_have(ele, secret_weapon_prob_init)
         for ele in [x for x in LIST_ROOM if x not in self.rooms]:
             self.players["secret"].update_room_possibly_have(ele, secret_room_prob_init)
+        self.players["secret"].set_defaultBaseValue(suspect_value=secret_suspect_prob_init, weapon_value=secret_weapon_prob_init, room_value=secret_room_prob_init)
 
         other_prob_init = 1/(Total_Number_of_Card - self.cardsIhave)
         for i in range(numberOpponents):
             playerInfo = input("Enter opponent's name, # of cards, seperated by comma, if no name or #ofcards given, it will be preset by the program\n")
             name, cardQuantity = playerInfo.split(",")[0].strip(), int(playerInfo.split(",")[1].strip())
 
-            opponent = Player(name, cardQuantity)
-            self.players[name] = opponent
+            self.players[name] = Player(name, cardQuantity)
             this_prob_init = other_prob_init * self.players[name].numberOfCards
 
             for ele in self.suspects:
@@ -156,6 +156,8 @@ class Advisor:
                 self.players[name].update_weapon_possibly_have(ele, this_prob_init)
             for ele in [x for x in LIST_ROOM if x not in self.rooms]:
                 self.players[name].update_room_possibly_have(ele, this_prob_init)
+
+            self.players[name].set_defaultBaseValue(general_value=this_prob_init)
                 
         
         
@@ -250,6 +252,14 @@ class Advisor:
         self.players[player_name].display_weapon_must_have()
         print("\n room must have:  ")
         self.players[player_name].display_room_must_have()
+        
+        if player_name != "secret":
+            print("\n Base Value: ", self.players[player_name].base_value_general)
+        else:
+            print("\n Suspect Base Value: ", self.players[player_name].base_value_secret_suspect)
+            print("\n Weapon Base Value: ", self.players[player_name].base_value_secret_weapon)
+            print("\n Room Base Value: ", self.players[player_name].base_value_secret_room)
+        
         print("\n suspect probably have:  ")
         self.players[player_name].display_suspect_possibly_have()
         print("\n weapon probably have:  ")
@@ -262,7 +272,6 @@ class Advisor:
         self.players[player_name].display_weapon_must_not_have()
         print("\n room must not have:  ")
         self.players[player_name].display_room_must_not_have()
-
 
 
     def display_log(self):
@@ -314,31 +323,45 @@ class Advisor:
         for ele in self.players["secret"].room_possibly_have.keys():
             self.players["secret"].room_possibly_have[ele] = max(self.players["secret"].room_possibly_have[ele], base_value_room_secret)
 
+        self.players["secret"].set_defaultBaseValue(suspect_value=base_value_suspect_secret,weapon_value=base_value_weapon_secret,room_value=base_value_room_secret)
+
        
     def otherAgent_Rebalance(self):
         exemptPlayers = {"myself", "secret"}
         for otherAgent in [x for x in self.players.keys() if x not in exemptPlayers]:
             base_value = self.players[otherAgent].getBaseValue()
+            prev_base_value = self.players[otherAgent].base_value_general
             if base_value == 0:
                 continue
             ## deal with suspect
             for ele in self.players[otherAgent].suspect_possibly_have.keys():
-                if self.players[otherAgent].suspect_possibly_have[ele] < 1/3:
-                    self.players[otherAgent].suspect_possibly_have[ele] = base_value
-                else:
+                if base_value >= prev_base_value:
                     self.players[otherAgent].suspect_possibly_have[ele] = max(self.players[otherAgent].suspect_possibly_have[ele], base_value)
+                else:  ## base_value < prev_base_value
+                    if self.players[otherAgent].suspect_possibly_have[ele] <= prev_base_value:
+                        self.players[otherAgent].suspect_possibly_have[ele] = base_value
+                    else:
+                        pass
             ## deal with weapon
             for ele in self.players[otherAgent].weapon_possibly_have.keys():
-                if self.players[otherAgent].weapon_possibly_have[ele] < 1/3:
-                    self.players[otherAgent].weapon_possibly_have[ele] = base_value
-                else:
+                if base_value >= prev_base_value:
                     self.players[otherAgent].weapon_possibly_have[ele] = max(self.players[otherAgent].weapon_possibly_have[ele], base_value)
+                else:  ## base_value < prev_base_value
+                    if self.players[otherAgent].weapon_possibly_have[ele] <= prev_base_value:
+                        self.players[otherAgent].weapon_possibly_have[ele] = base_value
+                    else:
+                        pass
             ## deal with room
             for ele in self.players[otherAgent].room_possibly_have.keys():
-                if self.players[otherAgent].room_possibly_have[ele] < 1/3:
-                    self.players[otherAgent].room_possibly_have[ele] = base_value
-                else:
+                if base_value >= prev_base_value:
                     self.players[otherAgent].room_possibly_have[ele] = max(self.players[otherAgent].room_possibly_have[ele], base_value)
+                else:  ## base_value < prev_base_value
+                    if self.players[otherAgent].room_possibly_have[ele] <= prev_base_value:
+                        self.players[otherAgent].room_possibly_have[ele] = base_value
+                    else:
+                        pass
+
+            self.players[otherAgent].set_defaultBaseValue(general_value=base_value)
             
 
     def magnifierCheck(self):

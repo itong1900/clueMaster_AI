@@ -1,4 +1,4 @@
-from logging import raiseExceptions
+from logging import NullHandler, raiseExceptions
 import math
 
 class Player:
@@ -14,6 +14,21 @@ class Player:
         self.suspect_must_not_have = set()
         self.weapon_must_not_have = set()
         self.room_must_not_have = set()
+
+        self.base_value_general = None
+        self.base_value_secret_suspect = None
+        self.base_value_secret_weapon = None
+        self.base_value_secret_room = None
+
+    def set_defaultBaseValue(self, general_value = None, suspect_value = None, weapon_value = None, room_value = None):
+        if self.name == "secret":
+            self.base_value_secret_suspect = suspect_value
+            self.base_value_secret_weapon = weapon_value
+            self.base_value_secret_room = room_value
+        elif self.name == "myself":
+            pass
+        else:
+            self.base_value_general = general_value
 
     def update_suspect_must_have(self, ele_add):
         self.suspect_must_have.add(ele_add)
@@ -49,7 +64,7 @@ class Player:
                 self.weapon_possibly_have[ele] = points_added
         else:
             if self.weapon_possibly_have[ele] >= 0.5:
-                self.weapon_possibly_have[ele] += math.log(1/2 + self.weapon_possibly_have[ele] + points_added)
+                self.weapon_possibly_have[ele] += math.log(1/2 + self.weapon_possibly_have[ele] + points_added, 5)
             else:
                 self.weapon_possibly_have[ele] = max(points_added, self.weapon_possibly_have[ele])
 
@@ -59,7 +74,7 @@ class Player:
                 self.room_possibly_have[ele] = points_added
         else:
             if self.room_possibly_have[ele] >= 0.5:
-                self.room_possibly_have[ele] += math.log(1/2 + self.room_possibly_have[ele] + points_added)
+                self.room_possibly_have[ele] += math.log(1/2 + self.room_possibly_have[ele] + points_added, 5)
             else:
                 self.room_possibly_have[ele] = max(points_added, self.room_possibly_have[ele])
 
@@ -107,10 +122,12 @@ class Player:
 
     ## Next 6 Methods to get the base value
     def getTotal_Unknown(self):
-        result = len(self.suspect_possibly_have) + len(self.room_possibly_have) + len(self.weapon_possibly_have) 
+        result = len(self.suspect_possibly_have) + len(self.weapon_possibly_have) + len(self.room_possibly_have)
+        # 30 - len(self.suspect_must_have) - len(self.room_must_have) - len(self.weapon_must_have) 
+        # - len(self.suspect_must_not_have) - len(self.weapon_must_not_have) - len(self.room_must_not_have)
         if result > 0:
             return result
-        raiseExceptions("This user is fully hacked on this category")
+        return 0  ## It means this user has fully been hacked
 
     def getTotal_Musthave(self):
         return len(self.suspect_must_have) + len(self.room_must_have) + len(self.weapon_must_have)
@@ -132,3 +149,7 @@ class Player:
         if len(self.room_possibly_have) != 0:
             return 1/len(self.room_possibly_have)
         return 0
+
+    ## get previous min_score to handle a decrease on base_value
+    def getMinPossibly_Score(self):
+        pass
