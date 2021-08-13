@@ -1,7 +1,15 @@
 from logging import NullHandler, raiseExceptions
 import math
 
+
 class Player:
+    global Total_Number_of_Card, LIST_SUSPECT, LIST_WEAPON, LIST_ROOM
+    Total_Number_of_Card = 30
+    LIST_SUSPECT = ["Miss Scarlet", "Mr. Green", "Mrs White", "Mrs Peacock", "Colonel Mustard", "Professor Plum", "Miss Peach", "Sgt. Gray", "Monsieur Brunette", "Mme. Rose"]
+    LIST_WEAPON = ["Candlestick", "Knife", "Lead Pipe", "Revolver", "Rope", "Wrench", "Horseshoe", "Poison"]
+    LIST_ROOM = ["Carriage House", "Conservatory", "Kitchen", "Trophy Room", "Dining Room", "Drawing Room", "Gazebo", "Courtyard", "Fountain", "Library", "Billiard Room", "Studio"]
+    
+
     def __init__(self, name, numberofCards):
         self.name = name
         self.numberOfCards = numberofCards
@@ -19,6 +27,8 @@ class Player:
         self.base_value_secret_suspect = None
         self.base_value_secret_weapon = None
         self.base_value_secret_room = None
+
+        
 
     def set_defaultBaseValue(self, general_value = None, suspect_value = None, weapon_value = None, room_value = None):
         if self.name == "secret":
@@ -153,3 +163,12 @@ class Player:
     ## get previous min_score to handle a decrease on base_value
     def getMinPossibly_Score(self):
         pass
+
+    ## check if in must_not_have
+    def check_in_must_not_have(self, checkItem):
+        if checkItem in LIST_SUSPECT:
+            return checkItem in self.suspect_must_not_have
+        elif checkItem in LIST_WEAPON:
+            return checkItem in self.weapon_must_not_have
+        elif checkItem in LIST_ROOM:
+            return checkItem in self.room_must_not_have

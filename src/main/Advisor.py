@@ -9,6 +9,9 @@ sys.path.append("../utils/")
 from agentAIUtils import search_in_must_have
 from agentAIUtils import myself_turn_players_update
 from agentAIUtils import secret_infer_helper
+from agentAIUtils import otherAgent_infer_helper
+
+
 
 
 class Advisor:
@@ -329,6 +332,11 @@ class Advisor:
     def otherAgent_Rebalance(self):
         exemptPlayers = {"myself", "secret"}
         for otherAgent in [x for x in self.players.keys() if x not in exemptPlayers]:
+            ## Reverse Impact 
+            otherAgent_infer_helper("suspect", self.players, otherAgent, self.numberOfPlayers)
+            otherAgent_infer_helper("weapon", self.players, otherAgent, self.numberOfPlayers)
+            otherAgent_infer_helper("room", self.players, otherAgent, self.numberOfPlayers)
+
             base_value = self.players[otherAgent].getBaseValue()
             prev_base_value = self.players[otherAgent].base_value_general
             if base_value == 0:

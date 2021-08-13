@@ -193,5 +193,53 @@ def secret_infer_helper(ObjectDealing, LIST_XXX, playersHashmap):
                     playersHashmap["secret"].update_weapon_must_not_have(ele)
                 playersHashmap["secret"].weapon_possibly_have = {}
     elif ObjectDealing == "room":
-        pass
+        if len(playersHashmap["secret"].room_must_have) == 0:
+            room_found = "None"
+            for room_poss in LIST_XXX:
+                flag = "This One"
+                for player in [x for x in playersHashmap.keys() if x != "secret"]:
+                    if room_poss in playersHashmap[player].room_must_not_have:
+                        continue
+                    else:
+                        flag = "Not this One"
+                        break
+                if flag == "This One":
+                    room_found = room_poss
+                    break
+                elif flag == "Not this One":
+                    continue
+            # if None is found, do nothing, otherwise, make inference
+            if room_found == "None":
+                pass
+            else:
+                ## update secret must have, delete the room_found from possibly set
+                playersHashmap["secret"].update_room_must_have(room_found)
+                del playersHashmap["secret"].room_possibly_have[room_found]
+                ## clean up the rest of possibly set, and move them to must-not-have class
+                for ele in playersHashmap["secret"].room_possibly_have.keys():
+                    playersHashmap["secret"].update_room_must_not_have(ele)
+                playersHashmap["secret"].room_possibly_have = {}
 
+
+def otherAgent_infer_helper(ObjectDealing, playerHashmap, playerName, playerQuantity):
+    if ObjectDealing == "suspect":
+        for ele in playerHashmap[playerName].suspect_possibly_have.keys():
+            results = [playerHashmap[x].check_in_must_not_have(ele) for x in playerHashmap.keys() if x != playerName]
+            ## move to must_have if this it's in all other players' must_not_have
+            if sum(results) == playerQuantity:
+                playerHashmap[playerName].update_suspect_must_have(ele)
+                del playerHashmap[playerName].suspect_possibly_have[ele]
+    elif ObjectDealing == "weapon":
+        for ele in playerHashmap[playerName].weapon_possibly_have.keys():
+            results = [playerHashmap[x].check_in_must_not_have(ele) for x in playerHashmap.keys() if x != playerName]
+            ## move to must_have if this it's in all other players' must_not_have
+            if sum(results) == playerQuantity:
+                playerHashmap[playerName].update_weapon_must_have(ele)
+                del playerHashmap[playerName].weapon_possibly_have[ele]
+    elif ObjectDealing == "room":
+        for ele in playerHashmap[playerName].room_possibly_have.keys():
+            results = [playerHashmap[x].check_in_must_not_have(ele) for x in playerHashmap.keys() if x != playerName]
+            ## move to must_have if this it's in all other players' must_not_have
+            if sum(results) == playerQuantity:
+                playerHashmap[playerName].update_room_must_have(ele)
+                del playerHashmap[playerName].room_possibly_have[ele]
