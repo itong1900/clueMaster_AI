@@ -44,7 +44,7 @@ class Advisor:
     
     def turnCycle(self):
         while True:
-            action = input("Next turn / Query / magnifier / Exit: ")
+            action = input("Next turn / Query / Magnifier / Exit: ")
             if action == "Next turn":
                 whose_turn = input("Whose turn is this: ")
                 if whose_turn == "myself":
@@ -53,6 +53,7 @@ class Advisor:
                     #break
                 elif whose_turn in self.players:
                     self.update_oppoTurn(whose_turn)
+                    #self.AI_unit_otherTurn_update()
                     #break
                 else:
                     print("Wrong name, enter again: ")
@@ -70,12 +71,12 @@ class Advisor:
                     self.player_summary(name)
             elif action == "Exit":
                 break
-            elif action == "magnifier":
+            elif action == "Magnifier":
                 self.magnifierCheck()
                 self.secret_Infer_Rebalance()
                 self.otherAgent_Rebalance()
             else:
-                print("Invalid input, enter agagin")
+                print("Invalid input, enter again")
             print("\n")
     
     def update_myturn(self):
@@ -304,6 +305,21 @@ class Advisor:
             myself_turn_players_update("room", not_in_must_have, card_givers[2], card_givers, self.players, claim_room, cards_received)
 
 
+    def AI_unit_otherTurn_update(self):
+        # Retrieve info from log
+        player_makeQuery = self.log.iloc[-1,:]["player_makeQuery"]
+        claim_suspect = self.log.iloc[-1,:]["claim_suspect"]
+        claim_weapon = self.log.iloc[-1,:]["claim_weapon"]
+        claim_room = self.log.iloc[-1,:]["claim_room"]
+        cards_received = self.log.iloc[-1,:]["cards_received"]
+        card_givers = self.log.iloc[-1,:]["card_giver(s)"]
+
+        if cards_received == 3:
+            pass
+        elif cards_received == 0:
+            pass
+
+
 
     def secret_Infer_Rebalance(self):
         """
@@ -376,7 +392,7 @@ class Advisor:
         """
         magnifer check by other players doesn't bring extra straightforward info here, we'll skip those cases
         """
-        magnifierResult = input("Enter player you check and the card you get, separated by ,")
+        magnifierResult = input("Enter player you check and the card you get, separated by ,\n")
         playerName, cardGot = magnifierResult.split(",")[0].strip(), magnifierResult.split(",")[1].strip() 
         ## determine what card is this
         if cardGot in LIST_SUSPECT:
@@ -385,10 +401,10 @@ class Advisor:
                 del self.players[playerName].suspect_possibly_have[cardGot]
                 ## put the cardGot in must-not-have in other agent, and remove from their possibly have as well
                 for other_agent in [x for x in self.players.keys() if x != playerName]:
-                    if cardGot in self.players[other_agent].suspect_possibly_have:
+                    if cardGot in self.players[other_agent].suspect_possibly_have.keys():
                         self.players[other_agent].update_suspect_must_not_have(cardGot)
                         del self.players[other_agent].suspect_possibly_have[cardGot]
-            elif cardGot in self.players[playerName].suspect_must_not_have.keys():
+            elif cardGot in self.players[playerName].suspect_must_not_have:
                 raiseExceptions("impossible to catch a card in must-not-have class, set up wrong, or someone forgets to give a card")
         elif cardGot in LIST_WEAPON:
             if cardGot in self.players[playerName].weapon_possibly_have.keys():
@@ -396,10 +412,10 @@ class Advisor:
                 del self.players[playerName].weapon_possibly_have[cardGot]
                 ## put the cardGot in must-not-have in other agent, and remove from their possibly have as well
                 for other_agent in [x for x in self.players.keys() if x != playerName]:
-                    if cardGot in self.players[other_agent].weapon_possibly_have:
+                    if cardGot in self.players[other_agent].weapon_possibly_have.keys():
                         self.players[other_agent].update_weapon_must_not_have(cardGot)
                         del self.players[other_agent].weapon_possibly_have[cardGot]
-            elif cardGot in self.players[playerName].weapon_must_not_have.keys():
+            elif cardGot in self.players[playerName].weapon_must_not_have:
                 raiseExceptions("impossible to catch a card in must-not-have class, set up wrong, or someone forgets to give a card")
         elif cardGot in LIST_ROOM:
             if cardGot in self.players[playerName].room_possibly_have.keys():
@@ -407,10 +423,10 @@ class Advisor:
                 del self.players[playerName].room_possibly_have[cardGot]
                 ## put the cardGot in must-not-have in other agent, and remove from their possibly have as well
                 for other_agent in [x for x in self.players.keys() if x != playerName]:
-                    if cardGot in self.players[other_agent].room_possibly_have:
+                    if cardGot in self.players[other_agent].room_possibly_have.keys():
                         self.players[other_agent].update_room_must_not_have(cardGot)
                         del self.players[other_agent].room_possibly_have[cardGot]
-            elif cardGot in self.players[playerName].room_must_not_have.keys():
+            elif cardGot in self.players[playerName].room_must_not_have:
                 raiseExceptions("impossible to catch a card in must-not-have class, set up wrong, or someone forgets to give a card")
         else:
             raiseExceptions("invalid card type in magnifier method")
