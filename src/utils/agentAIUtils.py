@@ -137,6 +137,8 @@ def myself_turn_players_update(ObjectDealing ,not_in_must_have, card_giver, card
 
 
 
+
+
 def secret_infer_helper(ObjectDealing, LIST_XXX, playersHashmap):
     if ObjectDealing == "suspect":
         if len(playersHashmap["secret"].suspect_must_have) == 0:
