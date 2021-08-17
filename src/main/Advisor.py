@@ -68,6 +68,9 @@ class Advisor:
                     self.display_log()
                 elif what_query == "Player_Summary":
                     name = input("Player's Name: ")
+                    while name not in self.players.keys():
+                        print("invalid name, enter again\n")
+                        name = input("Player's Name: ")
                     self.player_summary(name)
             elif action == "Exit":
                 break
