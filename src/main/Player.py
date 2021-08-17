@@ -172,3 +172,12 @@ class Player:
             return checkItem in self.weapon_must_not_have
         elif checkItem in LIST_ROOM:
             return checkItem in self.room_must_not_have
+
+    ## check if in must_have
+    def check_in_must_have(self, checkItem):
+        if checkItem in LIST_SUSPECT:
+            return checkItem in self.suspect_must_have
+        elif checkItem in LIST_WEAPON:
+            return checkItem in self.weapon_must_have
+        elif checkItem in LIST_ROOM:
+            return checkItem in self.room_must_have

@@ -10,6 +10,7 @@ from agentAIUtils import search_in_must_have
 from agentAIUtils import myself_turn_players_update
 from agentAIUtils import secret_infer_helper
 from agentAIUtils import otherAgent_infer_helper
+from agentAIUtils import otherAgent_turnUpdate_3cardsCase
 
 
 
@@ -53,7 +54,7 @@ class Advisor:
                     #break
                 elif whose_turn in self.players:
                     self.update_oppoTurn(whose_turn)
-                    #self.AI_unit_otherTurn_update()
+                    self.AI_unit_otherTurn_update()
                     #break
                 else:
                     print("Wrong name, enter again: ")
@@ -318,6 +319,10 @@ class Advisor:
         card_givers = self.log.iloc[-1,:]["card_giver(s)"]
 
         if cards_received == 3:
+            otherAgent_turnUpdate_3cardsCase(player_makeQuery, claim_suspect, claim_weapon, claim_room, card_givers, self.players)
+        elif cards_received == 2:
+            pass
+        elif cards_received == 1:
             pass
         elif cards_received == 0:
             pass

@@ -341,7 +341,7 @@ class TestAdvisor(unittest.TestCase):
     "Next turn", "myself", "Mme. Rose, Poison, Drawing Room", "None, None, Michael",
     "Magnifier", "Mia, Kitchen",
     "Magnifier", "Jane, Horseshoe",
-    "Query","Player_Summary", "Michael","Exit"])
+    "Query","Log","Exit"])
     def test_Game7(self, mock_inputs):
         Advisor7 = Advisor(4)
 

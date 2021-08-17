@@ -245,3 +245,92 @@ def otherAgent_infer_helper(ObjectDealing, playerHashmap, playerName, playerQuan
             if sum(results) == playerQuantity:
                 playerHashmap[playerName].update_room_must_have(ele)
                 del playerHashmap[playerName].room_possibly_have[ele]
+
+
+
+def otherAgent_turnUpdate_3cardsCase(claimer, claim_suspect, claim_weapon, claim_room, card_givers, playerHashmap):
+    """
+    card_givers will always be an array with 3 elements
+    """
+    ## These 3 cards must not in secret or non-cardgiver agents
+    for otherAgent in [x for x in playerHashmap.keys() if x not in card_givers]:
+        if claim_suspect in playerHashmap[otherAgent].suspect_possibly_have.keys():
+            del playerHashmap[otherAgent].suspect_possibly_have[claim_suspect]
+        playerHashmap[otherAgent].update_suspect_must_not_have(claim_suspect)
+        if claim_weapon in playerHashmap[otherAgent].weapon_possibly_have.keys():
+            del playerHashmap[otherAgent].weapon_possibly_have[claim_weapon]
+        playerHashmap[otherAgent].update_weapon_must_not_have(claim_weapon)
+        if claim_room in playerHashmap[otherAgent].room_possibly_have.keys():
+            del playerHashmap[otherAgent].room_possibly_have[claim_room]
+        playerHashmap[otherAgent].update_room_must_not_have(claim_room)
+
+    ## check how many cards are in the must-have of these 3 agents already
+    SuspectMustHavePlayer, WeaponMustHavePlayer, RoomMustHavePlayer = None, None, None
+    isSuspectInMustHave = [playerHashmap[x].check_in_must_have(claim_suspect) for x in card_givers]
+    if sum(isSuspectInMustHave) == 1:
+        SuspectMustHavePlayer = card_givers[first_True(isSuspectInMustHave)]
+    isWeaponInMustHave = [playerHashmap[x].check_in_must_have(claim_weapon) for x in card_givers]
+    if sum(isWeaponInMustHave) == 1:
+        WeaponMustHavePlayer = card_givers[first_True(isWeaponInMustHave)]
+    isRoomInMustHave = [playerHashmap[x].check_in_must_have(claim_room) for x in card_givers]
+    if sum(isRoomInMustHave) == 1:
+        RoomMustHavePlayer = card_givers[first_True(isRoomInMustHave)]
+    cardsInMustHave = sum(isSuspectInMustHave) + sum(isWeaponInMustHave) + sum(isRoomInMustHave)
+
+    if cardsInMustHave == 3:
+        pass
+    elif cardsInMustHave == 2:
+        if SuspectMustHavePlayer != None and WeaponMustHavePlayer != None:
+            playerHashmap[card_givers[2]].update_room_must_have(claim_room)
+            del playerHashmap[card_givers[2]].room_possibly_have[claim_room]
+            for twoOther in card_givers[0:2]:
+                playerHashmap[twoOther].update_room_must_not_have(claim_room)
+                del playerHashmap[twoOther].room_possiblly_have[claim_room]
+        elif SuspectMustHavePlayer != None and RoomMustHavePlayer != None:
+            playerHashmap[card_givers[1]].udpate_weapon_must_have(claim_weapon)
+            del playerHashmap[card_givers[1]].weapon_possibly_have[claim_weapon]
+            for twoOther in [x for x in card_givers if x != card_givers[1]]:
+                playerHashmap[twoOther].update_weapon_must_not_have(claim_weapon)
+                del playerHashmap[twoOther].weapon_possiblly_have[claim_weapon]
+        elif WeaponMustHavePlayer != None and RoomMustHavePlayer != None:
+            playerHashmap[card_givers[0]].udpate_suspect_must_have(claim_suspect)
+            del playerHashmap[card_givers[0]].suspect_possibly_have[claim_suspect]
+            for twoOther in [x for x in card_givers[1:]]:
+                playerHashmap[twoOther].update_suspect_must_not_have(claim_suspect)
+                del playerHashmap[twoOther].suspect_possiblly_have[claim_suspect]
+        
+    elif cardsInMustHave == 1:
+        ## figure out which card is the one in must-have
+        if SuspectMustHavePlayer != None:
+            ## other two are uncertain
+            for related_player in [x for x in card_givers if x != SuspectMustHavePlayer]:
+                playerHashmap[related_player].update_weapon_possibly_have(claim_weapon, 1/2)
+                playerHashmap[related_player].update_room_possibly_have(claim_room, 1/2)
+        elif WeaponMustHavePlayer != None:
+            for related_player in [x for x in card_givers if x != WeaponMustHavePlayer]:
+                playerHashmap[related_player].update_suspect_possibly_have(claim_suspect, 1/2)
+                playerHashmap[related_player].update_room_possibly_have(claim_room, 1/2)
+        elif RoomMustHavePlayer != None:
+            for related_player in [x for x in card_givers if x != RoomMustHavePlayer]:
+                playerHashmap[related_player].update_weapon_possibly_have(claim_suspect, 1/2)
+                playerHashmap[related_player].update_room_possibly_have(claim_weapon, 1/2)
+    elif cardsInMustHave == 0:
+        for related_player in card_givers:
+            playerHashmap[related_player].update_suspect_possibly_have(claim_suspect, 1/3)
+            playerHashmap[related_player].update_weapon_possibly_have(claim_weapon, 1/3)
+            playerHashmap[related_player].update_room_possibly_have(claim_room, 1/3)
+
+
+
+## A helper method for otherturn handler
+def first_True(array):
+    """
+    This method return the first element that's 1 in an array
+    """
+    idx = 0
+    for ele in array:
+        if ele != 0:
+            return idx
+        idx += 1
+
+
