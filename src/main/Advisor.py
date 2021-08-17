@@ -9,6 +9,9 @@ sys.path.append("../utils/")
 from agentAIUtils import search_in_must_have
 from agentAIUtils import myself_turn_players_update
 from agentAIUtils import secret_infer_helper
+from agentAIUtils import otherAgent_infer_helper
+
+
 
 
 class Advisor:
@@ -41,7 +44,7 @@ class Advisor:
     
     def turnCycle(self):
         while True:
-            action = input("Next turn / Query / magnifier / Exit: ")
+            action = input("Next turn / Query / Magnifier / Exit: ")
             if action == "Next turn":
                 whose_turn = input("Whose turn is this: ")
                 if whose_turn == "myself":
@@ -50,12 +53,15 @@ class Advisor:
                     #break
                 elif whose_turn in self.players:
                     self.update_oppoTurn(whose_turn)
+                    #self.AI_unit_otherTurn_update()
                     #break
                 else:
                     print("Wrong name, enter again: ")
                 if whose_turn in self.players.keys():
                     ## reblance some weight here
                     self.secret_Infer_Rebalance()
+                    self.otherAgent_Rebalance()
+                    
             elif action == "Query":
                 what_query = input("Player_Summary / Log / Probability_Table:  ")
                 if what_query == "Log":
@@ -65,11 +71,12 @@ class Advisor:
                     self.player_summary(name)
             elif action == "Exit":
                 break
-            elif action == "magnifier":
+            elif action == "Magnifier":
                 self.magnifierCheck()
                 self.secret_Infer_Rebalance()
+                self.otherAgent_Rebalance()
             else:
-                print("Invalid input, enter agagin")
+                print("Invalid input, enter again")
             print("\n")
     
     def update_myturn(self):
@@ -131,14 +138,14 @@ class Advisor:
             self.players["secret"].update_weapon_possibly_have(ele, secret_weapon_prob_init)
         for ele in [x for x in LIST_ROOM if x not in self.rooms]:
             self.players["secret"].update_room_possibly_have(ele, secret_room_prob_init)
+        self.players["secret"].set_defaultBaseValue(suspect_value=secret_suspect_prob_init, weapon_value=secret_weapon_prob_init, room_value=secret_room_prob_init)
 
         other_prob_init = 1/(Total_Number_of_Card - self.cardsIhave)
         for i in range(numberOpponents):
             playerInfo = input("Enter opponent's name, # of cards, seperated by comma, if no name or #ofcards given, it will be preset by the program\n")
             name, cardQuantity = playerInfo.split(",")[0].strip(), int(playerInfo.split(",")[1].strip())
 
-            opponent = Player(name, cardQuantity)
-            self.players[name] = opponent
+            self.players[name] = Player(name, cardQuantity)
             this_prob_init = other_prob_init * self.players[name].numberOfCards
 
             for ele in self.suspects:
@@ -153,6 +160,8 @@ class Advisor:
                 self.players[name].update_weapon_possibly_have(ele, this_prob_init)
             for ele in [x for x in LIST_ROOM if x not in self.rooms]:
                 self.players[name].update_room_possibly_have(ele, this_prob_init)
+
+            self.players[name].set_defaultBaseValue(general_value=this_prob_init)
                 
         
         
@@ -247,6 +256,14 @@ class Advisor:
         self.players[player_name].display_weapon_must_have()
         print("\n room must have:  ")
         self.players[player_name].display_room_must_have()
+        
+        if player_name != "secret":
+            print("\n Base Value: ", self.players[player_name].base_value_general)
+        else:
+            print("\n Suspect Base Value: ", self.players[player_name].base_value_secret_suspect)
+            print("\n Weapon Base Value: ", self.players[player_name].base_value_secret_weapon)
+            print("\n Room Base Value: ", self.players[player_name].base_value_secret_room)
+        
         print("\n suspect probably have:  ")
         self.players[player_name].display_suspect_possibly_have()
         print("\n weapon probably have:  ")
@@ -259,7 +276,6 @@ class Advisor:
         self.players[player_name].display_weapon_must_not_have()
         print("\n room must not have:  ")
         self.players[player_name].display_room_must_not_have()
-
 
 
     def display_log(self):
@@ -289,6 +305,21 @@ class Advisor:
             myself_turn_players_update("room", not_in_must_have, card_givers[2], card_givers, self.players, claim_room, cards_received)
 
 
+    def AI_unit_otherTurn_update(self):
+        # Retrieve info from log
+        player_makeQuery = self.log.iloc[-1,:]["player_makeQuery"]
+        claim_suspect = self.log.iloc[-1,:]["claim_suspect"]
+        claim_weapon = self.log.iloc[-1,:]["claim_weapon"]
+        claim_room = self.log.iloc[-1,:]["claim_room"]
+        cards_received = self.log.iloc[-1,:]["cards_received"]
+        card_givers = self.log.iloc[-1,:]["card_giver(s)"]
+
+        if cards_received == 3:
+            pass
+        elif cards_received == 0:
+            pass
+
+
 
     def secret_Infer_Rebalance(self):
         """
@@ -298,13 +329,70 @@ class Advisor:
         secret_infer_helper("weapon", LIST_WEAPON, self.players)
         secret_infer_helper("room", LIST_ROOM, self.players)
 
+        ## Rebalance here
+        base_value_suspect_secret = self.players["secret"].getSecretBaseValue_suspect()
+        for ele in self.players["secret"].suspect_possibly_have.keys():
+            self.players["secret"].suspect_possibly_have[ele] = max(self.players["secret"].suspect_possibly_have[ele], base_value_suspect_secret)
+
+        base_value_weapon_secret = self.players["secret"].getSecretBaseValue_weapon()
+        for ele in self.players["secret"].weapon_possibly_have.keys():
+            self.players["secret"].weapon_possibly_have[ele] = max(self.players["secret"].weapon_possibly_have[ele], base_value_weapon_secret)
+
+        base_value_room_secret = self.players["secret"].getSecretBaseValue_room()
+        for ele in self.players["secret"].room_possibly_have.keys():
+            self.players["secret"].room_possibly_have[ele] = max(self.players["secret"].room_possibly_have[ele], base_value_room_secret)
+
+        self.players["secret"].set_defaultBaseValue(suspect_value=base_value_suspect_secret,weapon_value=base_value_weapon_secret,room_value=base_value_room_secret)
+
        
+    def otherAgent_Rebalance(self):
+        exemptPlayers = {"myself", "secret"}
+        for otherAgent in [x for x in self.players.keys() if x not in exemptPlayers]:
+            ## Reverse Impact 
+            otherAgent_infer_helper("suspect", self.players, otherAgent, self.numberOfPlayers)
+            otherAgent_infer_helper("weapon", self.players, otherAgent, self.numberOfPlayers)
+            otherAgent_infer_helper("room", self.players, otherAgent, self.numberOfPlayers)
+
+            base_value = self.players[otherAgent].getBaseValue()
+            prev_base_value = self.players[otherAgent].base_value_general
+            if base_value == 0:
+                continue
+            ## deal with suspect
+            for ele in self.players[otherAgent].suspect_possibly_have.keys():
+                if base_value >= prev_base_value:
+                    self.players[otherAgent].suspect_possibly_have[ele] = max(self.players[otherAgent].suspect_possibly_have[ele], base_value)
+                else:  ## base_value < prev_base_value
+                    if self.players[otherAgent].suspect_possibly_have[ele] <= prev_base_value:
+                        self.players[otherAgent].suspect_possibly_have[ele] = base_value
+                    else:
+                        pass
+            ## deal with weapon
+            for ele in self.players[otherAgent].weapon_possibly_have.keys():
+                if base_value >= prev_base_value:
+                    self.players[otherAgent].weapon_possibly_have[ele] = max(self.players[otherAgent].weapon_possibly_have[ele], base_value)
+                else:  ## base_value < prev_base_value
+                    if self.players[otherAgent].weapon_possibly_have[ele] <= prev_base_value:
+                        self.players[otherAgent].weapon_possibly_have[ele] = base_value
+                    else:
+                        pass
+            ## deal with room
+            for ele in self.players[otherAgent].room_possibly_have.keys():
+                if base_value >= prev_base_value:
+                    self.players[otherAgent].room_possibly_have[ele] = max(self.players[otherAgent].room_possibly_have[ele], base_value)
+                else:  ## base_value < prev_base_value
+                    if self.players[otherAgent].room_possibly_have[ele] <= prev_base_value:
+                        self.players[otherAgent].room_possibly_have[ele] = base_value
+                    else:
+                        pass
+
+            self.players[otherAgent].set_defaultBaseValue(general_value=base_value)
+            
 
     def magnifierCheck(self):
         """
         magnifer check by other players doesn't bring extra straightforward info here, we'll skip those cases
         """
-        magnifierResult = input("Enter player you check and the card you get, separated by ,")
+        magnifierResult = input("Enter player you check and the card you get, separated by ,\n")
         playerName, cardGot = magnifierResult.split(",")[0].strip(), magnifierResult.split(",")[1].strip() 
         ## determine what card is this
         if cardGot in LIST_SUSPECT:
@@ -313,10 +401,10 @@ class Advisor:
                 del self.players[playerName].suspect_possibly_have[cardGot]
                 ## put the cardGot in must-not-have in other agent, and remove from their possibly have as well
                 for other_agent in [x for x in self.players.keys() if x != playerName]:
-                    if cardGot in self.players[other_agent].suspect_possibly_have:
+                    if cardGot in self.players[other_agent].suspect_possibly_have.keys():
                         self.players[other_agent].update_suspect_must_not_have(cardGot)
                         del self.players[other_agent].suspect_possibly_have[cardGot]
-            elif cardGot in self.players[playerName].suspect_must_not_have.keys():
+            elif cardGot in self.players[playerName].suspect_must_not_have:
                 raiseExceptions("impossible to catch a card in must-not-have class, set up wrong, or someone forgets to give a card")
         elif cardGot in LIST_WEAPON:
             if cardGot in self.players[playerName].weapon_possibly_have.keys():
@@ -324,10 +412,10 @@ class Advisor:
                 del self.players[playerName].weapon_possibly_have[cardGot]
                 ## put the cardGot in must-not-have in other agent, and remove from their possibly have as well
                 for other_agent in [x for x in self.players.keys() if x != playerName]:
-                    if cardGot in self.players[other_agent].weapon_possibly_have:
+                    if cardGot in self.players[other_agent].weapon_possibly_have.keys():
                         self.players[other_agent].update_weapon_must_not_have(cardGot)
                         del self.players[other_agent].weapon_possibly_have[cardGot]
-            elif cardGot in self.players[playerName].weapon_must_not_have.keys():
+            elif cardGot in self.players[playerName].weapon_must_not_have:
                 raiseExceptions("impossible to catch a card in must-not-have class, set up wrong, or someone forgets to give a card")
         elif cardGot in LIST_ROOM:
             if cardGot in self.players[playerName].room_possibly_have.keys():
@@ -335,10 +423,10 @@ class Advisor:
                 del self.players[playerName].room_possibly_have[cardGot]
                 ## put the cardGot in must-not-have in other agent, and remove from their possibly have as well
                 for other_agent in [x for x in self.players.keys() if x != playerName]:
-                    if cardGot in self.players[other_agent].room_possibly_have:
+                    if cardGot in self.players[other_agent].room_possibly_have.keys():
                         self.players[other_agent].update_room_must_not_have(cardGot)
                         del self.players[other_agent].room_possibly_have[cardGot]
-            elif cardGot in self.players[playerName].room_must_not_have.keys():
+            elif cardGot in self.players[playerName].room_must_not_have:
                 raiseExceptions("impossible to catch a card in must-not-have class, set up wrong, or someone forgets to give a card")
         else:
             raiseExceptions("invalid card type in magnifier method")
