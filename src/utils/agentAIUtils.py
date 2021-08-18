@@ -281,21 +281,24 @@ def otherAgent_turnUpdate_3cardsCase(claimer, claim_suspect, claim_weapon, claim
         pass
     elif cardsInMustHave == 2:
         if SuspectMustHavePlayer != None and WeaponMustHavePlayer != None:
-            playerHashmap[card_givers[2]].update_room_must_have(claim_room)
-            del playerHashmap[card_givers[2]].room_possibly_have[claim_room]
-            for twoOther in card_givers[0:2]:
+            thePlayer = [x for x in card_givers if x!= SuspectMustHavePlayer and x!= WeaponMustHavePlayer][0]
+            playerHashmap[thePlayer].update_room_must_have(claim_room)
+            del playerHashmap[thePlayer].room_possibly_have[claim_room]
+            for twoOther in [SuspectMustHavePlayer, WeaponMustHavePlayer]:
                 playerHashmap[twoOther].update_room_must_not_have(claim_room)
                 del playerHashmap[twoOther].room_possiblly_have[claim_room]
         elif SuspectMustHavePlayer != None and RoomMustHavePlayer != None:
-            playerHashmap[card_givers[1]].udpate_weapon_must_have(claim_weapon)
-            del playerHashmap[card_givers[1]].weapon_possibly_have[claim_weapon]
-            for twoOther in [x for x in card_givers if x != card_givers[1]]:
+            thePlayer = [x for x in card_givers if x!= SuspectMustHavePlayer and x!= RoomMustHavePlayer][0]
+            playerHashmap[thePlayer].udpate_weapon_must_have(claim_weapon)
+            del playerHashmap[thePlayer].weapon_possibly_have[claim_weapon]
+            for twoOther in [SuspectMustHavePlayer, RoomMustHavePlayer]:
                 playerHashmap[twoOther].update_weapon_must_not_have(claim_weapon)
                 del playerHashmap[twoOther].weapon_possiblly_have[claim_weapon]
         elif WeaponMustHavePlayer != None and RoomMustHavePlayer != None:
-            playerHashmap[card_givers[0]].udpate_suspect_must_have(claim_suspect)
-            del playerHashmap[card_givers[0]].suspect_possibly_have[claim_suspect]
-            for twoOther in [x for x in card_givers[1:]]:
+            thePlayer = [x for x in card_givers if x!= WeaponMustHavePlayer and x!= RoomMustHavePlayer][0]
+            playerHashmap[thePlayer].udpate_suspect_must_have(claim_suspect)
+            del playerHashmap[thePlayer].suspect_possibly_have[claim_suspect]
+            for twoOther in [WeaponMustHavePlayer, RoomMustHavePlayer]:
                 playerHashmap[twoOther].update_suspect_must_not_have(claim_suspect)
                 del playerHashmap[twoOther].suspect_possiblly_have[claim_suspect]
         
