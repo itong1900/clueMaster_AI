@@ -286,21 +286,24 @@ def otherAgent_turnUpdate_3cardsCase(claimer, claim_suspect, claim_weapon, claim
             del playerHashmap[thePlayer].room_possibly_have[claim_room]
             for twoOther in [SuspectMustHavePlayer, WeaponMustHavePlayer]:
                 playerHashmap[twoOther].update_room_must_not_have(claim_room)
-                del playerHashmap[twoOther].room_possiblly_have[claim_room]
+                if claim_room in playerHashmap[twoOther].room_possibly_have.keys():
+                    del playerHashmap[twoOther].room_possibly_have[claim_room]
         elif SuspectMustHavePlayer != None and RoomMustHavePlayer != None:
             thePlayer = [x for x in card_givers if x!= SuspectMustHavePlayer and x!= RoomMustHavePlayer][0]
             playerHashmap[thePlayer].udpate_weapon_must_have(claim_weapon)
             del playerHashmap[thePlayer].weapon_possibly_have[claim_weapon]
             for twoOther in [SuspectMustHavePlayer, RoomMustHavePlayer]:
                 playerHashmap[twoOther].update_weapon_must_not_have(claim_weapon)
-                del playerHashmap[twoOther].weapon_possiblly_have[claim_weapon]
+                if claim_weapon in playerHashmap[twoOther].weapon_possibly_have.keys():
+                    del playerHashmap[twoOther].weapon_possibly_have[claim_weapon]
         elif WeaponMustHavePlayer != None and RoomMustHavePlayer != None:
             thePlayer = [x for x in card_givers if x!= WeaponMustHavePlayer and x!= RoomMustHavePlayer][0]
             playerHashmap[thePlayer].udpate_suspect_must_have(claim_suspect)
             del playerHashmap[thePlayer].suspect_possibly_have[claim_suspect]
             for twoOther in [WeaponMustHavePlayer, RoomMustHavePlayer]:
                 playerHashmap[twoOther].update_suspect_must_not_have(claim_suspect)
-                del playerHashmap[twoOther].suspect_possiblly_have[claim_suspect]
+                if claim_suspect in playerHashmap[twoOther].suspect_possibly_have.keys():
+                    del playerHashmap[twoOther].suspect_possibly_have[claim_suspect]
         
     elif cardsInMustHave == 1:
         ## figure out which card is the one in must-have
