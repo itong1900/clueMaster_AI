@@ -11,7 +11,7 @@ from agentAIUtils import myself_turn_players_update
 from agentAIUtils import secret_infer_helper
 from agentAIUtils import otherAgent_infer_helper
 from agentAIUtils import otherAgent_turnUpdate_3cardsCase
-
+from agentAIUtils import otherAgent_turnUpdate_0cardsCase
 
 
 
@@ -100,7 +100,7 @@ class Advisor:
         oppoQuery_suspect, oppoQuery_weapon, oppoQuery_room = oppoQuery.split(",")[0].strip(), oppoQuery.split(",")[1].strip(), oppoQuery.split(",")[2].strip()
         
         cardGivers = input("Player(s) who give a card(including yourself, Enter None if no ones) : ")
-        cardGivers_list = [x.strip() for x in cardGivers.split(",")]
+        cardGivers_list = [] if cardGivers == "None" else [x.strip() for x in cardGivers.split(",")]
         cardNumber = 0 if cardGivers == "None" else len(cardGivers_list)
 
         self.udpate_log(whose_turn, oppoQuery_suspect, oppoQuery_weapon, oppoQuery_room, cardNumber, cardGivers_list)
@@ -325,7 +325,7 @@ class Advisor:
         elif cards_received == 1:
             pass
         elif cards_received == 0:
-            pass
+            otherAgent_turnUpdate_0cardsCase(player_makeQuery, claim_suspect, claim_weapon, claim_room, self.players)
 
 
 

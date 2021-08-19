@@ -247,7 +247,9 @@ def otherAgent_infer_helper(ObjectDealing, playerHashmap, playerName, playerQuan
                 del playerHashmap[playerName].room_possibly_have[ele]
 
 
-
+# ===============
+# Method to handle when other player makes a claim and there's 3 cardgivers
+# ===============
 def otherAgent_turnUpdate_3cardsCase(claimer, claim_suspect, claim_weapon, claim_room, card_givers, playerHashmap):
     """
     card_givers will always be an array with 3 elements
@@ -326,6 +328,69 @@ def otherAgent_turnUpdate_3cardsCase(claimer, claim_suspect, claim_weapon, claim
             playerHashmap[related_player].update_weapon_possibly_have(claim_weapon, 1/3)
             playerHashmap[related_player].update_room_possibly_have(claim_room, 1/3)
 
+
+# ===============
+# Method to handle when other player makes a claim and there's 0 cardgivers
+# ===============
+def otherAgent_turnUpdate_0cardsCase(claimer, claim_suspect, claim_weapon, claim_room, playerHashmap):
+    """
+    There's always no card_givers in this case
+    """
+    ## Handle claim_suspect, players other than secret or claimer must not have claim_suspect, can be optimzed here TODO 
+    for otherPlayer in [x for x in playerHashmap.keys() if x != claimer and x != "secret"]:
+        playerHashmap[otherPlayer].move_ele_possibly_to_must_not_have(claim_suspect)
+    ## if claim_suspect in secret or claimer's must-have, do nothing, ADD cheat score to claimer HERE TODO
+    if claim_suspect in playerHashmap["secret"].suspect_must_have:
+        pass  ## do nothing
+    elif claim_suspect in playerHashmap["secret"].suspect_must_not_have:
+        ## move claim_suspect to claimer's suspect_must_have
+        playerHashmap[claimer].move_ele_possibly_to_must_have(claim_suspect)
+    elif claim_suspect in playerHashmap[claimer].suspect_must_have:
+        pass ## do nothing
+    elif claim_suspect in playerHashmap[claimer].suspect_must_not_have:
+        ## move claim_suspect to secret's suspect_must_have
+        playerHashmap["secret"].move_ele_possibly_to_must_have(claim_suspect)
+    else:  ## update claimer and secret's possilby have
+        playerHashmap[claimer].update_suspect_possibly_have(claim_suspect, 1/2)
+        playerHashmap["secret"].update_suspect_possibly_have(claim_suspect, 1/2)
+
+    
+    ## Handle claim_weapon, players other than secret or claimer must not have claim_weapon, can be optimzed here TODO 
+    for otherPlayer in [x for x in playerHashmap.keys() if x != claimer and x != "secret"]:
+        playerHashmap[otherPlayer].move_ele_possibly_to_must_not_have(claim_weapon)
+    ## if claim_weapon in secret or claimer's must-have, do nothing, ADD cheat score to claimer HERE TODO
+    if claim_weapon in playerHashmap["secret"].weapon_must_have:
+        pass  ## do nothing
+    elif claim_weapon in playerHashmap["secret"].weapon_must_not_have:
+        ## move claim_weapon to claimer's weapon_must_have
+        playerHashmap[claimer].move_ele_possibly_to_must_have(claim_weapon)
+    elif claim_weapon in playerHashmap[claimer].weapon_must_have:
+        pass ## do nothing
+    elif claim_weapon in playerHashmap[claimer].weapon_must_not_have:
+        ## move claim_weapon to secret's weapon_must_have
+        playerHashmap["secret"].move_ele_possibly_to_must_have(claim_weapon)
+    else:  ## update claimer and secret's possilby have
+        playerHashmap[claimer].update_weapon_possibly_have(claim_weapon, 1/2)
+        playerHashmap["secret"].update_weapon_possibly_have(claim_weapon, 1/2)
+
+    
+    ## Handle claim_room, players other than secret or claimer must not have claim_room, can be optimzed here TODO 
+    for otherPlayer in [x for x in playerHashmap.keys() if x != claimer and x != "secret"]:
+        playerHashmap[otherPlayer].move_ele_possibly_to_must_not_have(claim_room)
+    ## if claim_room in secret or claimer's must-have, do nothing, ADD cheat score to claimer HERE TODO
+    if claim_room in playerHashmap["secret"].room_must_have:
+        pass  ## do nothing
+    elif claim_room in playerHashmap["secret"].room_must_not_have:
+        ## move claim_room to claimer's room_must_have
+        playerHashmap[claimer].move_ele_possibly_to_must_have(claim_room)
+    elif claim_room in playerHashmap[claimer].room_must_have:
+        pass ## do nothing
+    elif claim_room in playerHashmap[claimer].room_must_not_have:
+        ## move claim_room to secret's room_must_have
+        playerHashmap["secret"].move_ele_possibly_to_must_have(claim_room)
+    else:  ## update claimer and secret's possilby have
+        playerHashmap[claimer].update_room_possibly_have(claim_room, 1/2)
+        playerHashmap["secret"].update_room_possibly_have(claim_room, 1/2)
 
 
 ## A helper method for otherturn handler

@@ -340,8 +340,8 @@ class TestAdvisor(unittest.TestCase):
     "Next turn", "myself", "Mme. Rose, Poison, Gazebo", "None, None, Michael", 
     "Next turn", "myself", "Mme. Rose, Poison, Drawing Room", "None, None, Michael",
     "Magnifier", "Mia, Kitchen",
-    "Magnifier", "Jane, Horseshoe",
-    "Query","Log","Exit"])
+    "Magnifier", "Jane, Horseshoe", "Exit"])
+    #"Query","Log","Exit"])
     def test_Game7(self, mock_inputs):
         Advisor7 = Advisor(4)
 
@@ -408,8 +408,8 @@ class TestAdvisor(unittest.TestCase):
     "Next turn", "myself", "Miss Peach, Horseshoe ,Gazebo", "Michael, Jane, None",
     "Next turn", "myself", "Mme. Rose, Poison, Gazebo", "None, None, Michael", 
     "Next turn", "Michael", "Mrs White, Lead Pipe, Fountain", "myself, Mia, Jane",
-    "Next turn", "Jane", "Mrs Peacock, Rope, Conservatory", "Mia, Michael, myself",
-    "Query","Player_Summary","Michael","Exit"])
+    "Next turn", "Jane", "Mrs Peacock, Rope, Conservatory", "Mia, Michael, myself", "Exit"])
+    #"Query","Player_Summary","Michael","Exit"])
     def test_Game8(self, mock_inputs):
         Advisor8 = Advisor(4)
 
@@ -475,7 +475,7 @@ class TestAdvisor(unittest.TestCase):
     "Next turn", "Michael", "Mrs White, Lead Pipe, Fountain", "myself, Mia, Jane",
     "Next turn", "Jane", "Mrs Peacock, Rope, Conservatory", "Mia, Michael, myself",
     "Next turn", "Mia", "Miss Scarlet, Horseshoe, Drawing Room", "myself, Jane, Michael",
-    "Query","Log","Exit"])
+    "Exit"])
     def test_Game9(self, mock_inputs):
         Advisor9 = Advisor(4)
 
@@ -530,6 +530,23 @@ class TestAdvisor(unittest.TestCase):
         self.assertEqual(Advisor9.players["secret"].room_must_not_have,{"Carriage House", "Conservatory", "Library", "Gazebo","Fountain", "Drawing Room"})
         self.assertEqual(Advisor9.players["secret"].room_possibly_have, {"Kitchen": 1/6, "Trophy Room": 1/6, "Dining Room": 1/6, 
         "Courtyard": 1/6, "Billiard Room": 1/6, "Studio": 1/6})
+
+
+    
+    # Advisor 10
+    # 
+    @patch("builtins.input", side_effect = ["7", "Miss Scarlet, Mr. Green, Mrs White", "Candlestick, Knife", "Carriage House, Conservatory","Mia, 7", "Michael, 6","Jane,7",
+    "Next turn", "myself", "Mrs Peacock, Rope, Library", "Mia, Michael, Jane",
+    "Next turn", "myself", "Miss Peach, Horseshoe ,Gazebo", "Michael, Jane, None",
+    "Next turn", "myself", "Mme. Rose, Poison, Gazebo", "None, None, Michael", 
+    "Query", "Player_Summary", "Michael", "Exit"])
+    def test_Game10(self, mock_inputs):
+        Advisor10 = Advisor(4)
+
+        self.assertEqual(Advisor10.players["Michael"].suspect_must_have, {"Miss Peach"})
+        self.assertEqual(Advisor10.players["Michael"].suspect_must_not_have, {"Miss Scarlet", "Mr. Green", "Mrs White", "Mrs Peacock"})
+
+
 
 
 if __name__ == '__main__':
