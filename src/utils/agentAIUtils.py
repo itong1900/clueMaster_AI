@@ -2,7 +2,9 @@
 
 from logging import raiseExceptions
 
-
+# ===============
+# A global search method that check if item_checking is in any of player's must have
+# ===============
 def search_in_must_have(playersHashMap, item_checking, LIST_SUSPECT, LIST_WEAPON, LIST_ROOM):
     '''
     return who has the item or None if no one has it.
@@ -31,6 +33,9 @@ def search_in_must_have(playersHashMap, item_checking, LIST_SUSPECT, LIST_WEAPON
     return "None"
 
 
+# ===============
+# General update to the hashmaps in myself turn cases
+# ===============
 def myself_turn_players_update(ObjectDealing ,not_in_must_have, card_giver, card_giver_list, playersHashmap, claim_object, cards_received):
 
     if ObjectDealing == "suspect":
@@ -136,9 +141,9 @@ def myself_turn_players_update(ObjectDealing ,not_in_must_have, card_giver, card
             pass
 
 
-
-
-
+# ===============
+# Make necessary inference and update to secret agent after each round's update
+# ===============
 def secret_infer_helper(ObjectDealing, LIST_XXX, playersHashmap):
     if ObjectDealing == "suspect":
         if len(playersHashmap["secret"].suspect_must_have) == 0:
@@ -223,6 +228,9 @@ def secret_infer_helper(ObjectDealing, LIST_XXX, playersHashmap):
                 playersHashmap["secret"].room_possibly_have = {}
 
 
+# ===============
+# Make necessary inference and update to otherAgent after each round's update
+# ===============
 def otherAgent_infer_helper(ObjectDealing, playerHashmap, playerName, playerQuantity):
     if ObjectDealing == "suspect":
         for ele in playerHashmap[playerName].suspect_possibly_have.keys():
