@@ -248,12 +248,6 @@ class Advisor:
 
     def player_summary(self, player_name):
         print(player_name)
-        print("\n suspect must have:  ")
-        self.players[player_name].display_suspect_must_have()
-        print("\n weapon must have:  ")
-        self.players[player_name].display_weapon_must_have()
-        print("\n room must have:  ")
-        self.players[player_name].display_room_must_have()
         
         if player_name != "secret":
             print("\n Base Value: ", self.players[player_name].base_value_general)
@@ -262,18 +256,27 @@ class Advisor:
             print("\n Weapon Base Value: ", self.players[player_name].base_value_secret_weapon)
             print("\n Room Base Value: ", self.players[player_name].base_value_secret_room)
         
+        print("\n suspect must have:  ")
+        self.players[player_name].display_suspect_must_have()
         print("\n suspect probably have:  ")
         self.players[player_name].display_suspect_possibly_have()
-        print("\n weapon probably have:  ")
-        self.players[player_name].display_weapon_possibly_have()
-        print("\n room probably have:  ")
-        self.players[player_name].display_room_possibly_have()
         print("\n suspect must not have:  ")
         self.players[player_name].display_suspect_must_not_have()
+
+        print("\n weapon must have:  ")
+        self.players[player_name].display_weapon_must_have()
+        print("\n weapon probably have:  ")
+        self.players[player_name].display_weapon_possibly_have()
         print("\n weapon must not have:  ")
         self.players[player_name].display_weapon_must_not_have()
+        
+        print("\n room must have:  ")
+        self.players[player_name].display_room_must_have()
+        print("\n room probably have:  ")
+        self.players[player_name].display_room_possibly_have()
         print("\n room must not have:  ")
         self.players[player_name].display_room_must_not_have()
+
 
 
     def display_log(self):

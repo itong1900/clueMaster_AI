@@ -386,11 +386,11 @@ def otherAgent_turnUpdate_1cardsCase(claimer, claim_suspect, claim_weapon, claim
     ## deal with weapon, check how many among the 3 potential got claim_weapon in must-not-have
     player_with_claim_weapon_in_must_not_have = get_potential_must_not_have_helper(claim_weapon, playerHashmap, potential_players)
     complement_set_player_claim_weapon = [x for x in potential_players if x not in player_with_claim_weapon_in_must_not_have and x != player_must_have_claim_weapon]
-    print("potential player: ",potential_players)
-    print("player_with_claim_weapon_in_must_not_have: ",player_with_claim_weapon_in_must_not_have)
-    print("player_must_have_claim_weapon: ",player_must_have_claim_weapon)
-    print("len(complement_set_player_claim_weapon): ", len(complement_set_player_claim_weapon))
-    print("complement_set_player_claim_weapon: ", complement_set_player_claim_weapon)
+    # print("potential player: ",potential_players)
+    # print("player_with_claim_weapon_in_must_not_have: ",player_with_claim_weapon_in_must_not_have)
+    # print("player_must_have_claim_weapon: ",player_must_have_claim_weapon)
+    # print("len(complement_set_player_claim_weapon): ", len(complement_set_player_claim_weapon))
+    # print("complement_set_player_claim_weapon: ", complement_set_player_claim_weapon)
     if len(complement_set_player_claim_weapon) == 1:
         player_to_update = complement_set_player_claim_weapon[0]
         playerHashmap[player_to_update].move_ele_possibly_to_must_have(claim_weapon)
