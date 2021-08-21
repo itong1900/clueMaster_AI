@@ -369,53 +369,48 @@ def otherAgent_turnUpdate_1cardsCase(claimer, claim_suspect, claim_weapon, claim
         playerHashmap[non_related_players].move_ele_possibly_to_must_not_have(claim_suspect)
         playerHashmap[non_related_players].move_ele_possibly_to_must_not_have(claim_weapon)
         playerHashmap[non_related_players].move_ele_possibly_to_must_not_have(claim_room)
-    if total_in_must_have == 3:
-        pass # do nothing
-    elif total_in_must_have == 0:
-        ## deal with suspect, check how many among the 3 potential got claim_suspect in must-not-have
-        player_with_claim_suspect_in_must_not_have = get_potential_must_not_have_helper(claim_suspect, playerHashmap, potential_players)
-        if len(player_with_claim_suspect_in_must_not_have) == 3:
-            raiseExceptions("Impossible to happen, someone violates the rule")
-        elif len(player_with_claim_suspect_in_must_not_have) == 2:  ## if two out of 3 potential are in must-not-have, make direct inference 
-            player_to_update = [x for x in potential_players if x not in player_with_claim_suspect_in_must_not_have][0]
-            playerHashmap[player_to_update].move_ele_possibly_to_must_have(claim_suspect)
-        elif len(player_with_claim_suspect_in_must_not_have) == 1:
-            player_to_update = [x for x in potential_players if x not in player_with_claim_suspect_in_must_not_have]
-            for i in player_to_update:
-                playerHashmap[i].update_suspect_possibly_have(claim_suspect, 1/2)
-        else: # len(player_with_claim_suspect_in_must_not_have) == 0:
-            for i in potential_players:
-                playerHashmap[i].update_suspect_possibly_have(claim_suspect, 1/3)
-        ## same logic for weapon and room
-        ## deal with weapon, check how many among the 3 potential got claim_weapon in must-not-have
-        player_with_claim_weapon_in_must_not_have = get_potential_must_not_have_helper(claim_weapon, playerHashmap, potential_players)
-        if len(player_with_claim_weapon_in_must_not_have) == 3:
-            raiseExceptions("Impossible to happen, someone violates the rule")
-        elif len(player_with_claim_weapon_in_must_not_have) == 2:  ## if two out of 3 potential are in must-not-have, make direct inference 
-            player_to_update = [x for x in potential_players if x not in player_with_claim_weapon_in_must_not_have][0]
-            playerHashmap[player_to_update].move_ele_possibly_to_must_have(claim_weapon)
-        elif len(player_with_claim_weapon_in_must_not_have) == 1:
-            player_to_update = [x for x in potential_players if x not in player_with_claim_weapon_in_must_not_have]
-            for i in player_to_update:
-                playerHashmap[i].update_weapon_possibly_have(claim_weapon, 1/2)
-        else: # len(player_with_claim_weapon_in_must_not_have) == 0:
-            for i in potential_players:
-                playerHashmap[i].update_weapon_possibly_have(claim_weapon, 1/3)
-        ## deal with room, check how many among the 3 potential got claim_room in must-not-have
-        player_with_claim_room_in_must_not_have = get_potential_must_not_have_helper(claim_room, playerHashmap, potential_players)
-        if len(player_with_claim_room_in_must_not_have) == 3:
-            raiseExceptions("Impossible to happen, someone violates the rule")
-        elif len(player_with_claim_room_in_must_not_have) == 2:  ## if two out of 3 potential are in must-not-have, make direct inference 
-            player_to_update = [x for x in potential_players if x not in player_with_claim_room_in_must_not_have][0]
-            playerHashmap[player_to_update].move_ele_possibly_to_must_have(claim_room)
-        elif len(player_with_claim_room_in_must_not_have) == 1:
-            player_to_update = [x for x in potential_players if x not in player_with_claim_room_in_must_not_have]
-            for i in player_to_update:
-                playerHashmap[i].update_room_possibly_have(claim_room, 1/2)
-        else: # len(player_with_claim_room_in_must_not_have) == 0:
-            for i in potential_players:
-                playerHashmap[i].update_room_possibly_have(claim_room, 1/3)
 
+    ## deal with suspect, check how many among the 3 potential got claim_suspect in must-not-have
+    player_with_claim_suspect_in_must_not_have = get_potential_must_not_have_helper(claim_suspect, playerHashmap, potential_players)
+    complement_set_player_claim_suspect = [x for x in potential_players if x not in player_with_claim_suspect_in_must_not_have]
+    if len(complement_set_player_claim_suspect) == 1:
+        player_to_update = complement_set_player_claim_suspect[0]
+        playerHashmap[player_to_update].move_ele_possibly_to_must_have(claim_suspect)
+    elif len(complement_set_player_claim_suspect) == 2:
+        player_to_update = complement_set_player_claim_suspect
+        for i in player_to_update:
+            playerHashmap[i].update_suspect_possibly_have(claim_suspect, 1/2)
+    else: # len(complement_set_player_claim_suspect) == 3:
+        for i in potential_players:
+            playerHashmap[i].update_suspect_possibly_have(claim_suspect, 1/3)
+    
+    ## deal with weapon, check how many among the 3 potential got claim_weapon in must-not-have
+    player_with_claim_weapon_in_must_not_have = get_potential_must_not_have_helper(claim_weapon, playerHashmap, potential_players)
+    complement_set_player_claim_weapon = [x for x in potential_players if x not in player_with_claim_weapon_in_must_not_have]
+    if len(complement_set_player_claim_weapon) == 1:
+        player_to_update = complement_set_player_claim_weapon[0]
+        playerHashmap[player_to_update].move_ele_possibly_to_must_have(claim_weapon)
+    elif len(complement_set_player_claim_weapon) == 2:
+        player_to_update = complement_set_player_claim_weapon
+        for i in player_to_update:
+            playerHashmap[i].update_weapon_possibly_have(claim_weapon, 1/2)
+    else: # len(complement_set_player_claim_weapon) == 3:
+        for i in potential_players:
+            playerHashmap[i].update_weapon_possibly_have(claim_weapon, 1/3)
+
+    ## deal with room, check how many among the 3 potential got claim_room in must-not-have
+    player_with_claim_room_in_must_not_have = get_potential_must_not_have_helper(claim_room, playerHashmap, potential_players)
+    complement_set_player_claim_room = [x for x in potential_players if x not in player_with_claim_room_in_must_not_have]
+    if len(complement_set_player_claim_room) == 1:
+        player_to_update = complement_set_player_claim_room[0]
+        playerHashmap[player_to_update].move_ele_possibly_to_must_have(claim_room)
+    elif len(complement_set_player_claim_room) == 2:
+        player_to_update = complement_set_player_claim_room
+        for i in player_to_update:
+            playerHashmap[i].update_room_possibly_have(claim_room, 1/2)
+    else: # len(complement_set_player_claim_room) == 3:
+        for i in potential_players:
+            playerHashmap[i].update_room_possibly_have(claim_room, 1/3)
         
 
 # ========
