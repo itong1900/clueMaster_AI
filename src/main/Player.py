@@ -182,7 +182,7 @@ class Player:
         elif checkItem in LIST_ROOM:
             return checkItem in self.room_must_have
 
-
+    ## check if the ele in possibly set, if so, move to must_have
     def move_ele_possibly_to_must_have(self, ele):
         """
         move an ele from possibly-have set to must-have set
@@ -200,7 +200,7 @@ class Player:
                 del self.room_possibly_have[ele]
             self.update_room_must_have(ele)
 
-
+    ## check if the ele in possibly set, if so, move to must_not_have
     def move_ele_possibly_to_must_not_have(self, ele):
         """
         move an ele from possibly-have set to must-not-have set

@@ -43,6 +43,7 @@ class Advisor:
             if action == "Next turn":
                 whose_turn = input("Whose turn is this: ")
                 if whose_turn == "myself":
+                    self.recommendation()
                     self.update_myturn()
                     self.AI_unit_myselfTurn_update()
                     #break
@@ -85,6 +86,8 @@ class Advisor:
             self.players["secret"].display_weapon_must_have()
             self.players["secret"].display_room_must_have()
 
+    def recommendation(self):
+        pass
 
     def update_myturn(self):
         myQuery = input("My Claim:  ")
