@@ -330,9 +330,9 @@ class Advisor:
         """
         This method make straight forward inferences after each round and rebalance the score of secret agent after each round.
         """
-        secret_infer_helper("suspect", LIST_SUSPECT, self.players)
-        secret_infer_helper("weapon", LIST_WEAPON, self.players)
-        secret_infer_helper("room", LIST_ROOM, self.players)
+        secret_infer_helper("suspect", LIST_SUSPECT, self.players, self.numberOfPlayers)
+        secret_infer_helper("weapon", LIST_WEAPON, self.players, self.numberOfPlayers)
+        secret_infer_helper("room", LIST_ROOM, self.players, self.numberOfPlayers)
 
         ## Rebalance here
         base_value_suspect_secret = self.players["secret"].getSecretBaseValue_suspect()

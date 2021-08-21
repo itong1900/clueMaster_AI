@@ -150,23 +150,15 @@ def myself_turn_players_update(ObjectDealing ,not_in_must_have, card_giver, card
 # ===============
 # Make necessary inference and update to secret agent after each round's update
 # ===============
-def secret_infer_helper(ObjectDealing, LIST_XXX, playersHashmap):
+def secret_infer_helper(ObjectDealing, LIST_XXX, playersHashmap, numberOfPlayers):
     if ObjectDealing == "suspect":
         if len(playersHashmap["secret"].suspect_must_have) == 0:
             suspect_found = "None"
             for suspect_poss in LIST_XXX:
-                flag = "This One"
-                for player in [x for x in playersHashmap.keys() if x != "secret"]:
-                    if suspect_poss in playersHashmap[player].suspect_must_not_have:
-                        continue
-                    else:
-                        flag = "Not this One"
-                        break
-                if flag == "This One":
+                results = [playersHashmap[x].check_in_must_not_have(suspect_poss) for x in playersHashmap.keys() if x != "secret"]
+                in_all_other_must_not_have = True if sum(results) == numberOfPlayers else False
+                if in_all_other_must_not_have:
                     suspect_found = suspect_poss
-                    break
-                elif flag == "Not this One":
-                    continue
             # if None is found, do nothing, otherwise, make inference
             if suspect_found == "None":
                 pass
@@ -178,22 +170,19 @@ def secret_infer_helper(ObjectDealing, LIST_XXX, playersHashmap):
                 for ele in playersHashmap["secret"].suspect_possibly_have.keys():
                     playersHashmap["secret"].update_suspect_must_not_have(ele)
                 playersHashmap["secret"].suspect_possibly_have = {}
+        else: ## when something is added to suspect_must_have in seceret, clean the possibly set
+            if len(playersHashmap["secret"].suspect_possibly_have):
+                for ele in playersHashmap["secret"].suspect_possibly_have.keys():
+                    playersHashmap["secret"].update_suspect_must_not_have(ele)
+                playersHashmap["secret"].suspect_possibly_have = {}
     elif ObjectDealing == "weapon":
         if len(playersHashmap["secret"].weapon_must_have) == 0:
             weapon_found = "None"
             for weapon_poss in LIST_XXX:
-                flag = "This One"
-                for player in [x for x in playersHashmap.keys() if x != "secret"]:
-                    if weapon_poss in playersHashmap[player].weapon_must_not_have:
-                        continue
-                    else:
-                        flag = "Not this One"
-                        break
-                if flag == "This One":
+                results = [playersHashmap[x].check_in_must_not_have(weapon_poss) for x in playersHashmap.keys() if x != "secret"]
+                in_all_other_must_not_have = True if sum(results) == numberOfPlayers else False
+                if in_all_other_must_not_have:
                     weapon_found = weapon_poss
-                    break
-                elif flag == "Not this One":
-                    continue
             # if None is found, do nothing, otherwise, make inference
             if weapon_found == "None":
                 pass
@@ -205,22 +194,19 @@ def secret_infer_helper(ObjectDealing, LIST_XXX, playersHashmap):
                 for ele in playersHashmap["secret"].weapon_possibly_have.keys():
                     playersHashmap["secret"].update_weapon_must_not_have(ele)
                 playersHashmap["secret"].weapon_possibly_have = {}
+        else: ## when something is added to weapon_must_have in seceret, clean the possibly set
+            if len(playersHashmap["secret"].weapon_possibly_have):
+                for ele in playersHashmap["secret"].weapon_possibly_have.keys():
+                    playersHashmap["secret"].update_weapon_must_not_have(ele)
+                playersHashmap["secret"].weapon_possibly_have = {}
     elif ObjectDealing == "room":
         if len(playersHashmap["secret"].room_must_have) == 0:
             room_found = "None"
             for room_poss in LIST_XXX:
-                flag = "This One"
-                for player in [x for x in playersHashmap.keys() if x != "secret"]:
-                    if room_poss in playersHashmap[player].room_must_not_have:
-                        continue
-                    else:
-                        flag = "Not this One"
-                        break
-                if flag == "This One":
+                results = [playersHashmap[x].check_in_must_not_have(room_poss) for x in playersHashmap.keys() if x != "secret"]
+                in_all_other_must_not_have = True if sum(results) == numberOfPlayers else False
+                if in_all_other_must_not_have:
                     room_found = room_poss
-                    break
-                elif flag == "Not this One":
-                    continue
             # if None is found, do nothing, otherwise, make inference
             if room_found == "None":
                 pass
@@ -229,6 +215,11 @@ def secret_infer_helper(ObjectDealing, LIST_XXX, playersHashmap):
                 playersHashmap["secret"].update_room_must_have(room_found)
                 del playersHashmap["secret"].room_possibly_have[room_found]
                 ## clean up the rest of possibly set, and move them to must-not-have class
+                for ele in playersHashmap["secret"].room_possibly_have.keys():
+                    playersHashmap["secret"].update_room_must_not_have(ele)
+                playersHashmap["secret"].room_possibly_have = {}
+        else: ## when something is added to room_must_have in seceret, clean the possibly set
+            if len(playersHashmap["secret"].room_possibly_have):
                 for ele in playersHashmap["secret"].room_possibly_have.keys():
                     playersHashmap["secret"].update_room_must_not_have(ele)
                 playersHashmap["secret"].room_possibly_have = {}
