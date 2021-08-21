@@ -789,5 +789,75 @@ class TestAdvisor(unittest.TestCase):
         self.assertEqual(Advisor13.players["secret"].room_possibly_have,{"Trophy Room": 1/2, "Dining Room": 1/7, "Drawing Room": 1/7, 
         "Courtyard": 1/7, "Fountain": 1/7, "Billiard Room": 1/7, "Studio": 1/2})
 
+
+    
+
+    # Adivisor 14
+    # Inherit Advisor9, to validate the otherAgent turn 2 cardgivers cases, randomly test it with score udpates, and direct inferences
+    @patch("builtins.input", side_effect = ["7", "Miss Scarlet, Mr. Green, Mrs White", "Candlestick, Knife", "Carriage House, Conservatory","Mia, 7", "Michael, 6","Jane,7",
+    "Next turn", "myself", "Mrs Peacock, Rope, Library", "Mia, Michael, Jane",
+    "Next turn", "myself", "Miss Peach, Horseshoe ,Gazebo", "Michael, Jane, None",
+    "Next turn", "myself", "Mme. Rose, Poison, Gazebo", "None, None, Michael", 
+    "Next turn", "Michael", "Mrs White, Lead Pipe, Fountain", "myself, Mia, Jane",
+    "Next turn", "Jane", "Mrs Peacock, Rope, Conservatory", "Mia, Michael, myself",
+    "Next turn", "Mia", "Miss Scarlet, Horseshoe, Drawing Room", "myself, Jane, Michael",
+    "Next turn", "Michael", "Mme. Rose, Revolver ,Courtyard", "Mia, Jane",
+    "Query", "Player_Summary", "Michael","Exit"])
+    def test_Game_14(self, mock_inpupts):
+        Advisor14 = Advisor(4)
+
+        self.assertEqual(Advisor14.players["Michael"].suspect_must_have, {"Miss Peach"})
+        self.assertEqual(Advisor14.players["Michael"].suspect_must_not_have, {"Miss Scarlet", "Mr. Green", "Mrs White", "Mrs Peacock"})
+        self.assertEqual(Advisor14.players["Michael"].suspect_possibly_have, {"Colonel Mustard": 2/14, "Professor Plum": 2/14, 
+        "Sgt. Gray": 2/14, "Monsieur Brunette": 2/14, "Mme. Rose": 1/2 + math.log(3/2, 5) })
+        self.assertEqual(Advisor14.players["Michael"].weapon_must_have, {"Rope"})
+        self.assertEqual(Advisor14.players["Michael"].weapon_must_not_have, {"Candlestick", "Knife", "Horseshoe", "Lead Pipe"})
+        self.assertEqual(Advisor14.players["Michael"].weapon_possibly_have, {"Revolver": 1/4, "Wrench": 2/14, "Poison": 1/2})
+        self.assertEqual(Advisor14.players["Michael"].room_must_have, {"Gazebo","Drawing Room"})
+        self.assertEqual(Advisor14.players["Michael"].room_must_not_have, {"Carriage House", "Conservatory", "Library", "Fountain"})
+        self.assertEqual(Advisor14.players["Michael"].room_possibly_have, {"Kitchen": 2/14, "Trophy Room": 2/14, "Dining Room": 2/14, 
+        "Courtyard": 1/4, "Billiard Room": 2/14, "Studio": 2/14})
+
+        self.assertEqual(Advisor14.players["Jane"].suspect_must_have,set())
+        self.assertEqual(Advisor14.players["Jane"].suspect_must_not_have, {"Miss Scarlet", "Mr. Green", "Mrs White", "Mrs Peacock", "Miss Peach", 
+        "Mme. Rose"})
+        self.assertEqual(Advisor14.players["Jane"].suspect_possibly_have, {"Colonel Mustard":5/14, "Professor Plum": 5/14, 
+        "Sgt. Gray": 5/14, "Monsieur Brunette": 5/14})
+        self.assertEqual(Advisor14.players["Jane"].weapon_must_have, {"Horseshoe"})
+        self.assertEqual(Advisor14.players["Jane"].weapon_must_not_have, {"Candlestick", "Knife", "Rope", "Poison"})
+        self.assertEqual(Advisor14.players["Jane"].weapon_possibly_have, {"Lead Pipe": 1/2, "Revolver": 5/14, "Wrench": 5/14 })
+        self.assertEqual(Advisor14.players["Jane"].room_must_have, {"Library"})
+        self.assertEqual(Advisor14.players["Jane"].room_must_not_have, {"Carriage House", "Conservatory", "Gazebo","Drawing Room"})
+        self.assertEqual(Advisor14.players["Jane"].room_possibly_have, {"Kitchen": 5/14, "Trophy Room":5/14, "Dining Room":5/14, 
+        "Courtyard":5/14, "Fountain":1/2, "Billiard Room":5/14, "Studio":5/14})
+                                                                        
+        self.assertEqual(Advisor14.players["Mia"].suspect_must_have,{"Mrs Peacock"})
+        self.assertEqual(Advisor14.players["Mia"].suspect_must_not_have, {"Miss Scarlet", "Mr. Green", "Mrs White", "Miss Peach", "Mme. Rose"})
+        self.assertEqual(Advisor14.players["Mia"].suspect_possibly_have, {"Colonel Mustard": 6/14, "Professor Plum": 6/14, 
+        "Sgt. Gray": 6/14, "Monsieur Brunette": 6/14})
+        self.assertEqual(Advisor14.players["Mia"].weapon_must_have, set())
+        self.assertEqual(Advisor14.players["Mia"].weapon_must_not_have, {"Candlestick", "Knife", "Rope", "Horseshoe", "Poison"})
+        self.assertEqual(Advisor14.players["Mia"].weapon_possibly_have, {"Lead Pipe": 1/2, "Revolver":6/14, "Wrench":6/14})
+        self.assertEqual(Advisor14.players["Mia"].room_must_have, set())
+        self.assertEqual(Advisor14.players["Mia"].room_must_not_have, {"Carriage House", "Conservatory", "Library", "Gazebo", "Drawing Room"})
+        self.assertEqual(Advisor14.players["Mia"].room_possibly_have, {"Kitchen": 6/14, "Trophy Room":6/14, "Dining Room":6/14, 
+        "Courtyard":6/14, "Fountain":1/2, "Billiard Room":6/14, "Studio":6/14})
+
+        self.assertEqual(Advisor14.players["secret"].suspect_must_have,set())
+        self.assertEqual(Advisor14.players["secret"].suspect_must_not_have,{"Miss Scarlet", "Mr. Green", "Mrs White", "Mrs Peacock", "Miss Peach"})
+        self.assertEqual(Advisor14.players["secret"].suspect_possibly_have, {"Colonel Mustard": 1/5, "Professor Plum": 1/5, 
+        "Sgt. Gray": 1/5, "Monsieur Brunette": 1/5, "Mme. Rose": 1/2 + math.log(0.5 + 1/2 + 1/2, 5)})
+
+        self.assertEqual(Advisor14.players["secret"].weapon_must_have,set())
+        self.assertEqual(Advisor14.players["secret"].weapon_must_not_have,{"Candlestick", "Knife", "Rope", "Horseshoe","Lead Pipe"})
+        self.assertEqual(Advisor14.players["secret"].weapon_possibly_have, {"Revolver": 1/3, "Wrench": 1/3, 
+        "Poison": 1/2})
+
+        self.assertEqual(Advisor14.players["secret"].room_must_have,set())
+        self.assertEqual(Advisor14.players["secret"].room_must_not_have,{"Carriage House", "Conservatory", "Library", "Gazebo","Fountain", "Drawing Room"})
+        self.assertEqual(Advisor14.players["secret"].room_possibly_have, {"Kitchen": 1/6, "Trophy Room": 1/6, "Dining Room": 1/6, 
+        "Courtyard": 1/4, "Billiard Room": 1/6, "Studio": 1/6})
+    
+
 if __name__ == '__main__':
     unittest.main()
