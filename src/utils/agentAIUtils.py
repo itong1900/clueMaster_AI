@@ -357,13 +357,13 @@ def first_True(array):
 def otherAgent_turnUpdate_1cardsCase(claimer, claim_suspect, claim_weapon, claim_room, card_giver, playerHashmap):
     potential_players = {"secret", claimer, card_giver[0]}
     ## check how many of claim objects are in must-have
-    player_must_have_claim_suspect = search_in_must_have(playerHashmap, claim_suspect, LIST_SUSPECT, LIST_WEAPON, LIST_ROOM)
-    player_must_have_claim_weapon = search_in_must_have(playerHashmap, claim_weapon, LIST_SUSPECT, LIST_WEAPON, LIST_ROOM)
-    player_must_have_claim_room = search_in_must_have(playerHashmap, claim_room, LIST_SUSPECT, LIST_WEAPON, LIST_ROOM)
-    total_in_must_have = 0
-    for i in [player_must_have_claim_suspect, player_must_have_claim_weapon, player_must_have_claim_room]:
-        if i != "None":
-            total_in_must_have +=1
+    # player_must_have_claim_suspect = search_in_must_have(playerHashmap, claim_suspect, LIST_SUSPECT, LIST_WEAPON, LIST_ROOM)
+    # player_must_have_claim_weapon = search_in_must_have(playerHashmap, claim_weapon, LIST_SUSPECT, LIST_WEAPON, LIST_ROOM)
+    # player_must_have_claim_room = search_in_must_have(playerHashmap, claim_room, LIST_SUSPECT, LIST_WEAPON, LIST_ROOM)
+    # total_in_must_have = 0
+    # for i in [player_must_have_claim_suspect, player_must_have_claim_weapon, player_must_have_claim_room]:
+    #     if i != "None":
+    #         total_in_must_have +=1
     ## remove the 3 cards from non_related_players first
     for non_related_players in [x for x in playerHashmap.keys() if x not in potential_players]:
         playerHashmap[non_related_players].move_ele_possibly_to_must_not_have(claim_suspect)
