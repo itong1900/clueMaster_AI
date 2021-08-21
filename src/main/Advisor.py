@@ -7,12 +7,14 @@ import pandas as pd
 import sys
 sys.path.append("../utils/")
 from agentAIUtils import search_in_must_have, myself_turn_players_update, secret_infer_helper, otherAgent_infer_helper, otherAgent_turnUpdate_3cardsCase, otherAgent_turnUpdate_OneTwo_cardsCase, otherAgent_turnUpdate_0cardsCase
+from recommenderAIUtils import magnifier_recom_system, turn_recom_system
+from config_CONST import LIST_SUSPECT, LIST_WEAPON, LIST_ROOM, Total_Number_of_Card
 
-global Total_Number_of_Card, LIST_SUSPECT, LIST_WEAPON, LIST_ROOM
-Total_Number_of_Card = 30
-LIST_SUSPECT = ["Miss Scarlet", "Mr. Green", "Mrs White", "Mrs Peacock", "Colonel Mustard", "Professor Plum", "Miss Peach", "Sgt. Gray", "Monsieur Brunette", "Mme. Rose"]
-LIST_WEAPON = ["Candlestick", "Knife", "Lead Pipe", "Revolver", "Rope", "Wrench", "Horseshoe", "Poison"]
-LIST_ROOM = ["Carriage House", "Conservatory", "Kitchen", "Trophy Room", "Dining Room", "Drawing Room", "Gazebo", "Courtyard", "Fountain", "Library", "Billiard Room", "Studio"]
+#global Total_Number_of_Card, LIST_SUSPECT, LIST_WEAPON, LIST_ROOM
+# Total_Number_of_Card = 30
+# LIST_SUSPECT = ["Miss Scarlet", "Mr. Green", "Mrs White", "Mrs Peacock", "Colonel Mustard", "Professor Plum", "Miss Peach", "Sgt. Gray", "Monsieur Brunette", "Mme. Rose"]
+# LIST_WEAPON = ["Candlestick", "Knife", "Lead Pipe", "Revolver", "Rope", "Wrench", "Horseshoe", "Poison"]
+# LIST_ROOM = ["Carriage House", "Conservatory", "Kitchen", "Trophy Room", "Dining Room", "Drawing Room", "Gazebo", "Courtyard", "Fountain", "Library", "Billiard Room", "Studio"]
 
 class Advisor:
     
@@ -43,7 +45,7 @@ class Advisor:
             if action == "Next turn":
                 whose_turn = input("Whose turn is this: ")
                 if whose_turn == "myself":
-                    self.recommendation()
+                    self.turn_recommendation()
                     self.update_myturn()
                     self.AI_unit_myselfTurn_update()
                     #break
@@ -72,6 +74,7 @@ class Advisor:
             elif action == "Exit":
                 break
             elif action == "Magnifier":
+                self.magnifier_recom()
                 self.magnifierCheck()
                 self.secret_Infer_Rebalance()
                 self.otherAgent_Rebalance()
@@ -85,9 +88,14 @@ class Advisor:
             self.players["secret"].display_suspect_must_have()
             self.players["secret"].display_weapon_must_have()
             self.players["secret"].display_room_must_have()
+    
+    def magnifier_recom(self):
+        result = magnifier_recom_system(self.players)
+        print("Player to chekc: ", result)
 
-    def recommendation(self):
-        pass
+    def turn_recommendation(self):
+        result = turn_recom_system(self.players)
+        print("Claim to make: ", result)
 
     def update_myturn(self):
         myQuery = input("My Claim:  ")

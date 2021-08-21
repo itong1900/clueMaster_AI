@@ -925,5 +925,14 @@ class TestAdvisor(unittest.TestCase):
         self.assertEqual(Advisor15.players["secret"].room_possibly_have, {"Kitchen": 1/6, "Trophy Room": 1/6, "Dining Room": 1/6, 
         "Courtyard": 1/4, "Billiard Room": 1/6, "Studio": 1/6})
 
+import random
+test_set = set()
+test_set.add("hi")
+test_set.add("hello")
+test_set.add("kk")
+test_set.add("we")
+print(random.sample(test_set, 1)[0])
+
+
 if __name__ == '__main__':
     unittest.main()
