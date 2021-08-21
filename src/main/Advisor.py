@@ -6,21 +6,16 @@ import pandas as pd
 
 import sys
 sys.path.append("../utils/")
-from agentAIUtils import search_in_must_have
-from agentAIUtils import myself_turn_players_update
-from agentAIUtils import secret_infer_helper
-from agentAIUtils import otherAgent_infer_helper
+from agentAIUtils import search_in_must_have, myself_turn_players_update, secret_infer_helper, otherAgent_infer_helper, otherAgent_turnUpdate_3cardsCase, otherAgent_turnUpdate_OneTwo_cardsCase, otherAgent_turnUpdate_0cardsCase
 
-
-
+global Total_Number_of_Card, LIST_SUSPECT, LIST_WEAPON, LIST_ROOM
+Total_Number_of_Card = 30
+LIST_SUSPECT = ["Miss Scarlet", "Mr. Green", "Mrs White", "Mrs Peacock", "Colonel Mustard", "Professor Plum", "Miss Peach", "Sgt. Gray", "Monsieur Brunette", "Mme. Rose"]
+LIST_WEAPON = ["Candlestick", "Knife", "Lead Pipe", "Revolver", "Rope", "Wrench", "Horseshoe", "Poison"]
+LIST_ROOM = ["Carriage House", "Conservatory", "Kitchen", "Trophy Room", "Dining Room", "Drawing Room", "Gazebo", "Courtyard", "Fountain", "Library", "Billiard Room", "Studio"]
 
 class Advisor:
-    # CONSTANTS in Advisor class, _config
-    global Total_Number_of_Card, LIST_SUSPECT, LIST_WEAPON, LIST_ROOM
-    Total_Number_of_Card = 30
-    LIST_SUSPECT = ["Miss Scarlet", "Mr. Green", "Mrs White", "Mrs Peacock", "Colonel Mustard", "Professor Plum", "Miss Peach", "Sgt. Gray", "Monsieur Brunette", "Mme. Rose"]
-    LIST_WEAPON = ["Candlestick", "Knife", "Lead Pipe", "Revolver", "Rope", "Wrench", "Horseshoe", "Poison"]
-    LIST_ROOM = ["Carriage House", "Conservatory", "Kitchen", "Trophy Room", "Dining Room", "Drawing Room", "Gazebo", "Courtyard", "Fountain", "Library", "Billiard Room", "Studio"]
+    
     
     def __init__(self, numberOfPlayers):
         """
@@ -48,12 +43,13 @@ class Advisor:
             if action == "Next turn":
                 whose_turn = input("Whose turn is this: ")
                 if whose_turn == "myself":
+                    self.recommendation()
                     self.update_myturn()
                     self.AI_unit_myselfTurn_update()
                     #break
                 elif whose_turn in self.players:
                     self.update_oppoTurn(whose_turn)
-                    #self.AI_unit_otherTurn_update()
+                    self.AI_unit_otherTurn_update()
                     #break
                 else:
                     print("Wrong name, enter again: ")
@@ -61,7 +57,8 @@ class Advisor:
                     ## reblance some weight here
                     self.secret_Infer_Rebalance()
                     self.otherAgent_Rebalance()
-                    
+                ## Alert feature, when secret is fully hacked, send notifications.
+                self.alertWin()
             elif action == "Query":
                 what_query = input("Player_Summary / Log / Probability_Table:  ")
                 if what_query == "Log":
@@ -82,6 +79,16 @@ class Advisor:
                 print("Invalid input, enter again")
             print("\n")
     
+    def alertWin(self):
+        if len(self.players["secret"].suspect_must_have) and len(self.players["secret"].weapon_must_have) and len(self.players["secret"].room_must_have):
+            print("Secret Hacked, Make Accusation Now:\n")
+            self.players["secret"].display_suspect_must_have()
+            self.players["secret"].display_weapon_must_have()
+            self.players["secret"].display_room_must_have()
+
+    def recommendation(self):
+        pass
+
     def update_myturn(self):
         myQuery = input("My Claim:  ")
         myQuery_suspect, myQuery_weapon, myQuery_room = myQuery.split(",")[0].strip(), myQuery.split(",")[1].strip(), myQuery.split(",")[2].strip()
@@ -99,7 +106,7 @@ class Advisor:
         oppoQuery_suspect, oppoQuery_weapon, oppoQuery_room = oppoQuery.split(",")[0].strip(), oppoQuery.split(",")[1].strip(), oppoQuery.split(",")[2].strip()
         
         cardGivers = input("Player(s) who give a card(including yourself, Enter None if no ones) : ")
-        cardGivers_list = [x.strip() for x in cardGivers.split(",")]
+        cardGivers_list = [] if cardGivers == "None" else [x.strip() for x in cardGivers.split(",")]
         cardNumber = 0 if cardGivers == "None" else len(cardGivers_list)
 
         self.udpate_log(whose_turn, oppoQuery_suspect, oppoQuery_weapon, oppoQuery_room, cardNumber, cardGivers_list)
@@ -253,12 +260,6 @@ class Advisor:
 
     def player_summary(self, player_name):
         print(player_name)
-        print("\n suspect must have:  ")
-        self.players[player_name].display_suspect_must_have()
-        print("\n weapon must have:  ")
-        self.players[player_name].display_weapon_must_have()
-        print("\n room must have:  ")
-        self.players[player_name].display_room_must_have()
         
         if player_name != "secret":
             print("\n Base Value: ", self.players[player_name].base_value_general)
@@ -267,18 +268,27 @@ class Advisor:
             print("\n Weapon Base Value: ", self.players[player_name].base_value_secret_weapon)
             print("\n Room Base Value: ", self.players[player_name].base_value_secret_room)
         
+        print("\n suspect must have:  ")
+        self.players[player_name].display_suspect_must_have()
         print("\n suspect probably have:  ")
         self.players[player_name].display_suspect_possibly_have()
-        print("\n weapon probably have:  ")
-        self.players[player_name].display_weapon_possibly_have()
-        print("\n room probably have:  ")
-        self.players[player_name].display_room_possibly_have()
         print("\n suspect must not have:  ")
         self.players[player_name].display_suspect_must_not_have()
+
+        print("\n weapon must have:  ")
+        self.players[player_name].display_weapon_must_have()
+        print("\n weapon probably have:  ")
+        self.players[player_name].display_weapon_possibly_have()
         print("\n weapon must not have:  ")
         self.players[player_name].display_weapon_must_not_have()
+        
+        print("\n room must have:  ")
+        self.players[player_name].display_room_must_have()
+        print("\n room probably have:  ")
+        self.players[player_name].display_room_possibly_have()
         print("\n room must not have:  ")
         self.players[player_name].display_room_must_not_have()
+
 
 
     def display_log(self):
@@ -318,9 +328,13 @@ class Advisor:
         card_givers = self.log.iloc[-1,:]["card_giver(s)"]
 
         if cards_received == 3:
-            pass
+            otherAgent_turnUpdate_3cardsCase(player_makeQuery, claim_suspect, claim_weapon, claim_room, card_givers, self.players)
+        elif cards_received == 2:
+            otherAgent_turnUpdate_OneTwo_cardsCase(player_makeQuery, claim_suspect, claim_weapon, claim_room, card_givers, self.players, "two")
+        elif cards_received == 1:
+            otherAgent_turnUpdate_OneTwo_cardsCase(player_makeQuery, claim_suspect, claim_weapon, claim_room, card_givers, self.players, "one")
         elif cards_received == 0:
-            pass
+            otherAgent_turnUpdate_0cardsCase(player_makeQuery, claim_suspect, claim_weapon, claim_room, self.players)
 
 
 
@@ -328,9 +342,9 @@ class Advisor:
         """
         This method make straight forward inferences after each round and rebalance the score of secret agent after each round.
         """
-        secret_infer_helper("suspect", LIST_SUSPECT, self.players)
-        secret_infer_helper("weapon", LIST_WEAPON, self.players)
-        secret_infer_helper("room", LIST_ROOM, self.players)
+        secret_infer_helper("suspect", LIST_SUSPECT, self.players, self.numberOfPlayers)
+        secret_infer_helper("weapon", LIST_WEAPON, self.players, self.numberOfPlayers)
+        secret_infer_helper("room", LIST_ROOM, self.players, self.numberOfPlayers)
 
         ## Rebalance here
         base_value_suspect_secret = self.players["secret"].getSecretBaseValue_suspect()

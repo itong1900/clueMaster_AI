@@ -172,3 +172,48 @@ class Player:
             return checkItem in self.weapon_must_not_have
         elif checkItem in LIST_ROOM:
             return checkItem in self.room_must_not_have
+
+    ## check if in must_have
+    def check_in_must_have(self, checkItem):
+        if checkItem in LIST_SUSPECT:
+            return checkItem in self.suspect_must_have
+        elif checkItem in LIST_WEAPON:
+            return checkItem in self.weapon_must_have
+        elif checkItem in LIST_ROOM:
+            return checkItem in self.room_must_have
+
+    ## check if the ele in possibly set, if so, move to must_have
+    def move_ele_possibly_to_must_have(self, ele):
+        """
+        move an ele from possibly-have set to must-have set
+        """
+        if ele in LIST_SUSPECT:
+            if ele in self.suspect_possibly_have.keys():
+                del self.suspect_possibly_have[ele]
+            self.update_suspect_must_have(ele)
+        elif ele in LIST_WEAPON:
+            if ele in self.weapon_possibly_have.keys():
+                del self.weapon_possibly_have[ele]
+            self.update_weapon_must_have(ele)
+        else:  ## objectDealing == "room"
+            if ele in self.room_possibly_have.keys():
+                del self.room_possibly_have[ele]
+            self.update_room_must_have(ele)
+
+    ## check if the ele in possibly set, if so, move to must_not_have
+    def move_ele_possibly_to_must_not_have(self, ele):
+        """
+        move an ele from possibly-have set to must-not-have set
+        """
+        if ele in LIST_SUSPECT:
+            if ele in self.suspect_possibly_have.keys():
+                del self.suspect_possibly_have[ele]
+            self.update_suspect_must_not_have(ele)
+        elif ele in LIST_WEAPON:
+            if ele in self.weapon_possibly_have.keys():
+                del self.weapon_possibly_have[ele]
+            self.update_weapon_must_not_have(ele)
+        else:  ## objectDealing == "room"
+            if ele in self.room_possibly_have.keys():
+                del self.room_possibly_have[ele]
+            self.update_room_must_not_have(ele)
