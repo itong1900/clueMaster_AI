@@ -6,14 +6,8 @@ import pandas as pd
 
 import sys
 sys.path.append("../utils/")
-from agentAIUtils import search_in_must_have
-from agentAIUtils import myself_turn_players_update
-from agentAIUtils import secret_infer_helper
-from agentAIUtils import otherAgent_infer_helper
-from agentAIUtils import otherAgent_turnUpdate_3cardsCase
-from agentAIUtils import otherAgent_turnUpdate_0cardsCase
+from agentAIUtils import search_in_must_have, myself_turn_players_update, secret_infer_helper, otherAgent_infer_helper, otherAgent_turnUpdate_3cardsCase, otherAgent_turnUpdate_1cardsCase, otherAgent_turnUpdate_0cardsCase
 
-# CONSTANTS in Advisor class, _config
 global Total_Number_of_Card, LIST_SUSPECT, LIST_WEAPON, LIST_ROOM
 Total_Number_of_Card = 30
 LIST_SUSPECT = ["Miss Scarlet", "Mr. Green", "Mrs White", "Mrs Peacock", "Colonel Mustard", "Professor Plum", "Miss Peach", "Sgt. Gray", "Monsieur Brunette", "Mme. Rose"]
@@ -323,7 +317,7 @@ class Advisor:
         elif cards_received == 2:
             pass
         elif cards_received == 1:
-            pass
+            otherAgent_turnUpdate_1cardsCase(player_makeQuery, claim_suspect, claim_weapon, claim_room, card_givers, self.players)
         elif cards_received == 0:
             otherAgent_turnUpdate_0cardsCase(player_makeQuery, claim_suspect, claim_weapon, claim_room, self.players)
 

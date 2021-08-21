@@ -2,6 +2,12 @@
 
 from logging import raiseExceptions
 
+global Total_Number_of_Card, LIST_SUSPECT, LIST_WEAPON, LIST_ROOM
+Total_Number_of_Card = 30
+LIST_SUSPECT = ["Miss Scarlet", "Mr. Green", "Mrs White", "Mrs Peacock", "Colonel Mustard", "Professor Plum", "Miss Peach", "Sgt. Gray", "Monsieur Brunette", "Mme. Rose"]
+LIST_WEAPON = ["Candlestick", "Knife", "Lead Pipe", "Revolver", "Rope", "Wrench", "Horseshoe", "Poison"]
+LIST_ROOM = ["Carriage House", "Conservatory", "Kitchen", "Trophy Room", "Dining Room", "Drawing Room", "Gazebo", "Courtyard", "Fountain", "Library", "Billiard Room", "Studio"]
+
 # ===============
 # A global search method that check if item_checking is in any of player's must have
 # ===============
@@ -336,6 +342,92 @@ def otherAgent_turnUpdate_3cardsCase(claimer, claim_suspect, claim_weapon, claim
             playerHashmap[related_player].update_weapon_possibly_have(claim_weapon, 1/3)
             playerHashmap[related_player].update_room_possibly_have(claim_room, 1/3)
 
+## A helper method for otherturn handler
+def first_True(array):
+    """
+    This method return the first element that's 1 in an array
+    """
+    idx = 0
+    for ele in array:
+        if ele != 0:
+            return idx
+        idx += 1
+
+
+def otherAgent_turnUpdate_1cardsCase(claimer, claim_suspect, claim_weapon, claim_room, card_giver, playerHashmap):
+    potential_players = {"secret", claimer, card_giver[0]}
+    ## check how many of claim objects are in must-have
+    player_must_have_claim_suspect = search_in_must_have(playerHashmap, claim_suspect, LIST_SUSPECT, LIST_WEAPON, LIST_ROOM)
+    player_must_have_claim_weapon = search_in_must_have(playerHashmap, claim_weapon, LIST_SUSPECT, LIST_WEAPON, LIST_ROOM)
+    player_must_have_claim_room = search_in_must_have(playerHashmap, claim_room, LIST_SUSPECT, LIST_WEAPON, LIST_ROOM)
+    total_in_must_have = 0
+    for i in [player_must_have_claim_suspect, player_must_have_claim_weapon, player_must_have_claim_room]:
+        if i != "None":
+            total_in_must_have +=1
+    ## remove the 3 cards from non_related_players first
+    for non_related_players in [x for x in playerHashmap.keys() if x not in potential_players]:
+        playerHashmap[non_related_players].move_ele_possibly_to_must_not_have(claim_suspect)
+        playerHashmap[non_related_players].move_ele_possibly_to_must_not_have(claim_weapon)
+        playerHashmap[non_related_players].move_ele_possibly_to_must_not_have(claim_room)
+    if total_in_must_have == 3:
+        pass # do nothing
+    elif total_in_must_have == 0:
+        ## deal with suspect, check how many among the 3 potential got claim_suspect in must-not-have
+        player_with_claim_suspect_in_must_not_have = get_potential_must_not_have_helper(claim_suspect, playerHashmap, potential_players)
+        if len(player_with_claim_suspect_in_must_not_have) == 3:
+            raiseExceptions("Impossible to happen, someone violates the rule")
+        elif len(player_with_claim_suspect_in_must_not_have) == 2:  ## if two out of 3 potential are in must-not-have, make direct inference 
+            player_to_update = [x for x in potential_players if x not in player_with_claim_suspect_in_must_not_have][0]
+            playerHashmap[player_to_update].move_ele_possibly_to_must_have(claim_suspect)
+        elif len(player_with_claim_suspect_in_must_not_have) == 1:
+            player_to_update = [x for x in potential_players if x not in player_with_claim_suspect_in_must_not_have]
+            for i in player_to_update:
+                playerHashmap[i].update_suspect_possibly_have(claim_suspect, 1/2)
+        else: # len(player_with_claim_suspect_in_must_not_have) == 0:
+            for i in potential_players:
+                playerHashmap[i].update_suspect_possibly_have(claim_suspect, 1/3)
+        ## same logic for weapon and room
+        ## deal with weapon, check how many among the 3 potential got claim_weapon in must-not-have
+        player_with_claim_weapon_in_must_not_have = get_potential_must_not_have_helper(claim_weapon, playerHashmap, potential_players)
+        if len(player_with_claim_weapon_in_must_not_have) == 3:
+            raiseExceptions("Impossible to happen, someone violates the rule")
+        elif len(player_with_claim_weapon_in_must_not_have) == 2:  ## if two out of 3 potential are in must-not-have, make direct inference 
+            player_to_update = [x for x in potential_players if x not in player_with_claim_weapon_in_must_not_have][0]
+            playerHashmap[player_to_update].move_ele_possibly_to_must_have(claim_weapon)
+        elif len(player_with_claim_weapon_in_must_not_have) == 1:
+            player_to_update = [x for x in potential_players if x not in player_with_claim_weapon_in_must_not_have]
+            for i in player_to_update:
+                playerHashmap[i].update_weapon_possibly_have(claim_weapon, 1/2)
+        else: # len(player_with_claim_weapon_in_must_not_have) == 0:
+            for i in potential_players:
+                playerHashmap[i].update_weapon_possibly_have(claim_weapon, 1/3)
+        ## deal with room, check how many among the 3 potential got claim_room in must-not-have
+        player_with_claim_room_in_must_not_have = get_potential_must_not_have_helper(claim_room, playerHashmap, potential_players)
+        if len(player_with_claim_room_in_must_not_have) == 3:
+            raiseExceptions("Impossible to happen, someone violates the rule")
+        elif len(player_with_claim_room_in_must_not_have) == 2:  ## if two out of 3 potential are in must-not-have, make direct inference 
+            player_to_update = [x for x in potential_players if x not in player_with_claim_room_in_must_not_have][0]
+            playerHashmap[player_to_update].move_ele_possibly_to_must_have(claim_room)
+        elif len(player_with_claim_room_in_must_not_have) == 1:
+            player_to_update = [x for x in potential_players if x not in player_with_claim_room_in_must_not_have]
+            for i in player_to_update:
+                playerHashmap[i].update_room_possibly_have(claim_room, 1/2)
+        else: # len(player_with_claim_room_in_must_not_have) == 0:
+            for i in potential_players:
+                playerHashmap[i].update_room_possibly_have(claim_room, 1/3)
+
+        
+
+# ========
+# return the potential_player(s) where the claim_object is in its/their must-not-haves in a list
+# ======== 
+def get_potential_must_not_have_helper(claim_object, playerHashmap, potential_players):
+    result = []
+    for player in potential_players:
+        if playerHashmap[player].check_in_must_not_have(claim_object):
+            result.append(player)
+    return result
+    
 
 # ===============
 # Method to handle when other player makes a claim and there's 0 cardgivers
@@ -401,15 +493,6 @@ def otherAgent_turnUpdate_0cardsCase(claimer, claim_suspect, claim_weapon, claim
         playerHashmap["secret"].update_room_possibly_have(claim_room, 1/2)
 
 
-## A helper method for otherturn handler
-def first_True(array):
-    """
-    This method return the first element that's 1 in an array
-    """
-    idx = 0
-    for ele in array:
-        if ele != 0:
-            return idx
-        idx += 1
+
 
 
