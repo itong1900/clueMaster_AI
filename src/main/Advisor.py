@@ -56,7 +56,8 @@ class Advisor:
                     ## reblance some weight here
                     self.secret_Infer_Rebalance()
                     self.otherAgent_Rebalance()
-                    
+                ## Alert feature, when secret is fully hacked, send notifications.
+                self.alertWin()
             elif action == "Query":
                 what_query = input("Player_Summary / Log / Probability_Table:  ")
                 if what_query == "Log":
@@ -77,6 +78,14 @@ class Advisor:
                 print("Invalid input, enter again")
             print("\n")
     
+    def alertWin(self):
+        if len(self.players["secret"].suspect_must_have) and len(self.players["secret"].weapon_must_have) and len(self.players["secret"].room_must_have):
+            print("Secret Hacked, Make Accusation Now:\n")
+            self.players["secret"].display_suspect_must_have()
+            self.players["secret"].display_weapon_must_have()
+            self.players["secret"].display_room_must_have()
+
+
     def update_myturn(self):
         myQuery = input("My Claim:  ")
         myQuery_suspect, myQuery_weapon, myQuery_room = myQuery.split(",")[0].strip(), myQuery.split(",")[1].strip(), myQuery.split(",")[2].strip()
