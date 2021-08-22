@@ -10,18 +10,12 @@ from agentAIUtils import search_in_must_have, myself_turn_players_update, secret
 from recommenderAIUtils import magnifier_recom_system, turn_recom_system
 from config_CONST import LIST_SUSPECT, LIST_WEAPON, LIST_ROOM, Total_Number_of_Card
 
-#global Total_Number_of_Card, LIST_SUSPECT, LIST_WEAPON, LIST_ROOM
-# Total_Number_of_Card = 30
-# LIST_SUSPECT = ["Miss Scarlet", "Mr. Green", "Mrs White", "Mrs Peacock", "Colonel Mustard", "Professor Plum", "Miss Peach", "Sgt. Gray", "Monsieur Brunette", "Mme. Rose"]
-# LIST_WEAPON = ["Candlestick", "Knife", "Lead Pipe", "Revolver", "Rope", "Wrench", "Horseshoe", "Poison"]
-# LIST_ROOM = ["Carriage House", "Conservatory", "Kitchen", "Trophy Room", "Dining Room", "Drawing Room", "Gazebo", "Courtyard", "Fountain", "Library", "Billiard Room", "Studio"]
 
 class Advisor:
     
     
     def __init__(self, numberOfPlayers):
         """
-
         self.df_suspect : a real-time df showing probability of each suspect
         self.df_weapon  : a real-time df showing probability of each weapon
         self.df_room    : a real-time df showing probability of each room
@@ -95,7 +89,7 @@ class Advisor:
 
     def turn_recommendation(self):
         result = turn_recom_system(self.players)
-        print("Claim to make: ", result)
+        print("\nSuggested Claim: ", result, "\n")
 
     def update_myturn(self):
         myQuery = input("My Claim:  ")

@@ -7,7 +7,7 @@ from unittest.mock import patch
 from unittest import TestCase
 import math
 # from unittest.mock import Mock
-#advisor1 = Advisor(4)
+# advisor1 = Advisor(4)
 
 
 class TestAdvisor(unittest.TestCase):
@@ -870,6 +870,7 @@ class TestAdvisor(unittest.TestCase):
     "Next turn", "Mia", "Miss Scarlet, Horseshoe, Drawing Room", "myself, Jane, Michael",
     "Next turn", "Michael", "Mme. Rose, Revolver ,Courtyard", "Mia, Jane",
     "Next turn", "Jane", "Mme. Rose, Lead Pipe, Carriage House", "Mia, myself",
+    "Query", "Log",
     "Query", "Player_Summary","secret","Exit"])
     def test_Game_15(self, mock_inputs):
         Advisor15 = Advisor(4)
@@ -924,15 +925,6 @@ class TestAdvisor(unittest.TestCase):
         self.assertEqual(Advisor15.players["secret"].room_must_not_have,{"Carriage House", "Conservatory", "Library", "Gazebo","Fountain", "Drawing Room"})
         self.assertEqual(Advisor15.players["secret"].room_possibly_have, {"Kitchen": 1/6, "Trophy Room": 1/6, "Dining Room": 1/6, 
         "Courtyard": 1/4, "Billiard Room": 1/6, "Studio": 1/6})
-
-import random
-test_set = set()
-test_set.add("hi")
-test_set.add("hello")
-test_set.add("kk")
-test_set.add("we")
-print(random.sample(test_set, 1)[0])
-
 
 if __name__ == '__main__':
     unittest.main()

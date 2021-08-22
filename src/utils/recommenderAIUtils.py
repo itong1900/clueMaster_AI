@@ -22,7 +22,20 @@ def magnifier_recom_system(playerHashmap):
 def turn_recom_system(playerHashmap):
     ## pick suspect
     if len(playerHashmap["secret"].suspect_must_have):
-        suspect_rec = "null"
+        ## iterate through all players's suspect_possibly_have except secret and myself
+        potential_cards = set()
+        highest_score = -1
+        for player in [x for x in playerHashmap.keys() if x != "secret" and x != "myself"]:
+            for card in playerHashmap[player].suspect_possibly_have.keys():
+                if playerHashmap[player].suspect_possibly_have[card] < highest_score:
+                    pass
+                elif playerHashmap[player].suspect_possibly_have[card] == highest_score:
+                    potential_cards.add(card)
+                else: # playerHashmap[player].suspect_possibly_have[card] > highest_score:
+                    potential_cards = set()
+                    potential_cards.add(card)
+                    highest_score = playerHashmap[player].suspect_possibly_have[card]
+        suspect_rec = random.sample(potential_cards, 1)[0]
     else:
         ## get the ele with highest score, suspect
         ele_to_check = [x for x in playerHashmap["secret"].suspect_possibly_have.keys()]
@@ -39,9 +52,22 @@ def turn_recom_system(playerHashmap):
                 potential_cards.add(ele)
                 highest_score_so_far = this_ele_score
         suspect_rec = random.sample(potential_cards, 1)[0]
-
+    ## pick weapon
     if len(playerHashmap["secret"].weapon_must_have):
-        weapon_rec = "null"
+        ## iterate through all players's weapon_possibly_have except secret and myself
+        potential_cards = set()
+        highest_score = -1
+        for player in [x for x in playerHashmap.keys() if x != "secret" and x != "myself"]:
+            for card in playerHashmap[player].weapon_possibly_have.keys():
+                if playerHashmap[player].weapon_possibly_have[card] < highest_score:
+                    pass
+                elif playerHashmap[player].weapon_possibly_have[card] == highest_score:
+                    potential_cards.add(card)
+                else: # playerHashmap[player].weapon_possibly_have[card] > highest_score:
+                    potential_cards = set()
+                    potential_cards.add(card)
+                    highest_score = playerHashmap[player].weapon_possibly_have[card]
+        weapon_rec = random.sample(potential_cards, 1)[0]
     else:
         ## get the ele with highest score, weapon
         ele_to_check = [x for x in playerHashmap["secret"].weapon_possibly_have.keys()]
@@ -59,8 +85,22 @@ def turn_recom_system(playerHashmap):
                 highest_score_so_far = this_ele_score
         weapon_rec = random.sample(potential_cards, 1)[0]
 
+    ## pick room
     if len(playerHashmap["secret"].room_must_have):
-        room_rec = "null"
+        ## iterate through all players's room_possibly_have except secret and myself
+        potential_cards = set()
+        highest_score = -1
+        for player in [x for x in playerHashmap.keys() if x != "secret" and x != "myself"]:
+            for card in playerHashmap[player].room_possibly_have.keys():
+                if playerHashmap[player].room_possibly_have[card] < highest_score:
+                    pass
+                elif playerHashmap[player].room_possibly_have[card] == highest_score:
+                    potential_cards.add(card)
+                else: # playerHashmap[player].room_possibly_have[card] > highest_score:
+                    potential_cards = set()
+                    potential_cards.add(card)
+                    highest_score = playerHashmap[player].room_possibly_have[card]
+        room_rec = random.sample(potential_cards, 1)[0]
     else:
         ## get the ele with highest score, room
         ele_to_check = [x for x in playerHashmap["secret"].room_possibly_have.keys()]
