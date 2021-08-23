@@ -85,7 +85,7 @@ class Advisor:
     
     def magnifier_recom(self):
         result = magnifier_recom_system(self.players)
-        print("Player to chekc: ", result)
+        print("Player to check: ", result)
 
     def turn_recommendation(self):
         result = turn_recom_system(self.players)
@@ -308,7 +308,7 @@ class Advisor:
         if player_makeQuery == "myself":
             ## deal with suspect
             not_in_must_have = search_in_must_have(self.players, claim_suspect, LIST_SUSPECT, LIST_WEAPON, LIST_ROOM) == "None"
-            myself_turn_players_update("suspect" ,not_in_must_have, card_givers[0], card_givers, self.players, claim_suspect, cards_received)
+            myself_turn_players_update("suspect", not_in_must_have, card_givers[0], card_givers, self.players, claim_suspect, cards_received)
             
 
             ## deal with weapon
