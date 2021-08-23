@@ -45,13 +45,9 @@ def myself_turn_players_update(ObjectDealing ,not_in_must_have, card_giver, card
     if ObjectDealing == "suspect":
         if not_in_must_have:
             if card_giver != "None":
-                print("card_giver: ", card_giver)
-                print("claim object: ", claim_object)
-                print("critical: ", playersHashmap[card_giver].suspect_possibly_have)
                 playersHashmap[card_giver].update_suspect_must_have(claim_object)
                 # remove the card from the possibly have of this giver
                 if claim_object in playersHashmap[card_giver].suspect_possibly_have.keys():
-                    print("hit")
                     del playersHashmap[card_giver].suspect_possibly_have[claim_object]
                 # add to must_not_have in other agents, remove from their probably have list, including secret agent
                 for other_agent in [x for x in playersHashmap.keys() if x != card_giver]:
