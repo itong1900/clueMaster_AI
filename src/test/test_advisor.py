@@ -989,8 +989,9 @@ class TestAdvisor(unittest.TestCase):
     "Next turn", "myself", "Sgt. Gray, Candlestick, Drawing Room", "Nan, None, Yuan",
     "Next turn", "Michael", "Mr. Green, Candlestick, Dinning Room", "myself, Yuan",
     "Next turn", "Nan", "Mr. Green, Poison, Dinning Room", "myself",
+    "Suggestion", 
     "Magnifier", "Michael, Library",
-    "Next turn", "myself", "Mrs Peacock, Wrench, Fountain", "Michael, Yuan, Nan",
+    # "Next turn", "myself", "Mrs Peacock, Wrench, Fountain", "Michael, Yuan, Nan",
     # "Next turn", "Yuan", "Mr. Green, Lead Pipe, Dinning Room", "Michael, myself",
     # #"Query", "Log", "Exit"])
     "Query", "Player_Summary","secret","Exit"])

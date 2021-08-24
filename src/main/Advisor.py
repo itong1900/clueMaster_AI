@@ -35,11 +35,10 @@ class Advisor:
     
     def turnCycle(self):
         while True:
-            action = input("Next turn / Query / Magnifier / Exit: ")
+            action = input("Next turn / Suggestion / Query / Magnifier / Exit: ")
             if action == "Next turn":
                 whose_turn = input("Whose turn is this: ")
                 if whose_turn == "myself":
-                    self.turn_recommendation()
                     self.update_myturn()
                     self.AI_unit_myselfTurn_update()
                     #break
@@ -55,6 +54,8 @@ class Advisor:
                     self.otherAgent_Rebalance()
                 ## Alert feature, when secret is fully hacked, send notifications.
                 self.alertWin()
+            elif action == "Suggestion":
+                self.turn_recommendation()
             elif action == "Query":
                 what_query = input("Player_Summary / Log / Probability_Table:  ")
                 if what_query == "Log":
