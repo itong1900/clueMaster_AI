@@ -870,6 +870,7 @@ class TestAdvisor(unittest.TestCase):
     "Next turn", "Mia", "Miss Scarlet, Horseshoe, Drawing Room", "myself, Jane, Michael",
     "Next turn", "Michael", "Mme. Rose, Revolver ,Courtyard", "Mia, Jane",
     "Next turn", "Jane", "Mme. Rose, Lead Pipe, Carriage House", "Mia, myself",
+    "Query", "Log",
     "Query", "Player_Summary","secret","Exit"])
     def test_Game_15(self, mock_inputs):
         Advisor15 = Advisor(4)
@@ -924,6 +925,79 @@ class TestAdvisor(unittest.TestCase):
         self.assertEqual(Advisor15.players["secret"].room_must_not_have,{"Carriage House", "Conservatory", "Library", "Gazebo","Fountain", "Drawing Room"})
         self.assertEqual(Advisor15.players["secret"].room_possibly_have, {"Kitchen": 1/6, "Trophy Room": 1/6, "Dining Room": 1/6, 
         "Courtyard": 1/4, "Billiard Room": 1/6, "Studio": 1/6})
+
+    # Adivisor 16 a test run, first real world testing
+    @patch("builtins.input", side_effect = ["7", "Miss Peach", "Rope", "Carriage House, Courtyard, Studo, Billiard Room, Dining Room","Michael, 6", "Yuan, 7","Nan, 7",
+    "Next turn", "Yuan", "Miss Peach, Rope, Trophy Room", "myself",
+    "Next turn", "Nan", "Professor Plum, Revolver, Studio", "Yuan, myself",
+    "Next turn", "myself", "Professor Plum, Revolver, Dining Room", "Yuan, None, myself", 
+    "Next turn", "Michael", "Professor Plum, Revolver, Courtyard", "Yuan, myself",
+    "Next turn", "Yuan", "Professor Plum, Revolver, Conservatory", "Nan",
+    "Next turn", "Nan", "Monsieur Brunette, Revolver, Conservatory", "Yuan",
+    "Magnifier", "Nan, Conservatory",
+    "Next turn", "myself", "Monsieur Brunette, Wrench, Kitchen", "Yuan, None, None", 
+    "Next turn", "Michael", "Monsieur Brunette, Wrench, Billiard Room", "Yuan, myself",
+    "Next turn", "Yuan", "Miss Peach, Revolver, Trophy Room", "myself",
+    "Next turn", "myself", "Mme. Rose, Poison, Library", "None, Nan, Michael",
+    "Next turn", "Michael", "Miss Scarlet, Revolver, Studio", "Nan, myself",
+    "Next turn", "Yuan", "Mme. Rose, Poison, Studio", "Nan, Michael, myself",
+    "Next turn", "Nan", "Miss Peach, Knife, Billiard Room", "Michael, myself",
+    "Next turn", "myself", "Sgt. Gray, Horseshoe, Courtyard", "Nan, Michael, myself",
+    "Next turn", "Michael", "Mrs White, Revolver, Conservatory", "Nan",
+    "Next turn", "Yuan", "Sgt. Gray, Revolver, Conservatory", "Nan",
+    "Magnifier", "Michael, Horseshoe",
+    "Next turn", "myself", "Mr. Green, Lead Pipe, Gazebo", "None, None, Michael",
+    "Next turn", "Michael", "Mrs White, Knife, Drawing Room", "Nan, Yuan",
+    "Next turn", "Yuan", "Mrs Peacock, Knife, Drawing Room", "Nan, Michael",
+    "Next turn", "Nan", "Mrs White, Knife, Courtyard", "myself",
+    "Next turn", "myself", "Colonel Mustard, Knife, Courtyard", "Yuan, Nan, myself",
+    "Next turn", "Michael", "Mr. Green, Candlestick, Dinning Room", "myself, Yuan",
+    "Next turn", "Nan", "Mr. Green, Poison, Dinning Room", "myself",
+    "Magnifier", "Michael, Library",
+    "Next turn", "myself", "Mr. Green, Lead Pipe, Fountain", "None, Michael, Nan",
+    "Next turn", "Yuan", "Mr. Green, Lead Pipe, Dinning Room", "Michael, myself",
+    #"Query", "Log", "Exit"])
+    "Query", "Player_Summary","Nan","Exit"])
+    def test_Game_16(self, mock_inputs):
+        Advisor16 = Advisor(4)
+
+
+    # Adivisor 17, if I follow suggestion closely in every myself turn 
+    @patch("builtins.input", side_effect = ["7", "Miss Peach", "Rope", "Carriage House, Courtyard, Studo, Billiard Room, Dining Room","Michael, 6", "Yuan, 7","Nan, 7",
+    "Next turn", "Yuan", "Miss Peach, Rope, Trophy Room", "myself",
+    "Next turn", "Nan", "Professor Plum, Revolver, Studio", "Yuan, myself",
+    "Next turn", "myself", "Professor Plum, Revolver, Dining Room", "Yuan, None, myself", 
+    "Next turn", "Michael", "Professor Plum, Revolver, Courtyard", "Yuan, myself",
+    "Next turn", "Yuan", "Professor Plum, Revolver, Conservatory", "Nan",
+    "Next turn", "Nan", "Monsieur Brunette, Revolver, Conservatory", "Yuan",
+    "Magnifier", "Nan, Conservatory",
+    "Next turn", "myself", "Monsieur Brunette, Revolver, Kitchen", "Yuan, None, None", 
+    "Next turn", "Michael", "Monsieur Brunette, Wrench, Billiard Room", "Yuan, myself",
+    "Next turn", "Yuan", "Miss Peach, Revolver, Trophy Room", "myself",
+    "Next turn", "myself", "Mrs White, Revolver, Library", "Nan, None, Michael",
+    "Next turn", "Michael", "Miss Scarlet, Revolver, Studio", "Nan, myself",
+    "Next turn", "Yuan", "Mme. Rose, Poison, Studio", "Nan, Michael, myself",
+    "Next turn", "Nan", "Miss Peach, Knife, Billiard Room", "Michael, myself",
+    "Next turn", "myself", "Miss Scarlet, Knife, Trophy Room", "None, Nan, None",
+    "Next turn", "Michael", "Mrs White, Revolver, Conservatory", "Nan",
+    "Next turn", "Yuan", "Sgt. Gray, Revolver, Conservatory", "Nan",
+    "Magnifier", "Michael, Horseshoe",
+    "Next turn", "myself", "Miss Scarlet, Lead Pipe, Studio", "Nan, Michael, myself",
+    "Next turn", "Michael", "Mrs White, Knife, Drawing Room", "Nan, Yuan",
+    "Next turn", "Yuan", "Mrs Peacock, Knife, Drawing Room", "Nan, Michael",
+    "Next turn", "Nan", "Mrs White, Knife, Courtyard", "myself",
+    "Next turn", "myself", "Sgt. Gray, Candlestick, Drawing Room", "Nan, None, Yuan",
+    "Next turn", "Michael", "Mr. Green, Candlestick, Dinning Room", "myself, Yuan",
+    "Next turn", "Nan", "Mr. Green, Poison, Dinning Room", "myself",
+    "Suggestion", 
+    "Magnifier", "Michael, Library",
+    # "Next turn", "myself", "Mrs Peacock, Wrench, Fountain", "Michael, Yuan, Nan",
+    # "Next turn", "Yuan", "Mr. Green, Lead Pipe, Dinning Room", "Michael, myself",
+    # #"Query", "Log", "Exit"])
+    "Query", "Player_Summary","secret","Exit"])
+    def test_Game_17(self, mock_inputs):
+        Advisor17 = Advisor(4)
+
 
 if __name__ == '__main__':
     unittest.main()

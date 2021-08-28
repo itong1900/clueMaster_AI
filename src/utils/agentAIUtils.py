@@ -2,11 +2,9 @@
 
 from logging import raiseExceptions
 
-global Total_Number_of_Card, LIST_SUSPECT, LIST_WEAPON, LIST_ROOM
-Total_Number_of_Card = 30
-LIST_SUSPECT = ["Miss Scarlet", "Mr. Green", "Mrs White", "Mrs Peacock", "Colonel Mustard", "Professor Plum", "Miss Peach", "Sgt. Gray", "Monsieur Brunette", "Mme. Rose"]
-LIST_WEAPON = ["Candlestick", "Knife", "Lead Pipe", "Revolver", "Rope", "Wrench", "Horseshoe", "Poison"]
-LIST_ROOM = ["Carriage House", "Conservatory", "Kitchen", "Trophy Room", "Dining Room", "Drawing Room", "Gazebo", "Courtyard", "Fountain", "Library", "Billiard Room", "Studio"]
+# import sys
+# sys.path.append("../utils/")
+from config_CONST import LIST_SUSPECT, LIST_WEAPON, LIST_ROOM, Total_Number_of_Card
 
 # ===============
 # A global search method that check if item_checking is in any of player's must have
@@ -49,7 +47,7 @@ def myself_turn_players_update(ObjectDealing ,not_in_must_have, card_giver, card
             if card_giver != "None":
                 playersHashmap[card_giver].update_suspect_must_have(claim_object)
                 # remove the card from the possibly have of this giver
-                if claim_object in playersHashmap[card_giver].suspect_possibly_have:
+                if claim_object in playersHashmap[card_giver].suspect_possibly_have.keys():
                     del playersHashmap[card_giver].suspect_possibly_have[claim_object]
                 # add to must_not_have in other agents, remove from their probably have list, including secret agent
                 for other_agent in [x for x in playersHashmap.keys() if x != card_giver]:
@@ -230,21 +228,24 @@ def secret_infer_helper(ObjectDealing, LIST_XXX, playersHashmap, numberOfPlayers
 # ===============
 def otherAgent_infer_helper(ObjectDealing, playerHashmap, playerName, playerQuantity):
     if ObjectDealing == "suspect":
-        for ele in playerHashmap[playerName].suspect_possibly_have.keys():
+        elements_to_go_through_copy = [x for x in playerHashmap[playerName].suspect_possibly_have.keys()]  ## deep copy the ele to go through
+        for ele in elements_to_go_through_copy:
             results = [playerHashmap[x].check_in_must_not_have(ele) for x in playerHashmap.keys() if x != playerName]
             ## move to must_have if this it's in all other players' must_not_have
             if sum(results) == playerQuantity:
                 playerHashmap[playerName].update_suspect_must_have(ele)
                 del playerHashmap[playerName].suspect_possibly_have[ele]
     elif ObjectDealing == "weapon":
-        for ele in playerHashmap[playerName].weapon_possibly_have.keys():
+        elements_to_go_through_copy = [x for x in playerHashmap[playerName].suspect_possibly_have.keys()]  ## deep copy the ele to go through
+        for ele in elements_to_go_through_copy:
             results = [playerHashmap[x].check_in_must_not_have(ele) for x in playerHashmap.keys() if x != playerName]
             ## move to must_have if this it's in all other players' must_not_have
             if sum(results) == playerQuantity:
                 playerHashmap[playerName].update_weapon_must_have(ele)
                 del playerHashmap[playerName].weapon_possibly_have[ele]
     elif ObjectDealing == "room":
-        for ele in playerHashmap[playerName].room_possibly_have.keys():
+        elements_to_go_through_copy = [x for x in playerHashmap[playerName].suspect_possibly_have.keys()]  ## deep copy the ele to go through
+        for ele in elements_to_go_through_copy:
             results = [playerHashmap[x].check_in_must_not_have(ele) for x in playerHashmap.keys() if x != playerName]
             ## move to must_have if this it's in all other players' must_not_have
             if sum(results) == playerQuantity:

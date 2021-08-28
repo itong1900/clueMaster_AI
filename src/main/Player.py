@@ -1,6 +1,10 @@
 from logging import NullHandler, raiseExceptions
 import math
 
+import sys
+sys.path.append("../utils/")
+from config_CONST import LIST_SUSPECT, LIST_WEAPON, LIST_ROOM, Total_Number_of_Card
+
 
 class Player:
     global Total_Number_of_Card, LIST_SUSPECT, LIST_WEAPON, LIST_ROOM
@@ -217,3 +221,11 @@ class Player:
             if ele in self.room_possibly_have.keys():
                 del self.room_possibly_have[ele]
             self.update_room_must_not_have(ele)
+
+
+    ## return How many cards not in must-have yet: CardsHave of the player - total_cards_in_must_have, for magnifier recommendation use.
+    def get_not_in_must_have_yet(self):
+        return self.numberOfCards - self.getTotal_Musthave()
+
+
+
