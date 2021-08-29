@@ -9,7 +9,7 @@ sys.path.append("../utils/")
 from agentAIUtils import search_in_must_have, myself_turn_players_update, secret_infer_helper, otherAgent_infer_helper, otherAgent_turnUpdate_3cardsCase, otherAgent_turnUpdate_OneTwo_cardsCase, otherAgent_turnUpdate_0cardsCase
 from recommenderAIUtils import magnifier_recom_system, turn_recom_system
 from config_CONST import LIST_SUSPECT, LIST_WEAPON, LIST_ROOM, Total_Number_of_Card
-
+from analytics import export_csv_helper
 
 class Advisor:
     
@@ -46,7 +46,7 @@ class Advisor:
     
     def turnCycle(self):
         while True:
-            action = input("Next turn / Suggestion / Query / Magnifier / ScoreTable / Exit: ")
+            action = input("Next turn / Suggestion / Query / Magnifier / ScoreExport / Exit: ")
             if action == "Next turn":
                 whose_turn = input("Whose turn is this: ")
                 if whose_turn == "myself":
@@ -74,13 +74,10 @@ class Advisor:
                 if what_query == "Log":
                     self.display_log()
                 elif what_query == "Player_Summary":
-                    name = input("Player's Name: ")
-                    while name not in self.players.keys():
-                        print("invalid name, enter again\n")
-                        name = input("Player's Name: ")
-                    self.player_summary(name)
-            elif action == "ScoreTable":
-                self.displayScoreTable()
+                    self.player_summary()
+            elif action == "ScoreExport":
+                #self.displayScoreTable()
+                self.exportAllTables()
             elif action == "Exit":
                 break
             elif action == "Magnifier":
@@ -277,7 +274,11 @@ class Advisor:
                                     "cards_received": numberCards, 
                                     "card_giver(s)": cardGivers}, ignore_index=True)
 
-    def player_summary(self, player_name):
+    def player_summary(self):
+        player_name = input("Player's Name: ")
+        while player_name not in self.players.keys():
+            print("invalid name, enter again\n")
+            player_name = input("Player's Name: ")
         print(player_name)
         
         if player_name != "secret":
@@ -482,6 +483,9 @@ class Advisor:
     def displayScoreTable(self):
         playerName = input("Whose score table to check: ")
         self.players[playerName].display_score_table()
+
+    def exportAllTables(self):
+        export_csv_helper(self.players)
 
 
     # def update_probability_table(df, ele_eliminated):
