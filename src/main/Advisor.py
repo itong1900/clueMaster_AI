@@ -23,35 +23,48 @@ class Advisor:
         """
 
         self.numberOfPlayers = numberOfPlayers
+        ## get info I entered
         self.suspects, self.weapons, self.rooms, self.cardsIhave = self.collectInfo()
+
+        ## init myself agent
         self.players = {"myself": self.initPlayers(self.suspects, self.weapons, self.rooms, self.cardsIhave)}
 
-        self.initProbabilityTable(self.suspects, self.weapons, self.rooms)
+        # self.initProbabilityTable(self.suspects, self.weapons, self.rooms)
         
+        ## init other agents
         self.initialize_secret_and_other_players(numberOfPlayers - 1)
+
+        ## init log
         self.log = self.initialize_log()
+
+        ## init every player's score table
+        self.add_recent_row_to_all_player("init")
+
+        ## start the game
         self.turnCycle()
         
     
     def turnCycle(self):
         while True:
-            action = input("Next turn / Suggestion / Query / Magnifier / Exit: ")
+            action = input("Next turn / Suggestion / Query / Magnifier / ScoreTable / Exit: ")
             if action == "Next turn":
                 whose_turn = input("Whose turn is this: ")
                 if whose_turn == "myself":
                     self.update_myturn()
                     self.AI_unit_myselfTurn_update()
+                    self.secret_Infer_Rebalance()
+                    self.otherAgent_Rebalance()
+                    self.add_recent_row_to_all_player("selfTurn")
                     #break
                 elif whose_turn in self.players:
                     self.update_oppoTurn(whose_turn)
                     self.AI_unit_otherTurn_update()
+                    self.secret_Infer_Rebalance()
+                    self.otherAgent_Rebalance()
+                    self.add_recent_row_to_all_player("otherTurn")
                     #break
                 else:
                     print("Wrong name, enter again: ")
-                if whose_turn in self.players.keys():
-                    ## reblance some weight here
-                    self.secret_Infer_Rebalance()
-                    self.otherAgent_Rebalance()
                 ## Alert feature, when secret is fully hacked, send notifications.
                 self.alertWin()
             elif action == "Suggestion":
@@ -66,6 +79,8 @@ class Advisor:
                         print("invalid name, enter again\n")
                         name = input("Player's Name: ")
                     self.player_summary(name)
+            elif action == "ScoreTable":
+                self.displayScoreTable()
             elif action == "Exit":
                 break
             elif action == "Magnifier":
@@ -73,6 +88,7 @@ class Advisor:
                 self.magnifierCheck()
                 self.secret_Infer_Rebalance()
                 self.otherAgent_Rebalance()
+                self.add_recent_row_to_all_player("magnifier")
             else:
                 print("Invalid input, enter again")
             print("\n")
@@ -218,30 +234,30 @@ class Advisor:
         return suspects, weapons, rooms, cardsIhave
 
 
-    def initProbabilityTable(self, suspects, weapons, rooms):
-        self.df_suspect = pd.DataFrame(index = range(1), columns = LIST_SUSPECT)
-        probab = 1/(len(LIST_SUSPECT) - len(suspects))
-        for col in self.df_suspect.columns:
-            if col in suspects:
-                self.df_suspect[col][0] = 0
-            else:
-                self.df_suspect[col][0] = probab
+    # def initProbabilityTable(self, suspects, weapons, rooms):
+    #     self.df_suspect = pd.DataFrame(index = range(1), columns = LIST_SUSPECT)
+    #     probab = 1/(len(LIST_SUSPECT) - len(suspects))
+    #     for col in self.df_suspect.columns:
+    #         if col in suspects:
+    #             self.df_suspect[col][0] = 0
+    #         else:
+    #             self.df_suspect[col][0] = probab
         
-        self.df_weapon = pd.DataFrame(index = range(1), columns = LIST_WEAPON)
-        probab = 1/(len(LIST_WEAPON) - len(weapons))
-        for col in self.df_weapon.columns:
-            if col in weapons:
-                self.df_weapon[col][0] = 0
-            else:
-                self.df_weapon[col][0] = probab
+    #     self.df_weapon = pd.DataFrame(index = range(1), columns = LIST_WEAPON)
+    #     probab = 1/(len(LIST_WEAPON) - len(weapons))
+    #     for col in self.df_weapon.columns:
+    #         if col in weapons:
+    #             self.df_weapon[col][0] = 0
+    #         else:
+    #             self.df_weapon[col][0] = probab
         
-        self.df_room = pd.DataFrame(index = range(1), columns = LIST_ROOM)
-        probab = 1/(len(LIST_ROOM) - len(rooms))
-        for col in self.df_room.columns:
-            if col in rooms:
-                self.df_room[col][0] = 0
-            else:
-                self.df_room[col][0] = probab
+    #     self.df_room = pd.DataFrame(index = range(1), columns = LIST_ROOM)
+    #     probab = 1/(len(LIST_ROOM) - len(rooms))
+    #     for col in self.df_room.columns:
+    #         if col in rooms:
+    #             self.df_room[col][0] = 0
+    #         else:
+    #             self.df_room[col][0] = probab
 
     def initialize_log(self):
         cols = ["player_makeQuery", 
@@ -450,6 +466,22 @@ class Advisor:
                 raiseExceptions("impossible to catch a card in must-not-have class, set up wrong, or someone forgets to give a card")
         else:
             raiseExceptions("invalid card type in magnifier method")
+
+    
+    def add_recent_row_to_all_player(self, updateEvent):
+        """
+        updateEvent will always be among {"init", "selfTurn", "otherTurn", "magnifier"}
+        """
+        if updateEvent not in {"init", "selfTurn", "otherTurn", "magnifier"}:
+            raiseExceptions("new row type not valid")
+
+        for player in self.players.keys():
+            self.players[player].newScore_append(updateEvent)
+            
+        
+    def displayScoreTable(self):
+        playerName = input("Whose score table to check: ")
+        self.players[playerName].display_score_table()
 
 
     # def update_probability_table(df, ele_eliminated):

@@ -1,5 +1,6 @@
 from logging import NullHandler, raiseExceptions
 import math
+import pandas as pd
 
 import sys
 sys.path.append("../utils/")
@@ -7,13 +8,7 @@ from config_CONST import LIST_SUSPECT, LIST_WEAPON, LIST_ROOM, Total_Number_of_C
 
 
 class Player:
-    global Total_Number_of_Card, LIST_SUSPECT, LIST_WEAPON, LIST_ROOM
-    Total_Number_of_Card = 30
-    LIST_SUSPECT = ["Miss Scarlet", "Mr. Green", "Mrs White", "Mrs Peacock", "Colonel Mustard", "Professor Plum", "Miss Peach", "Sgt. Gray", "Monsieur Brunette", "Mme. Rose"]
-    LIST_WEAPON = ["Candlestick", "Knife", "Lead Pipe", "Revolver", "Rope", "Wrench", "Horseshoe", "Poison"]
-    LIST_ROOM = ["Carriage House", "Conservatory", "Kitchen", "Trophy Room", "Dining Room", "Drawing Room", "Gazebo", "Courtyard", "Fountain", "Library", "Billiard Room", "Studio"]
     
-
     def __init__(self, name, numberofCards):
         self.name = name
         self.numberOfCards = numberofCards
@@ -31,6 +26,8 @@ class Player:
         self.base_value_secret_suspect = None
         self.base_value_secret_weapon = None
         self.base_value_secret_room = None
+
+        self.score_table = pd.DataFrame(index = range(0), columns = ["eventType"]+ LIST_SUSPECT + LIST_WEAPON + LIST_ROOM)
 
         
 
@@ -228,4 +225,42 @@ class Player:
         return self.numberOfCards - self.getTotal_Musthave()
 
 
+    ## generate new row of score of this agent
+    def newScore_row_generation(self):
+        result = {}
+        for ele in LIST_SUSPECT:
+            if ele in self.suspect_must_have:
+                result[ele] = 2
+            elif ele in self.suspect_possibly_have.keys():
+                result[ele] = self.suspect_possibly_have[ele]
+            else:  ## ele in must_have
+                result[ele] = 0
+        
+        for ele in LIST_WEAPON:
+            if ele in self.weapon_must_have:
+                result[ele] = 2
+            elif ele in self.weapon_possibly_have.keys():
+                result[ele] = self.weapon_possibly_have[ele]
+            else:  ## ele in must_have
+                result[ele] = 0
+
+        for ele in LIST_ROOM:
+            if ele in self.room_must_have:
+                result[ele] = 2
+            elif ele in self.room_possibly_have.keys():
+                result[ele] = self.room_possibly_have[ele]
+            else:  ## ele in must_have
+                result[ele] = 0
+
+        return result
+
+    ## append the new row scores along with Type to each Agent
+    def newScore_append(self, eventType):
+        toAppend = self.newScore_row_generation()
+        toAppend["eventType"] = eventType
+        self.score_table = self.score_table.append(toAppend, ignore_index=True)
+    
+        
+    def display_score_table(self):
+        print(self.score_table)
 

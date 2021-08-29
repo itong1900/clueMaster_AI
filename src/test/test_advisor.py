@@ -991,10 +991,11 @@ class TestAdvisor(unittest.TestCase):
     "Next turn", "Nan", "Mr. Green, Poison, Dinning Room", "myself",
     "Suggestion", 
     "Magnifier", "Michael, Library",
+    "ScoreTable", "Michael","Exit"])
     # "Next turn", "myself", "Mrs Peacock, Wrench, Fountain", "Michael, Yuan, Nan",
     # "Next turn", "Yuan", "Mr. Green, Lead Pipe, Dinning Room", "Michael, myself",
     # #"Query", "Log", "Exit"])
-    "Query", "Player_Summary","secret","Exit"])
+    #"Query", "Player_Summary","secret","Exit"])
     def test_Game_17(self, mock_inputs):
         Advisor17 = Advisor(4)
 
