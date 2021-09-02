@@ -927,7 +927,7 @@ class TestAdvisor(unittest.TestCase):
         "Courtyard": 1/4, "Billiard Room": 1/6, "Studio": 1/6})
 
     # Adivisor 16 a test run, first real world testing
-    @patch("builtins.input", side_effect = ["7", "Miss Peach", "Rope", "Carriage House, Courtyard, Studo, Billiard Room, Dining Room","Michael, 6", "Yuan, 7","Nan, 7",
+    @patch("builtins.input", side_effect = ["7", "Miss Peach", "Rope", "Carriage House, Courtyard, Studio, Billiard Room, Dining Room","Michael, 6", "Yuan, 7","Nan, 7",
     "Next turn", "Yuan", "Miss Peach, Rope, Trophy Room", "myself",
     "Next turn", "Nan", "Professor Plum, Revolver, Studio", "Yuan, myself",
     "Next turn", "myself", "Professor Plum, Revolver, Dining Room", "Yuan, None, myself", 
@@ -963,7 +963,7 @@ class TestAdvisor(unittest.TestCase):
 
 
     # Adivisor 17, if I follow suggestion closely in every myself turn 
-    @patch("builtins.input", side_effect = ["7", "Miss Peach", "Rope", "Carriage House, Courtyard, Studo, Billiard Room, Dining Room","Michael, 6", "Yuan, 7","Nan, 7",
+    @patch("builtins.input", side_effect = ["7", "Miss Peach", "Rope", "Carriage House, Courtyard, Studio, Billiard Room, Dining Room","Michael, 6", "Yuan, 7","Nan, 7",
     "Next turn", "Yuan", "Miss Peach, Rope, Trophy Room", "myself",
     "Next turn", "Nan", "Professor Plum, Revolver, Studio", "Yuan, myself",
     "Next turn", "myself", "Professor Plum, Revolver, Dining Room", "Yuan, None, myself", 
