@@ -115,7 +115,7 @@ class Advisor:
         listOfGiver = [suspect_giver, weapon_giver, room_giver]
         cardsCollected = 3 - listOfGiver.count("None")
         
-        self.udpate_log("myself", myQuery_suspect, myQuery_weapon, myQuery_room, cardsCollected, listOfGiver)
+        self.update_log("myself", myQuery_suspect, myQuery_weapon, myQuery_room, cardsCollected, listOfGiver)
 
     def update_oppoTurn(self, whose_turn):
         oppoQuery = input(whose_turn + "'s Claim:  ")
@@ -125,7 +125,7 @@ class Advisor:
         cardGivers_list = [] if cardGivers == "None" else [x.strip() for x in cardGivers.split(",")]
         cardNumber = 0 if cardGivers == "None" else len(cardGivers_list)
 
-        self.udpate_log(whose_turn, oppoQuery_suspect, oppoQuery_weapon, oppoQuery_room, cardNumber, cardGivers_list)
+        self.update_log(whose_turn, oppoQuery_suspect, oppoQuery_weapon, oppoQuery_room, cardNumber, cardGivers_list)
 
     def initPlayers(self, suspect_list, weapon_list, room_list, cardsIhave):
         playerMyself = Player("myself", cardsIhave)
@@ -266,7 +266,7 @@ class Advisor:
         log = pd.DataFrame(index = range(0), columns = cols)
         return log
 
-    def udpate_log(self, playerName, claim_suspect, claim_weapon, claim_room, numberCards, cardGivers):
+    def update_log(self, playerName, claim_suspect, claim_weapon, claim_room, numberCards, cardGivers):
         self.log = self.log.append({"player_makeQuery": playerName, 
                                     "claim_suspect": claim_suspect,
                                     "claim_weapon": claim_weapon, 
