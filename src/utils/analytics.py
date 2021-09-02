@@ -5,9 +5,9 @@ import os
 # import sys
 # sys.path.append("../utils/")
 
-def export_csv_helper(playersHashmap):
+def export_csv_helper(playersHashmap, nameOfGame):
     ct = str(datetime.datetime.now()).split()[0]
-    path = "../../log/" + ct + "-Game17" + "/"
+    path = "../../log/" + ct + "-" + nameOfGame + "/"
     for player in playersHashmap.keys():
         if not os.path.exists(path):
             os.mkdir(path)

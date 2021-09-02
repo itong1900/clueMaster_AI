@@ -485,7 +485,8 @@ class Advisor:
         self.players[playerName].display_score_table()
 
     def exportAllTables(self):
-        export_csv_helper(self.players)
+        nameOfGame = input("Enter the name id of the Game")
+        export_csv_helper(self.players, nameOfGame)
 
 
     # def update_probability_table(df, ele_eliminated):

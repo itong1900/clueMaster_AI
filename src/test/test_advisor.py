@@ -991,7 +991,7 @@ class TestAdvisor(unittest.TestCase):
     "Next turn", "Nan", "Mr. Green, Poison, Dinning Room", "myself",
     "Suggestion", 
     "Magnifier", "Michael, Library",
-    "ScoreExport", "Exit"])
+    "ScoreExport", "Game17","Exit"])
     # "Next turn", "myself", "Mrs Peacock, Wrench, Fountain", "Michael, Yuan, Nan",
     # "Next turn", "Yuan", "Mr. Green, Lead Pipe, Dinning Room", "Michael, myself",
     # #"Query", "Log", "Exit"])
