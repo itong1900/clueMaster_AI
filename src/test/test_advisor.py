@@ -927,7 +927,7 @@ class TestAdvisor(unittest.TestCase):
         "Courtyard": 1/4, "Billiard Room": 1/6, "Studio": 1/6})
 
     # Adivisor 16 a test run, first real world testing
-    @patch("builtins.input", side_effect = ["7", "Miss Peach", "Rope", "Carriage House, Courtyard, Studo, Billiard Room, Dining Room","Michael, 6", "Yuan, 7","Nan, 7",
+    @patch("builtins.input", side_effect = ["7", "Miss Peach", "Rope", "Carriage House, Courtyard, Studio, Billiard Room, Dining Room","Michael, 6", "Yuan, 7","Nan, 7",
     "Next turn", "Yuan", "Miss Peach, Rope, Trophy Room", "myself",
     "Next turn", "Nan", "Professor Plum, Revolver, Studio", "Yuan, myself",
     "Next turn", "myself", "Professor Plum, Revolver, Dining Room", "Yuan, None, myself", 
@@ -963,7 +963,7 @@ class TestAdvisor(unittest.TestCase):
 
 
     # Adivisor 17, if I follow suggestion closely in every myself turn 
-    @patch("builtins.input", side_effect = ["7", "Miss Peach", "Rope", "Carriage House, Courtyard, Studo, Billiard Room, Dining Room","Michael, 6", "Yuan, 7","Nan, 7",
+    @patch("builtins.input", side_effect = ["7", "Miss Peach", "Rope", "Carriage House, Courtyard, Studio, Billiard Room, Dining Room","Michael, 6", "Yuan, 7","Nan, 7",
     "Next turn", "Yuan", "Miss Peach, Rope, Trophy Room", "myself",
     "Next turn", "Nan", "Professor Plum, Revolver, Studio", "Yuan, myself",
     "Next turn", "myself", "Professor Plum, Revolver, Dining Room", "Yuan, None, myself", 
@@ -991,10 +991,11 @@ class TestAdvisor(unittest.TestCase):
     "Next turn", "Nan", "Mr. Green, Poison, Dinning Room", "myself",
     "Suggestion", 
     "Magnifier", "Michael, Library",
+    "ScoreExport", "Game17","Exit"])
     # "Next turn", "myself", "Mrs Peacock, Wrench, Fountain", "Michael, Yuan, Nan",
     # "Next turn", "Yuan", "Mr. Green, Lead Pipe, Dinning Room", "Michael, myself",
     # #"Query", "Log", "Exit"])
-    "Query", "Player_Summary","secret","Exit"])
+    #"Query", "Player_Summary","secret","Exit"])
     def test_Game_17(self, mock_inputs):
         Advisor17 = Advisor(4)
 

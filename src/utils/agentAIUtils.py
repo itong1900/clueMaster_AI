@@ -1,5 +1,3 @@
-
-
 from logging import raiseExceptions
 
 # import sys
@@ -298,7 +296,7 @@ def otherAgent_turnUpdate_3cardsCase(claimer, claim_suspect, claim_weapon, claim
                     del playerHashmap[twoOther].room_possibly_have[claim_room]
         elif SuspectMustHavePlayer != None and RoomMustHavePlayer != None:
             thePlayer = [x for x in card_givers if x!= SuspectMustHavePlayer and x!= RoomMustHavePlayer][0]
-            playerHashmap[thePlayer].udpate_weapon_must_have(claim_weapon)
+            playerHashmap[thePlayer].update_weapon_must_have(claim_weapon)
             del playerHashmap[thePlayer].weapon_possibly_have[claim_weapon]
             for twoOther in [SuspectMustHavePlayer, RoomMustHavePlayer]:
                 playerHashmap[twoOther].update_weapon_must_not_have(claim_weapon)
@@ -306,7 +304,7 @@ def otherAgent_turnUpdate_3cardsCase(claimer, claim_suspect, claim_weapon, claim
                     del playerHashmap[twoOther].weapon_possibly_have[claim_weapon]
         elif WeaponMustHavePlayer != None and RoomMustHavePlayer != None:
             thePlayer = [x for x in card_givers if x!= WeaponMustHavePlayer and x!= RoomMustHavePlayer][0]
-            playerHashmap[thePlayer].udpate_suspect_must_have(claim_suspect)
+            playerHashmap[thePlayer].update_suspect_must_have(claim_suspect)
             del playerHashmap[thePlayer].suspect_possibly_have[claim_suspect]
             for twoOther in [WeaponMustHavePlayer, RoomMustHavePlayer]:
                 playerHashmap[twoOther].update_suspect_must_not_have(claim_suspect)

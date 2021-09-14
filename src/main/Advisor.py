@@ -9,7 +9,7 @@ sys.path.append("../utils/")
 from agentAIUtils import search_in_must_have, myself_turn_players_update, secret_infer_helper, otherAgent_infer_helper, otherAgent_turnUpdate_3cardsCase, otherAgent_turnUpdate_OneTwo_cardsCase, otherAgent_turnUpdate_0cardsCase
 from recommenderAIUtils import magnifier_recom_system, turn_recom_system
 from config_CONST import LIST_SUSPECT, LIST_WEAPON, LIST_ROOM, Total_Number_of_Card
-
+from analytics import export_csv_helper
 
 class Advisor:
     
@@ -23,35 +23,48 @@ class Advisor:
         """
 
         self.numberOfPlayers = numberOfPlayers
+        ## get info I entered
         self.suspects, self.weapons, self.rooms, self.cardsIhave = self.collectInfo()
+
+        ## init myself agent
         self.players = {"myself": self.initPlayers(self.suspects, self.weapons, self.rooms, self.cardsIhave)}
 
-        self.initProbabilityTable(self.suspects, self.weapons, self.rooms)
+        # self.initProbabilityTable(self.suspects, self.weapons, self.rooms)
         
+        ## init other agents
         self.initialize_secret_and_other_players(numberOfPlayers - 1)
+
+        ## init log
         self.log = self.initialize_log()
+
+        ## init every player's score table
+        self.add_recent_row_to_all_player("init")
+
+        ## start the game
         self.turnCycle()
         
     
     def turnCycle(self):
         while True:
-            action = input("Next turn / Suggestion / Query / Magnifier / Exit: ")
+            action = input("Next turn / Suggestion / Query / Magnifier / ScoreExport / Exit: ")
             if action == "Next turn":
                 whose_turn = input("Whose turn is this: ")
                 if whose_turn == "myself":
                     self.update_myturn()
                     self.AI_unit_myselfTurn_update()
+                    self.secret_Infer_Rebalance()
+                    self.otherAgent_Rebalance()
+                    self.add_recent_row_to_all_player("selfTurn")
                     #break
                 elif whose_turn in self.players:
                     self.update_oppoTurn(whose_turn)
                     self.AI_unit_otherTurn_update()
+                    self.secret_Infer_Rebalance()
+                    self.otherAgent_Rebalance()
+                    self.add_recent_row_to_all_player("otherTurn")
                     #break
                 else:
                     print("Wrong name, enter again: ")
-                if whose_turn in self.players.keys():
-                    ## reblance some weight here
-                    self.secret_Infer_Rebalance()
-                    self.otherAgent_Rebalance()
                 ## Alert feature, when secret is fully hacked, send notifications.
                 self.alertWin()
             elif action == "Suggestion":
@@ -61,11 +74,10 @@ class Advisor:
                 if what_query == "Log":
                     self.display_log()
                 elif what_query == "Player_Summary":
-                    name = input("Player's Name: ")
-                    while name not in self.players.keys():
-                        print("invalid name, enter again\n")
-                        name = input("Player's Name: ")
-                    self.player_summary(name)
+                    self.player_summary()
+            elif action == "ScoreExport":
+                #self.displayScoreTable()
+                self.exportAllTables()
             elif action == "Exit":
                 break
             elif action == "Magnifier":
@@ -73,6 +85,7 @@ class Advisor:
                 self.magnifierCheck()
                 self.secret_Infer_Rebalance()
                 self.otherAgent_Rebalance()
+                self.add_recent_row_to_all_player("magnifier")
             else:
                 print("Invalid input, enter again")
             print("\n")
@@ -102,7 +115,7 @@ class Advisor:
         listOfGiver = [suspect_giver, weapon_giver, room_giver]
         cardsCollected = 3 - listOfGiver.count("None")
         
-        self.udpate_log("myself", myQuery_suspect, myQuery_weapon, myQuery_room, cardsCollected, listOfGiver)
+        self.update_log("myself", myQuery_suspect, myQuery_weapon, myQuery_room, cardsCollected, listOfGiver)
 
     def update_oppoTurn(self, whose_turn):
         oppoQuery = input(whose_turn + "'s Claim:  ")
@@ -112,7 +125,7 @@ class Advisor:
         cardGivers_list = [] if cardGivers == "None" else [x.strip() for x in cardGivers.split(",")]
         cardNumber = 0 if cardGivers == "None" else len(cardGivers_list)
 
-        self.udpate_log(whose_turn, oppoQuery_suspect, oppoQuery_weapon, oppoQuery_room, cardNumber, cardGivers_list)
+        self.update_log(whose_turn, oppoQuery_suspect, oppoQuery_weapon, oppoQuery_room, cardNumber, cardGivers_list)
 
     def initPlayers(self, suspect_list, weapon_list, room_list, cardsIhave):
         playerMyself = Player("myself", cardsIhave)
@@ -218,30 +231,30 @@ class Advisor:
         return suspects, weapons, rooms, cardsIhave
 
 
-    def initProbabilityTable(self, suspects, weapons, rooms):
-        self.df_suspect = pd.DataFrame(index = range(1), columns = LIST_SUSPECT)
-        probab = 1/(len(LIST_SUSPECT) - len(suspects))
-        for col in self.df_suspect.columns:
-            if col in suspects:
-                self.df_suspect[col][0] = 0
-            else:
-                self.df_suspect[col][0] = probab
+    # def initProbabilityTable(self, suspects, weapons, rooms):
+    #     self.df_suspect = pd.DataFrame(index = range(1), columns = LIST_SUSPECT)
+    #     probab = 1/(len(LIST_SUSPECT) - len(suspects))
+    #     for col in self.df_suspect.columns:
+    #         if col in suspects:
+    #             self.df_suspect[col][0] = 0
+    #         else:
+    #             self.df_suspect[col][0] = probab
         
-        self.df_weapon = pd.DataFrame(index = range(1), columns = LIST_WEAPON)
-        probab = 1/(len(LIST_WEAPON) - len(weapons))
-        for col in self.df_weapon.columns:
-            if col in weapons:
-                self.df_weapon[col][0] = 0
-            else:
-                self.df_weapon[col][0] = probab
+    #     self.df_weapon = pd.DataFrame(index = range(1), columns = LIST_WEAPON)
+    #     probab = 1/(len(LIST_WEAPON) - len(weapons))
+    #     for col in self.df_weapon.columns:
+    #         if col in weapons:
+    #             self.df_weapon[col][0] = 0
+    #         else:
+    #             self.df_weapon[col][0] = probab
         
-        self.df_room = pd.DataFrame(index = range(1), columns = LIST_ROOM)
-        probab = 1/(len(LIST_ROOM) - len(rooms))
-        for col in self.df_room.columns:
-            if col in rooms:
-                self.df_room[col][0] = 0
-            else:
-                self.df_room[col][0] = probab
+    #     self.df_room = pd.DataFrame(index = range(1), columns = LIST_ROOM)
+    #     probab = 1/(len(LIST_ROOM) - len(rooms))
+    #     for col in self.df_room.columns:
+    #         if col in rooms:
+    #             self.df_room[col][0] = 0
+    #         else:
+    #             self.df_room[col][0] = probab
 
     def initialize_log(self):
         cols = ["player_makeQuery", 
@@ -253,7 +266,7 @@ class Advisor:
         log = pd.DataFrame(index = range(0), columns = cols)
         return log
 
-    def udpate_log(self, playerName, claim_suspect, claim_weapon, claim_room, numberCards, cardGivers):
+    def update_log(self, playerName, claim_suspect, claim_weapon, claim_room, numberCards, cardGivers):
         self.log = self.log.append({"player_makeQuery": playerName, 
                                     "claim_suspect": claim_suspect,
                                     "claim_weapon": claim_weapon, 
@@ -261,7 +274,11 @@ class Advisor:
                                     "cards_received": numberCards, 
                                     "card_giver(s)": cardGivers}, ignore_index=True)
 
-    def player_summary(self, player_name):
+    def player_summary(self):
+        player_name = input("Player's Name: ")
+        while player_name not in self.players.keys():
+            print("invalid name, enter again\n")
+            player_name = input("Player's Name: ")
         print(player_name)
         
         if player_name != "secret":
@@ -450,6 +467,26 @@ class Advisor:
                 raiseExceptions("impossible to catch a card in must-not-have class, set up wrong, or someone forgets to give a card")
         else:
             raiseExceptions("invalid card type in magnifier method")
+
+    
+    def add_recent_row_to_all_player(self, updateEvent):
+        """
+        updateEvent will always be among {"init", "selfTurn", "otherTurn", "magnifier"}
+        """
+        if updateEvent not in {"init", "selfTurn", "otherTurn", "magnifier"}:
+            raiseExceptions("new row type not valid")
+
+        for player in self.players.keys():
+            self.players[player].newScore_append(updateEvent)
+            
+        
+    def displayScoreTable(self):
+        playerName = input("Whose score table to check: ")
+        self.players[playerName].display_score_table()
+
+    def exportAllTables(self):
+        nameOfGame = input("Enter the name id of the Game")
+        export_csv_helper(self.players, nameOfGame)
 
 
     # def update_probability_table(df, ele_eliminated):
