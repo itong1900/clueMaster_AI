@@ -161,10 +161,6 @@ class Player:
             return 1/len(self.room_possibly_have)
         return 0
 
-    ## get previous min_score to handle a decrease on base_value
-    def getMinPossibly_Score(self):
-        pass
-
     ## check if in must_not_have
     def check_in_must_not_have(self, checkItem):
         if checkItem in LIST_SUSPECT:
