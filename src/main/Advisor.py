@@ -16,10 +16,8 @@ class Advisor:
     
     def __init__(self, numberOfPlayers):
         """
-        self.df_suspect : a real-time df showing probability of each suspect
-        self.df_weapon  : a real-time df showing probability of each weapon
-        self.df_room    : a real-time df showing probability of each room
-        self.players    : a list of playerObject 
+        Initialize the game with number of players, collect the info I have
+        in my hands, and create log. 
         """
 
         self.numberOfPlayers = numberOfPlayers
@@ -45,6 +43,9 @@ class Advisor:
         
     
     def turnCycle(self):
+        """
+        The main round structure of the advisor mode.
+        """
         while True:
             action = input("Next turn / Suggestion / Query / Magnifier / ScoreExport / Exit: ")
             if action == "Next turn":
@@ -91,6 +92,9 @@ class Advisor:
             print("\n")
     
     def alertWin(self):
+        """
+        A method to alert the user when a winning condition is met.
+        """
         if len(self.players["secret"].suspect_must_have) and len(self.players["secret"].weapon_must_have) and len(self.players["secret"].room_must_have):
             print("Secret Hacked, Make Accusation Now:\n")
             self.players["secret"].display_suspect_must_have()
@@ -98,14 +102,24 @@ class Advisor:
             self.players["secret"].display_room_must_have()
     
     def magnifier_recom(self):
+        """
+        Give recommendation if a magnifier opportunity is given
+        """
         result = magnifier_recom_system(self.players)
         print("Player to check: ", result)
 
     def turn_recommendation(self):
+        """
+        Given recommendation when it's ur turn of moving 
+        """
         result = turn_recom_system(self.players)
         print("\nSuggested Claim: ", result, "\n")
 
     def update_myturn(self):
+        """
+        With the claim I made, and the cards I collected, update the probability in 
+        "myself" and other players' Player Objects. 
+        """
         myQuery = input("My Claim:  ")
         myQuery_suspect, myQuery_weapon, myQuery_room = myQuery.split(",")[0].strip(), myQuery.split(",")[1].strip(), myQuery.split(",")[2].strip()
 
@@ -118,6 +132,9 @@ class Advisor:
         self.update_log("myself", myQuery_suspect, myQuery_weapon, myQuery_room, cardsCollected, listOfGiver)
 
     def update_oppoTurn(self, whose_turn):
+        """
+        Similar to the previous method, but the scenario of other players' turns. 
+        """
         oppoQuery = input(whose_turn + "'s Claim:  ")
         oppoQuery_suspect, oppoQuery_weapon, oppoQuery_room = oppoQuery.split(",")[0].strip(), oppoQuery.split(",")[1].strip(), oppoQuery.split(",")[2].strip()
         
@@ -128,6 +145,9 @@ class Advisor:
         self.update_log(whose_turn, oppoQuery_suspect, oppoQuery_weapon, oppoQuery_room, cardNumber, cardGivers_list)
 
     def initPlayers(self, suspect_list, weapon_list, room_list, cardsIhave):
+        """
+        init myself Player Object
+        """
         playerMyself = Player("myself", cardsIhave)
         for ele in suspect_list:
             playerMyself.update_suspect_must_have(ele)
@@ -145,6 +165,10 @@ class Advisor:
 
 
     def initialize_secret_and_other_players(self, numberOpponents):
+        """
+        init secret and other players' Player Object
+        """
+
         secret_suspect_prob_init = 1/len([x for x in LIST_SUSPECT if x not in self.suspects])
         secret_weapon_prob_init = 1/len([x for x in LIST_WEAPON if x not in self.weapons])
         secret_room_prob_init = 1/len([x for x in LIST_ROOM if x not in self.rooms])
@@ -192,6 +216,9 @@ class Advisor:
         
         
     def collectInfo(self):
+        """
+        helper method to collect the info of myself at the start of the game, with some input validation
+        """
 
         while True:
             ## collect number of cards
@@ -257,6 +284,9 @@ class Advisor:
     #             self.df_room[col][0] = probab
 
     def initialize_log(self):
+        """
+        initialize the log and return an empty dataframe with only column name row.
+        """
         cols = ["player_makeQuery", 
                 "claim_suspect", 
                 "claim_weapon", 
@@ -267,6 +297,9 @@ class Advisor:
         return log
 
     def update_log(self, playerName, claim_suspect, claim_weapon, claim_room, numberCards, cardGivers):
+        """
+        Attach the infomation collected in the new round to log table
+        """
         self.log = self.log.append({"player_makeQuery": playerName, 
                                     "claim_suspect": claim_suspect,
                                     "claim_weapon": claim_weapon, 
@@ -275,6 +308,9 @@ class Advisor:
                                     "card_giver(s)": cardGivers}, ignore_index=True)
 
     def player_summary(self):
+        """
+        method to display player summary, should migrate to player's class
+        """
         player_name = input("Player's Name: ")
         while player_name not in self.players.keys():
             print("invalid name, enter again\n")
