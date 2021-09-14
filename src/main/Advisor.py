@@ -2,9 +2,11 @@ from logging import raiseExceptions
 
 from numpy import empty
 from Player import Player
+from Player import Secret
 import pandas as pd
 
 import sys
+
 sys.path.append("../utils/")
 from agentAIUtils import search_in_must_have, myself_turn_players_update, secret_infer_helper, otherAgent_infer_helper, otherAgent_turnUpdate_3cardsCase, otherAgent_turnUpdate_OneTwo_cardsCase, otherAgent_turnUpdate_0cardsCase
 from recommenderAIUtils import magnifier_recom_system, turn_recom_system
@@ -174,7 +176,7 @@ class Advisor:
         secret_room_prob_init = 1/len([x for x in LIST_ROOM if x not in self.rooms])
 
         ## add secret agent
-        secret = Player("secret", 3)
+        secret = Secret("secret", 3)
         self.players["secret"] = secret
         for ele in self.suspects:
             self.players["secret"].update_suspect_must_not_have(ele)
@@ -315,35 +317,7 @@ class Advisor:
         while player_name not in self.players.keys():
             print("invalid name, enter again\n")
             player_name = input("Player's Name: ")
-        print(player_name)
-        
-        if player_name != "secret":
-            print("\n Base Value: ", self.players[player_name].base_value_general)
-        else:
-            print("\n Suspect Base Value: ", self.players[player_name].base_value_secret_suspect)
-            print("\n Weapon Base Value: ", self.players[player_name].base_value_secret_weapon)
-            print("\n Room Base Value: ", self.players[player_name].base_value_secret_room)
-        
-        print("\n ** suspect must have **:  ")
-        self.players[player_name].display_suspect_must_have()
-        print("\n suspect probably have:  ")
-        self.players[player_name].display_suspect_possibly_have()
-        print("\n suspect must not have:  ")
-        self.players[player_name].display_suspect_must_not_have()
-
-        print("\n ** weapon must have **:  ")
-        self.players[player_name].display_weapon_must_have()
-        print("\n weapon probably have:  ")
-        self.players[player_name].display_weapon_possibly_have()
-        print("\n weapon must not have:  ")
-        self.players[player_name].display_weapon_must_not_have()
-        
-        print("\n ** room must have **:  ")
-        self.players[player_name].display_room_must_have()
-        print("\n room probably have:  ")
-        self.players[player_name].display_room_possibly_have()
-        print("\n room must not have:  ")
-        self.players[player_name].display_room_must_not_have()
+        self.players[player_name].display_player_summary(player_name)
 
 
 

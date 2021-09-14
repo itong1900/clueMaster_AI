@@ -23,23 +23,12 @@ class Player:
         self.room_must_not_have = set()
 
         self.base_value_general = None
-        self.base_value_secret_suspect = None
-        self.base_value_secret_weapon = None
-        self.base_value_secret_room = None
 
         self.score_table = pd.DataFrame(index = range(0), columns = ["eventType"]+ LIST_SUSPECT + LIST_WEAPON + LIST_ROOM)
 
-        
 
-    def set_defaultBaseValue(self, general_value = None, suspect_value = None, weapon_value = None, room_value = None):
-        if self.name == "secret":
-            self.base_value_secret_suspect = suspect_value
-            self.base_value_secret_weapon = weapon_value
-            self.base_value_secret_room = room_value
-        elif self.name == "myself":
-            pass
-        else:
-            self.base_value_general = general_value
+    def set_defaultBaseValue(self, general_value):
+        self.base_value_general = general_value
 
     def update_suspect_must_have(self, ele_add):
         self.suspect_must_have.add(ele_add)
@@ -146,20 +135,6 @@ class Player:
     def getBaseValue(self):
         return (self.numberOfCards - self.getTotal_Musthave())/self.getTotal_Unknown()
         
-    def getSecretBaseValue_suspect(self):
-        if len(self.suspect_possibly_have) != 0:
-            return 1/len(self.suspect_possibly_have)
-        return 0
-
-    def getSecretBaseValue_weapon(self):
-        if len(self.weapon_possibly_have) != 0:
-            return 1/len(self.weapon_possibly_have)
-        return 0
-
-    def getSecretBaseValue_room(self):
-        if len(self.room_possibly_have) != 0:
-            return 1/len(self.room_possibly_have)
-        return 0
 
     ## check if in must_not_have
     def check_in_must_not_have(self, checkItem):
@@ -259,4 +234,112 @@ class Player:
         
     def display_score_table(self):
         print(self.score_table)
+
+    
+    def display_player_summary(self, player_name):
+        print(player_name)
+        
+        print("\n Base Value: ", self.base_value_general)
+        
+        print("\n ** suspect must have **:  ")
+        self.display_suspect_must_have()
+        print("\n suspect probably have:  ")
+        self.display_suspect_possibly_have()
+        print("\n suspect must not have:  ")
+        self.display_suspect_must_not_have()
+
+        print("\n ** weapon must have **:  ")
+        self.display_weapon_must_have()
+        print("\n weapon probably have:  ")
+        self.display_weapon_possibly_have()
+        print("\n weapon must not have:  ")
+        self.display_weapon_must_not_have()
+        
+        print("\n ** room must have **:  ")
+        self.display_room_must_have()
+        print("\n room probably have:  ")
+        self.display_room_possibly_have()
+        print("\n room must not have:  ")
+        self.display_room_must_not_have()
+
+
+
+class Secret(Player):
+    
+    def __init__(self, name, numberofCards):
+        """
+        override init method
+        """
+        self.name = name
+        self.numberOfCards = numberofCards
+        self.suspect_must_have = set()
+        self.weapon_must_have = set()
+        self.room_must_have = set()
+        self.suspect_possibly_have = {}
+        self.weapon_possibly_have = {}
+        self.room_possibly_have = {}
+        self.suspect_must_not_have = set()
+        self.weapon_must_not_have = set()
+        self.room_must_not_have = set()
+
+        self.base_value_secret_suspect = None
+        self.base_value_secret_weapon = None
+        self.base_value_secret_room = None
+
+        self.score_table = pd.DataFrame(index = range(0), columns = ["eventType"]+ LIST_SUSPECT + LIST_WEAPON + LIST_ROOM)
+
+    
+    def set_defaultBaseValue(self, suspect_value, weapon_value, room_value):
+        """
+        override set_defaultBaseValue method 
+        """
+        self.base_value_secret_suspect = suspect_value
+        self.base_value_secret_weapon = weapon_value
+        self.base_value_secret_room = room_value
+
+    ## Special get base value methods for secret agent
+    def getSecretBaseValue_suspect(self):
+        if len(self.suspect_possibly_have) != 0:
+            return 1/len(self.suspect_possibly_have)
+        return 0
+
+    def getSecretBaseValue_weapon(self):
+        if len(self.weapon_possibly_have) != 0:
+            return 1/len(self.weapon_possibly_have)
+        return 0
+
+    def getSecretBaseValue_room(self):
+        if len(self.room_possibly_have) != 0:
+            return 1/len(self.room_possibly_have)
+        return 0
+
+    
+    def display_player_summary(self, player_name):
+        """override display_player_summary"""
+        print(player_name)
+        
+        print("\n Suspect Base Value: ", self.base_value_secret_suspect)
+        print("\n Weapon Base Value: ", self.base_value_secret_weapon)
+        print("\n Room Base Value: ", self.base_value_secret_room)
+    
+        print("\n ** suspect must have **:  ")
+        self.display_suspect_must_have()
+        print("\n suspect probably have:  ")
+        self.display_suspect_possibly_have()
+        print("\n suspect must not have:  ")
+        self.display_suspect_must_not_have()
+
+        print("\n ** weapon must have **:  ")
+        self.display_weapon_must_have()
+        print("\n weapon probably have:  ")
+        self.display_weapon_possibly_have()
+        print("\n weapon must not have:  ")
+        self.display_weapon_must_not_have()
+        
+        print("\n ** room must have **:  ")
+        self.display_room_must_have()
+        print("\n room probably have:  ")
+        self.display_room_possibly_have()
+        print("\n room must not have:  ")
+        self.display_room_must_not_have()
 
