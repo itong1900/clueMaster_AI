@@ -3,6 +3,8 @@ from logging import raiseExceptions
 from numpy import empty
 import pandas as pd
 
+from advisor_mode import advisor_mode
+
 import sys
 sys.path.append("../utils/")
 from agentAIUtils import search_in_must_have, myself_turn_players_update, secret_infer_helper, otherAgent_infer_helper, otherAgent_turnUpdate_3cardsCase, otherAgent_turnUpdate_OneTwo_cardsCase, otherAgent_turnUpdate_0cardsCase
@@ -48,26 +50,11 @@ def main():
         pass
 
 
-def advisor_mode(opponents_info, suspect_myself_have, weapon_myself_have, room_myself_have, number_of_player):
-    #parse input 
-    opponent_list_hashmap = {}
-    # for single_input in opponents_info:
-    #     name, card_amount = single_input.split(",")[0].strip(), single_input.split(",")[1].strip()
-    #     opponent_list_hashmap[name] = int(card_amount)
 
-    st.checkbox('Show Log')
-    st.checkbox('Show suggestion')
 
 if __name__ == '__main__':
     main()
-
-
-
-
-
-
-
-
+    
 
 # st.selectbox('Select', [1,2,3])
 # st.select_slider('Slide to select', options=[1,'2'])
