@@ -89,4 +89,22 @@ class advisor_mode:
         self.players["secret"].set_defaultBaseValue(suspect_value=secret_suspect_prob_init, weapon_value=secret_weapon_prob_init, room_value=secret_room_prob_init)
 
     def init_other_agent(self, opponent_list_hashmap):
-        pass
+        other_prob_init = 1/(Total_Number_of_Card - self.cardsIhave)
+        for name in opponent_list_hashmap.keys():
+            self.players[name] = Player(name, opponent_list_hashmap[name])
+            this_prob_init = other_prob_init * self.players[name].numberOfCards
+
+            for ele in self.suspects:
+                self.players[name].update_suspect_must_not_have(ele)
+            for ele in self.weapons:
+                self.players[name].update_weapon_must_not_have(ele)
+            for ele in self.rooms:
+                self.players[name].update_room_must_not_have(ele)
+            for ele in [x for x in LIST_SUSPECT if x not in self.suspects]:
+                self.players[name].update_suspect_possibly_have(ele, this_prob_init)
+            for ele in [x for x in LIST_WEAPON if x not in self.weapons]:
+                self.players[name].update_weapon_possibly_have(ele, this_prob_init)
+            for ele in [x for x in LIST_ROOM if x not in self.rooms]:
+                self.players[name].update_room_possibly_have(ele, this_prob_init)
+
+            self.players[name].set_defaultBaseValue(general_value=this_prob_init)
