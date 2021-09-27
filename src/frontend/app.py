@@ -25,25 +25,28 @@ def main():
         st.sidebar.title("Game Configuration")
         st.sidebar.caption("Advisor Mode")
 
-        number_of_player = st.sidebar.number_input(
+        form1 = st.sidebar.form(key = "advisor_mode")
+        button_container = form1.container()
+        form1.caption('Save Configuration and Start the Game')
+        number_of_player = form1.number_input(
             "Enter number of player:",
             min_value = 2, max_value = 20, value = 4, step=1
         )
 
-        suspect_myself_have = st.sidebar.multiselect("Suspect card(s) in your hand", LIST_SUSPECT)
-        weapon_myself_have = st.sidebar.multiselect("Weapon card(s) in your hand", LIST_WEAPON)
-        room_myself_have = st.sidebar.multiselect("Room card(s) in your hand", LIST_ROOM)
+        suspect_myself_have = form1.multiselect("Suspect card(s) in your hand", LIST_SUSPECT)
+        weapon_myself_have = form1.multiselect("Weapon card(s) in your hand", LIST_WEAPON)
+        room_myself_have = form1.multiselect("Room card(s) in your hand", LIST_ROOM)
 
         # Enter name and number of cards of your opponents.
         inputs = []
         for i in range(1, number_of_player):
-            input = st.sidebar.text_area("Enter the name of the opponent_" + str(i) + " and number of card he/she has, i.e Mia, 6")
+            input = form1.text_area("Enter the name of the opponent_" + str(i) + " and number of card he/she has, i.e Mia, 6")
             inputs.append(input)
 
-        st.sidebar.text("Don't modify this part after game start, and recommend hide this part while playing")
+        form1.caption("Don't modify this part after game start, and recommend hide this part while playing")
+        button_container.form_submit_button("Save Configuration")
 
-        st.text('Click start the game when finishing editting configuration')
-        if st.button('Start the game'):
+        if st.button("Start the Game"):
             advisor_mode(inputs, suspect_myself_have, weapon_myself_have, room_myself_have, number_of_player)
 
     else:
@@ -54,7 +57,7 @@ def main():
 
 if __name__ == '__main__':
     main()
-    
+
 
 # st.selectbox('Select', [1,2,3])
 # st.select_slider('Slide to select', options=[1,'2'])
