@@ -22,7 +22,7 @@ def main():
     game_mode = st.radio('START HERE: Select Game Mode', ["Advisor", "Simulator(not Deployed)"])
 
     if game_mode == "Advisor":    
-        st.sidebar.title("Game Configuration")
+        st.sidebar.header("Game Configuration")
         st.sidebar.caption("Advisor Mode")
 
         form1 = st.sidebar.form(key = "advisor_mode")
@@ -48,11 +48,10 @@ def main():
 
         if st.button("Start the Game"):
             advisor_mode(inputs, suspect_myself_have, weapon_myself_have, room_myself_have, number_of_player)
+            st.write("hello")
 
     else:
         pass
-
-
 
 
 if __name__ == '__main__':

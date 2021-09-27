@@ -1,3 +1,4 @@
+from os import stat
 import streamlit as st
 from logging import raiseExceptions
 from numpy import empty
@@ -18,6 +19,7 @@ from Player import Secret
 class advisor_mode:
     def __init__(self, opponents_info, suspect_myself_have, weapon_myself_have, room_myself_have, number_of_player):
         self.round_num = 0
+        self.game_over = False
 
         self.numberOfPlayers = number_of_player
 
@@ -43,52 +45,20 @@ class advisor_mode:
 
         ## start the game
         self.turnCycle()
- 
 
 
     def turnCycle(self):
         """
         The main round structure of the advisor mode.
         """
-        while True:
-            form = st.form(key="round_" + str(self.round_num))
-            turn_container = form.container()
-            whose_turn = st.selectbox('Whose turn: ', [x for x in self.players.keys() if x != "secret"], key = "whose_turn_" + str(self.round_num))
-
-            if whose_turn == "myself":
-                self.update_myturn(form)
-            else:
-                self.update_oppoTurn(whose_turn, form)
-            self.round_num += 1
-
-            if self.round_num >= 2:
-                break
-            
-
-        # st.write(st.session_state.count)
-        # if st.button("Next Turn"):
-            
-        #     st.write(st.session_state.count)
-        #     whose_turn = st.selectbox('Whose turn: ', [x for x in self.players.keys() if x != "secret"])
-        #     if whose_turn == "myself":
-        #         self.update_myturn()
-        #         self.AI_unit_myselfTurn_update()
-        #         self.secret_Infer_Rebalance()
-        #         self.otherAgent_Rebalance()
-        #         self.add_recent_row_to_all_player("selfTurn")
-        #     else:
-                # self.update_oppoTurn(whose_turn)
-                # self.AI_unit_otherTurn_update()
-                # self.secret_Infer_Rebalance()
-                # self.otherAgent_Rebalance()
-                # self.add_recent_row_to_all_player("otherTurn")
-                #pass
+        if 'turn' not in st.session_state:
+            st.session_state['turn'] = None
+        st.session_state.turn = st.selectbox("Whose turn: ", [x for x in self.players.keys() if x != "secret"] + ["None"])
         
-        # st.write(st.session_state.count)
-
-        st.checkbox('Show Log')
-        st.checkbox('Show suggestion')
-
+        if st.session_state.turn == "myself":
+            st.write("hi, me")
+        else:
+            st.write("hi, you")
 
     def parse_input_helper(self, opponents_info):
         opponent_list_hashmap = {}
@@ -203,7 +173,7 @@ class advisor_mode:
 
         stform.form_submit_button("Save Claim")
    
-        if st.button("Next round", key = "next_round" + str(self.round_num)):
+        if st.button("Next round", key = "next_round_" + str(self.round_num)):
             listOfGiver = [suspect_giver, weapon_giver, room_giver]
             cardsCollected = 3 - listOfGiver.count("None")
             
@@ -323,19 +293,20 @@ class advisor_mode:
         """
         Similar to the previous method, but the scenario of other players' turns. 
         """
-        oppoQuery_suspect = st.selectbox(whose_turn+"'s"+" Suspect Claim:  ", LIST_SUSPECT)
-        oppoQuery_weapon = st.selectbox(whose_turn+"'s"+"My Weapon Claim:  ", LIST_WEAPON)
-        oppoQuery_room = st.selectbox(whose_turn+"'s"+"My Room Claim:  ", LIST_ROOM)
+        oppoQuery_suspect = stform.selectbox(whose_turn+"'s"+" Suspect Claim:  ", LIST_SUSPECT, key = "opponent_sus_claim_" + str(self.round_num))
+        oppoQuery_weapon = stform.selectbox(whose_turn+"'s"+"My Weapon Claim:  ", LIST_WEAPON, key = "opponent_wea_claim_" + str(self.round_num))
+        oppoQuery_room = stform.selectbox(whose_turn+"'s"+"My Room Claim:  ", LIST_ROOM, key = "opponent_room_claim_" + str(self.round_num))
         
         giver_potentials = [x for x in self.players.keys() if x != "secret"]
-        cardGivers = st.selectbox("Player(s) who give a card(including yourself, Enter None if no ones) : ", giver_potentials)
+        cardGivers = stform.selectbox("Player(s) who give a card(including yourself, Enter None if no ones) : ", giver_potentials)
 
         stform.form_submit_button("Save Claim")
 
-        cardGivers_list = [] if cardGivers == "None" else [x.strip() for x in cardGivers.split(",")]
-        cardNumber = 0 if cardGivers == "None" else len(cardGivers_list)
+        if st.button("Next round", key = "next_round_" + str(self.round_num)):
+            cardGivers_list = [] if cardGivers == "None" else [x.strip() for x in cardGivers.split(",")]
+            cardNumber = 0 if cardGivers == "None" else len(cardGivers_list)
 
-        self.update_log(whose_turn, oppoQuery_suspect, oppoQuery_weapon, oppoQuery_room, cardNumber, cardGivers_list)
+            self.update_log(whose_turn, oppoQuery_suspect, oppoQuery_weapon, oppoQuery_room, cardNumber, cardGivers_list)
 
 
     def update_log(self, playerName, claim_suspect, claim_weapon, claim_room, numberCards, cardGivers):
@@ -348,3 +319,6 @@ class advisor_mode:
                                     "claim_room": claim_room,
                                     "cards_received": numberCards, 
                                     "card_giver(s)": cardGivers}, ignore_index=True)
+
+
+
