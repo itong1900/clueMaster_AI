@@ -51,14 +51,24 @@ class advisor_mode:
         """
         The main round structure of the advisor mode.
         """
-        if 'turn' not in st.session_state:
-            st.session_state['turn'] = None
-        st.session_state.turn = st.selectbox("Whose turn: ", [x for x in self.players.keys() if x != "secret"] + ["None"])
+        if st.button("next turn"):
+            form_alpha = st.form(key = "alpha")
+            form_alpha.session_state.turn = st.selectbox("Whose turn: ", [x for x in self.players.keys() if x != "secret"] + ["None"])
+
+            if form_alpha.form_submit_button("confirm whose turn"):
+                if form_alpha.session_state.turn == "myself":
+                    st.write("hi, me")
+                elif form_alpha.session_state.turn != "myself":
+                    st.write("hi, you")
+
+        # if 'turn' not in st.session_state:
+        #     st.session_state['turn'] = None
+        # st.session_state.turn = st.selectbox("Whose turn: ", [x for x in self.players.keys() if x != "secret"] + ["None"])
         
-        if st.session_state.turn == "myself":
-            st.write("hi, me")
-        else:
-            st.write("hi, you")
+        # if st.session_state.turn == "myself":
+        #     st.write("hi, me")
+        # else:
+        #     st.write("hi, you")
 
     def parse_input_helper(self, opponents_info):
         opponent_list_hashmap = {}

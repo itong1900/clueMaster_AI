@@ -48,7 +48,6 @@ def main():
 
         if st.button("Start the Game"):
             advisor_mode(inputs, suspect_myself_have, weapon_myself_have, room_myself_have, number_of_player)
-            st.write("hello")
 
     else:
         pass
