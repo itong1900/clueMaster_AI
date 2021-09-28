@@ -18,12 +18,15 @@ from Player import Secret
 
 
 def main():
-    st.title("""Welcome to the Game of Clue """)
-    game_mode = st.radio('START HERE: Select Game Mode', ["Advisor", "Simulator(not Deployed)"])
+    container = st.container()
+
+    container.title("""Welcome to the Game of Clue """)
+    game_mode = container.radio('START HERE: Select Game Mode', ["Advisor", "Simulator(not Deployed)"])
 
     if game_mode == "Advisor":    
         st.sidebar.header("Game Configuration")
         st.sidebar.caption("Advisor Mode")
+
 
         form1 = st.sidebar.form(key = "advisor_mode")
         button_container = form1.container()
@@ -44,19 +47,22 @@ def main():
             inputs.append(input)
 
         form1.caption("Don't modify this part after game start, and recommend hide this part while playing")
-        button_container.form_submit_button("Save Configuration")
+        button_container.form_submit_button("Start Game")
 
-        if st.button("Start the Game"):
+        if st.button("Next turn"):
             advisor_mode(inputs, suspect_myself_have, weapon_myself_have, room_myself_have, number_of_player)
 
     else:
-        pass
+        st.sidebar.header("Game Configuration")
+        st.sidebar.caption("Simulation Mode")
+
+
+    st.selectbox('Select', [1,2,3])
+    st.select_slider('Slide to select', options=[1,'2'])
 
 
 if __name__ == '__main__':
     main()
 
 
-# st.selectbox('Select', [1,2,3])
-# st.select_slider('Slide to select', options=[1,'2'])
 
