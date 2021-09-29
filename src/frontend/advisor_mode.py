@@ -141,27 +141,15 @@ class advisor_mode:
             self.players[player].newScore_append(updateEvent)
 
 
-    def update_myturn(self, stform):
+    def update_myturn(self, suspect_giver, weapon_giver, room_giver, myQuery_suspect, myQuery_weapon, myQuery_room):
         """
         With the claim I made, and the cards I collected, update the probability in 
         "myself" and other players' Player Objects. 
         """
-        myQuery_suspect = stform.selectbox("My Suspect Claim:  ", LIST_SUSPECT, key = "mySuspect_claim_" + str(self.round_num)) 
-        myQuery_weapon = stform.selectbox("My Weapon Claim:  ", LIST_WEAPON, key = "myWeapon_claim_" + str(self.round_num))
-        myQuery_room = stform.selectbox("My Room Claim:  ", LIST_ROOM, key = "myRoom_claim_" + str(self.round_num))
-
-        giver_potentials = [x for x in self.players.keys() if x != "secret"] + ["None"]
-        suspect_giver = stform.selectbox("Suspect Giver:  ", giver_potentials, key = "mySuspectClaim_get_" + str(self.round_num)) 
-        weapon_giver = stform.selectbox("Weapon Giver:  ", giver_potentials, key = "myWeaponClaim_get_" + str(self.round_num))
-        room_giver = stform.selectbox("Room Giver:  ", giver_potentials, key = "myRoomClaim_get_" + str(self.round_num))
-
-        stform.form_submit_button("Save Claim")
-   
-        if st.button("Next round", key = "next_round_" + str(self.round_num)):
-            listOfGiver = [suspect_giver, weapon_giver, room_giver]
-            cardsCollected = 3 - listOfGiver.count("None")
+        listOfGiver = [suspect_giver, weapon_giver, room_giver]
+        cardsCollected = 3 - listOfGiver.count("None")
             
-            self.update_log("myself", myQuery_suspect, myQuery_weapon, myQuery_room, cardsCollected, listOfGiver)
+        self.update_log("myself", myQuery_suspect, myQuery_weapon, myQuery_room, cardsCollected, listOfGiver)
 
 
     def AI_unit_myselfTurn_update(self):

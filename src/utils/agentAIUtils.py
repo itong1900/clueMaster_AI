@@ -185,7 +185,8 @@ def secret_infer_helper(ObjectDealing, LIST_XXX, playersHashmap, numberOfPlayers
             else:
                 ## update secret must have, delete the weapon_found from possibly set
                 playersHashmap["secret"].update_weapon_must_have(weapon_found)
-                del playersHashmap["secret"].weapon_possibly_have[weapon_found]
+                if weapon_found in playersHashmap["secret"].weapon_possibly_have.keys():
+                    del playersHashmap["secret"].weapon_possibly_have[weapon_found]
                 ## clean up the rest of possibly set, and move them to must-not-have class
                 for ele in playersHashmap["secret"].weapon_possibly_have.keys():
                     playersHashmap["secret"].update_weapon_must_not_have(ele)
