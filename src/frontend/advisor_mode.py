@@ -42,79 +42,7 @@ class advisor_mode:
 
         ## init every player's score table
         self.add_recent_row_to_all_player("init")
-
-        ## start the game
-        self.turnCycle()
-
-
-    def turnCycle(self):
-        """
-        The main round structure of the advisor mode.
-        """
-
-        def save_turn():
-            st.write("turn saved")
-
-
-        def form_callback():
-            #st.write(st.session_state.my_selectbox)
-
-            if st.session_state.my_selectbox == "myself":
-                st.write("My turn")
-
-                with st.form(key = "my_turn"):
-                    col1, col2, col3 = st.columns(3)
-                    myQuery_suspect = col1.selectbox("My Suspect Claim:  ", LIST_SUSPECT, key = "mySuspect_claim") 
-                    myQuery_weapon = col2.selectbox("My Weapon Claim:  ", LIST_WEAPON, key = "myWeapon_claim")
-                    myQuery_room = col3.selectbox("My Room Claim:  ", LIST_ROOM, key = "myRoom_claim")
-
-                    giver_potentials = [x for x in self.players.keys() if x != "secret"] + ["None"]
-                    suspect_giver = col1.selectbox("Suspect Giver:  ", giver_potentials, key = "mySuspectClaim_get") 
-                    weapon_giver = col2.selectbox("Weapon Giver:  ", giver_potentials, key = "myWeaponClaim_get")
-                    room_giver = col3.selectbox("Room Giver:  ", giver_potentials, key = "myRoomClaim_get")
-
-                    submit_button = st.form_submit_button(label='save', on_click=save_turn)
-            else:
-                st.write(st.session_state.my_selectbox + "'s turn")
-
-                with st.form(key = "other_turn"):
-                    col1, col2, col3 = st.columns(3)
-                    oppoQuery_suspect = col1.selectbox(st.session_state.my_selectbox+"'s"+" Suspect Claim:  ", LIST_SUSPECT, key = "opponent_sus_claim")
-                    oppoQuery_weapon = col2.selectbox(st.session_state.my_selectbox+"'s"+"My Weapon Claim:  ", LIST_WEAPON, key = "opponent_wea_claim")
-                    oppoQuery_room = col3.selectbox(st.session_state.my_selectbox+"'s"+"My Room Claim:  ", LIST_ROOM, key = "opponent_room_claim")
-
-                    giver_potentials = [x for x in self.players.keys() if x != "secret"]
-                    cardGivers = st.multiselect("Player(s) who give a card(including yourself) : ", giver_potentials)
-
-                    submit_button = st.form_submit_button(label='save', on_click=save_turn)
-
-        with st.form(key='my_form'):
-            selectbox_input = st.selectbox("Whose turn: ", [x for x in self.players.keys() if x != "secret"], key='my_selectbox')
-            submit_button = st.form_submit_button(label='Confirm whose turn', on_click=form_callback)
         
-        # if "whose_turn" not in st.session_state:
-        #     st.session_state.whose_turn = "Mia"
-
-        # def handle_turn(this_turn):
-        #     st.session_state.whose_turn = this_turn
-
-        # whose_turn = st.selectbox("Whose turn: ", ["Mia","Michael"])
-
-        # change = st.button("confirm whose turn", on_click = handle_turn, args = [whose_turn])
-
-        # if st.session_state.whose_turn == "myself":
-        #     #st.write("hello, me")
-        #     pass
-        # else:
-        #     st.write("hello, you")
-        # if 'turn' not in st.session_state:
-        #     st.session_state['turn'] = None
-        # st.session_state.turn = st.selectbox("Whose turn: ", [x for x in self.players.keys() if x != "secret"] + ["None"])
-        
-        # if st.session_state.turn == "myself":
-        #     st.write("hi, me")
-        # else:
-        #     st.write("hi, you")
 
     def parse_input_helper(self, opponents_info):
         opponent_list_hashmap = {}
