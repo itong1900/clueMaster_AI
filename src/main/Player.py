@@ -31,21 +31,33 @@ class Player:
         self.base_value_general = general_value
 
     def update_suspect_must_have(self, ele_add):
+        if ele_add in self.suspect_possibly_have.keys():
+            del self.suspect_possibly_have[ele_add]
         self.suspect_must_have.add(ele_add)
 
     def update_weapon_must_have(self, ele_add):
+        if ele_add in self.weapon_possibly_have.keys():
+            del self.weapon_possibly_have[ele_add]
         self.weapon_must_have.add(ele_add)
     
     def update_room_must_have(self, ele_add):
+        if ele_add in self.room_possibly_have.keys():
+            del self.room_possibly_have[ele_add]
         self.room_must_have.add(ele_add)
 
     def update_suspect_must_not_have(self, ele_add):
+        if ele_add in self.suspect_possibly_have.keys():
+            del self.suspect_possibly_have[ele_add]
         self.suspect_must_not_have.add(ele_add)
 
     def update_weapon_must_not_have(self, ele_add):
+        if ele_add in self.weapon_possibly_have.keys():
+            del self.weapon_possibly_have[ele_add]
         self.weapon_must_not_have.add(ele_add)
     
     def update_room_must_not_have(self, ele_add):
+        if ele_add in self.room_possibly_have.keys():
+            del self.room_possibly_have[ele_add]
         self.room_must_not_have.add(ele_add)
     
     def update_suspect_possibly_have(self, ele, points_added):
