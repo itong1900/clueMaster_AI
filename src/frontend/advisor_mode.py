@@ -261,24 +261,14 @@ class advisor_mode:
             self.players[otherAgent].set_defaultBaseValue(general_value=base_value)
 
 
-    def update_oppoTurn(self, whose_turn, stform):
+    def update_oppoTurn(self, whose_turn, cardGivers, oppoQuery_suspect, oppoQuery_weapon, oppoQuery_room):
         """
         Similar to the previous method, but the scenario of other players' turns. 
         """
-        oppoQuery_suspect = stform.selectbox(whose_turn+"'s"+" Suspect Claim:  ", LIST_SUSPECT, key = "opponent_sus_claim_" + str(self.round_num))
-        oppoQuery_weapon = stform.selectbox(whose_turn+"'s"+"My Weapon Claim:  ", LIST_WEAPON, key = "opponent_wea_claim_" + str(self.round_num))
-        oppoQuery_room = stform.selectbox(whose_turn+"'s"+"My Room Claim:  ", LIST_ROOM, key = "opponent_room_claim_" + str(self.round_num))
-        
-        giver_potentials = [x for x in self.players.keys() if x != "secret"]
-        cardGivers = stform.selectbox("Player(s) who give a card(including yourself, Enter None if no ones) : ", giver_potentials)
+        #cardGivers_list = [] if cardGivers == "None" else [x.strip() for x in cardGivers.split(",")]
+        cardNumber = len(cardGivers) ## 0 if cardGivers == "None" else len(cardGivers_list)
 
-        stform.form_submit_button("Save Claim")
-
-        if st.button("Next round", key = "next_round_" + str(self.round_num)):
-            cardGivers_list = [] if cardGivers == "None" else [x.strip() for x in cardGivers.split(",")]
-            cardNumber = 0 if cardGivers == "None" else len(cardGivers_list)
-
-            self.update_log(whose_turn, oppoQuery_suspect, oppoQuery_weapon, oppoQuery_room, cardNumber, cardGivers_list)
+        self.update_log(whose_turn, oppoQuery_suspect, oppoQuery_weapon, oppoQuery_room, cardNumber, cardGivers)
 
 
     def update_log(self, playerName, claim_suspect, claim_weapon, claim_room, numberCards, cardGivers):

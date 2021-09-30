@@ -3,6 +3,9 @@ from logging import raiseExceptions
 from numpy import empty
 import pandas as pd
 
+from PIL import Image
+
+
 from advisor_mode import advisor_mode
 
 import sys
@@ -20,6 +23,8 @@ from Player import Secret
 def main():
 
     st.title("""Welcome to the Game of Clue """)
+
+    st.image("https://vividmaps.com/wp-content/uploads/2020/10/Clue-master.jpg", width = 500)
     game_mode = st.radio('START HERE: Select Game Mode', ["Advisor", "Simulator(not Deployed)"])
 
 
@@ -29,12 +34,19 @@ def main():
         st.sidebar.caption('Save Configuration and Start the Game')
 
         ## Unit of showing analytics and prompts
-        col1, col2 = st.columns(2)
-        show_log = col1.checkbox('Show analytics')
+        
+        show_log = st.checkbox('Show Log')
         if show_log:
-            col1.dataframe(st.session_state.advisor_obj.log)
-        col2.checkbox('show hint')
+            st.dataframe(st.session_state.advisor_obj.log)
+        
+        col1, col2, col3, col4 = st.columns(4)
+        player_toCheck_1 = col1.selectbox('suspect_must_have', [] if 'advisor_obj' not in st.session_state else st.session_state.advisor_obj.players.keys())
+        if "advisor_obj" in st.session_state:
+            col1.write(st.session_state.advisor_obj.players[player_toCheck_1].suspect_must_have)
 
+        player_toCheck_2 = col2.selectbox('suspect_possibly_have', [] if 'advisor_obj' not in st.session_state else st.session_state.advisor_obj.players.keys())
+        if "advisor_obj" in st.session_state:
+            col1.write(st.session_state.advisor_obj.players[player_toCheck_2].suspect_possibly_have)
 
         number_of_player = st.sidebar.number_input(
             "Enter number of player:",
@@ -77,7 +89,13 @@ def main():
             st.session_state.advisor_obj.add_recent_row_to_all_player("selfTurn")
 
         def callback_oppTurn():
-            st.write("save other turn here")
+            st.session_state.advisor_obj.update_oppoTurn(st.session_state.which_oppo_turn, st.session_state.oppo_turn_cardgivers,
+                                                        st.session_state.opponent_sus_claim, st.session_state.opponent_wea_claim,
+                                                        st.session_state.opponent_room_claim)
+            st.session_state.advisor_obj.AI_unit_otherTurn_update()
+            st.session_state.advisor_obj.secret_Infer_Rebalance()
+            st.session_state.advisor_obj.otherAgent_Rebalance()
+            st.session_state.advisor_obj.add_recent_row_to_all_player("otherTurn")
 
         with st.form(key='my_form'):
             st.subheader("When it's your turn")
@@ -97,14 +115,14 @@ def main():
         with st.form(key='other_form'):
             st.subheader("When it's others' turn")
             col1, col2, col3, col4 = st.columns(4)
-            which_oppo = col1.selectbox("Whose turn", [] if st.session_state.advisor_obj is None else [x for x in st.session_state.advisor_obj.players.keys() if x != "secret" and x != "myself"])
+            which_oppo = col1.selectbox("Whose turn", [] if st.session_state.advisor_obj is None else [x for x in st.session_state.advisor_obj.players.keys() if x != "secret" and x != "myself"], key = "which_oppo_turn")
 
             oppoQuery_suspect = col2.selectbox("Opponent's Suspect Claim:  ", LIST_SUSPECT, key = "opponent_sus_claim")
             oppoQuery_weapon = col3.selectbox("Opponent's Weapon Claim:  ", LIST_WEAPON, key = "opponent_wea_claim")
             oppoQuery_room = col2.selectbox("Opponent's Room Claim:  ", LIST_ROOM, key = "opponent_room_claim")
 
             giver_potentials = [] if st.session_state.advisor_obj is None else [x for x in st.session_state.advisor_obj.players.keys() if x != "secret"]
-            cardGivers = col1.multiselect("Player(s) who give a card(including yourself) : ", giver_potentials)
+            cardGivers = col1.multiselect("Player(s) who give a card(including yourself) : ", giver_potentials, key = "oppo_turn_cardgivers")
             col4.caption("Submit when confirmed")
             col4.form_submit_button(label='Submit', on_click = callback_oppTurn)
         
