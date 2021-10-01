@@ -18,9 +18,6 @@ from Player import Secret
 
 class advisor_mode:
     def __init__(self, opponents_info, suspect_myself_have, weapon_myself_have, room_myself_have, number_of_player):
-        self.round_num = 0
-        self.game_over = False
-
         self.numberOfPlayers = number_of_player
 
         ## get info I entered
@@ -42,6 +39,9 @@ class advisor_mode:
 
         ## init every player's score table
         self.add_recent_row_to_all_player("init")
+
+        ## add the hint of myturn, speical for frontend
+        self.myhint = turn_recom_system(self.players)
         
 
     def parse_input_helper(self, opponents_info):
@@ -192,6 +192,9 @@ class advisor_mode:
 
         for player in self.players.keys():
             self.players[player].newScore_append(updateEvent)
+        
+        ## add the hint of myturn, speical for frontend
+        self.myhint = turn_recom_system(self.players)
 
 
     def update_myturn(self, suspect_giver, weapon_giver, room_giver, myQuery_suspect, myQuery_weapon, myQuery_room):
