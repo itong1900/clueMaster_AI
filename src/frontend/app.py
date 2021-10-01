@@ -102,7 +102,8 @@ def main():
                 st.write(st.session_state.advisor_obj.players["serect"].room_must_have)
 
         
-        container_myhint = st.container()
+        #container_myhint = st.container()
+        st.write(st.session_state.advisor_obj.turn_recommendation())
 
         with st.form(key='my_form'):
             st.subheader("When it's your turn")
@@ -144,9 +145,9 @@ def main():
             card_get = col2.selectbox("card you get", LIST_SUSPECT + LIST_ROOM + LIST_WEAPON, key = "mag_card_got")
             col4.form_submit_button(label="Confirm", on_click = callback_mag)
 
-        show_me = container_myhint.checkbox('Show Hint for my turn')
-        if show_me:
-            container_myhint.write(st.session_state.advisor_obj.turn_recommendation())
+        # show_me = container_myhint.checkbox('Show Hint for my turn')
+        # if show_me:
+        #     container_myhint.write(st.session_state.advisor_obj.turn_recommendation())
 
         ## Unit of showing analytics and prompts
         show_log = st.checkbox('Show Log')
