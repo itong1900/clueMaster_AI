@@ -324,6 +324,13 @@ class advisor_mode:
         self.update_log(whose_turn, oppoQuery_suspect, oppoQuery_weapon, oppoQuery_room, cardNumber, cardGivers)
 
 
+    def alertWin(self):
+        """
+        A method to alert the user when a winning condition is met.
+        """
+        if len(self.players["secret"].suspect_must_have) and len(self.players["secret"].weapon_must_have) and len(self.players["secret"].room_must_have):
+            return True
+
     def update_log(self, playerName, claim_suspect, claim_weapon, claim_room, numberCards, cardGivers):
         """
         Attach the infomation collected in the new round to log table

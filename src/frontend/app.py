@@ -70,6 +70,11 @@ def main():
             st.session_state.advisor_obj.secret_Infer_Rebalance()
             st.session_state.advisor_obj.otherAgent_Rebalance()
             st.session_state.advisor_obj.add_recent_row_to_all_player("selfTurn")
+            if st.session_state.advisor_obj.alertWin():
+                st.balloons()
+                st.write(st.session_state.advisor_obj.players["serect"].suspect_must_have)
+                st.write(st.session_state.advisor_obj.players["serect"].weapon_must_have)
+                st.write(st.session_state.advisor_obj.players["serect"].room_must_have)
 
         def callback_oppTurn():
             st.session_state.advisor_obj.update_oppoTurn(st.session_state.which_oppo_turn, st.session_state.oppo_turn_cardgivers,
@@ -79,12 +84,22 @@ def main():
             st.session_state.advisor_obj.secret_Infer_Rebalance()
             st.session_state.advisor_obj.otherAgent_Rebalance()
             st.session_state.advisor_obj.add_recent_row_to_all_player("otherTurn")
+            if st.session_state.advisor_obj.alertWin():
+                st.balloons()
+                st.write(st.session_state.advisor_obj.players["serect"].suspect_must_have)
+                st.write(st.session_state.advisor_obj.players["serect"].weapon_must_have)
+                st.write(st.session_state.advisor_obj.players["serect"].room_must_have)
 
         def callback_mag():
             st.session_state.advisor_obj.magnifierCheck(st.session_state.mag_person_check, st.session_state.mag_card_got)
             st.session_state.advisor_obj.secret_Infer_Rebalance()
             st.session_state.advisor_obj.otherAgent_Rebalance()
             st.session_state.advisor_obj.add_recent_row_to_all_player("magnifier")
+            if st.session_state.advisor_obj.alertWin():
+                st.balloons()
+                st.write(st.session_state.advisor_obj.players["serect"].suspect_must_have)
+                st.write(st.session_state.advisor_obj.players["serect"].weapon_must_have)
+                st.write(st.session_state.advisor_obj.players["serect"].room_must_have)
 
         
         container_myhint = st.container()
