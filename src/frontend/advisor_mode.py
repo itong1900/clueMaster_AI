@@ -116,6 +116,11 @@ class advisor_mode:
 
             self.players[name].set_defaultBaseValue(general_value=this_prob_init)
 
+    def turn_recommendation(self):
+        """
+        Given recommendation when it's ur turn of moving 
+        """
+        return turn_recom_system(self.players)
 
     def initialize_log(self):
         """
@@ -129,6 +134,54 @@ class advisor_mode:
                 "card_giver(s)"]
         log = pd.DataFrame(index = range(0), columns = cols)
         return log
+
+
+    def magnifierCheck(self, playerName, cardGot):
+        """
+        magnifer check by other players doesn't bring extra straightforward info here, we'll skip those cases
+        """
+        ## determine what card is this
+        if cardGot in LIST_SUSPECT:
+            if cardGot in self.players[playerName].suspect_possibly_have.keys():
+                self.players[playerName].update_suspect_must_have(cardGot)
+                #del self.players[playerName].suspect_possibly_have[cardGot]
+                ## put the cardGot in must-not-have in other agent, and remove from their possibly have as well
+                for other_agent in [x for x in self.players.keys() if x != playerName]:
+                    if cardGot in self.players[other_agent].suspect_possibly_have.keys():
+                        self.players[other_agent].update_suspect_must_not_have(cardGot)
+                        #del self.players[other_agent].suspect_possibly_have[cardGot]
+            elif cardGot in self.players[playerName].suspect_must_not_have:
+                raiseExceptions("impossible to catch a card in must-not-have class, set up wrong, or someone forgets to give a card")
+        elif cardGot in LIST_WEAPON:
+            if cardGot in self.players[playerName].weapon_possibly_have.keys():
+                self.players[playerName].update_weapon_must_have(cardGot)
+                #del self.players[playerName].weapon_possibly_have[cardGot]
+                ## put the cardGot in must-not-have in other agent, and remove from their possibly have as well
+                for other_agent in [x for x in self.players.keys() if x != playerName]:
+                    if cardGot in self.players[other_agent].weapon_possibly_have.keys():
+                        self.players[other_agent].update_weapon_must_not_have(cardGot)
+                        #del self.players[other_agent].weapon_possibly_have[cardGot]
+            elif cardGot in self.players[playerName].weapon_must_not_have:
+                raiseExceptions("impossible to catch a card in must-not-have class, set up wrong, or someone forgets to give a card")
+        elif cardGot in LIST_ROOM:
+            if cardGot in self.players[playerName].room_possibly_have.keys():
+                self.players[playerName].update_room_must_have(cardGot)
+                #del self.players[playerName].room_possibly_have[cardGot]
+                ## put the cardGot in must-not-have in other agent, and remove from their possibly have as well
+                for other_agent in [x for x in self.players.keys() if x != playerName]:
+                    if cardGot in self.players[other_agent].room_possibly_have.keys():
+                        self.players[other_agent].update_room_must_not_have(cardGot)
+                        #del self.players[other_agent].room_possibly_have[cardGot]
+            elif cardGot in self.players[playerName].room_must_not_have:
+                raiseExceptions("impossible to catch a card in must-not-have class, set up wrong, or someone forgets to give a card")
+        else:
+            raiseExceptions("invalid card type in magnifier method")
+
+    def magnifier_recom(self):
+        """
+        Give recommendation if a magnifier opportunity is given
+        """
+        return magnifier_recom_system(self.players)
 
     def add_recent_row_to_all_player(self, updateEvent):
         """

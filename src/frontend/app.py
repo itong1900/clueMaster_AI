@@ -23,30 +23,13 @@ from Player import Secret
 def main():
 
     st.title("""Welcome to the Game of Clue """)
-
-    st.image("https://vividmaps.com/wp-content/uploads/2020/10/Clue-master.jpg", width = 500)
     game_mode = st.radio('START HERE: Select Game Mode', ["Advisor", "Simulator(not Deployed)"])
-
+    st.image("https://vividmaps.com/wp-content/uploads/2020/10/Clue-master.jpg", width = 600)
 
     if game_mode == "Advisor":    
         st.sidebar.header("Game Configuration")
         st.sidebar.caption("Advisor Mode")
         st.sidebar.caption('Save Configuration and Start the Game')
-
-        ## Unit of showing analytics and prompts
-        
-        show_log = st.checkbox('Show Log')
-        if show_log:
-            st.dataframe(st.session_state.advisor_obj.log)
-        
-        col1, col2, col3, col4 = st.columns(4)
-        player_toCheck_1 = col1.selectbox('suspect_must_have', [] if 'advisor_obj' not in st.session_state else st.session_state.advisor_obj.players.keys())
-        if "advisor_obj" in st.session_state:
-            col1.write(st.session_state.advisor_obj.players[player_toCheck_1].suspect_must_have)
-
-        player_toCheck_2 = col2.selectbox('suspect_possibly_have', [] if 'advisor_obj' not in st.session_state else st.session_state.advisor_obj.players.keys())
-        if "advisor_obj" in st.session_state:
-            col1.write(st.session_state.advisor_obj.players[player_toCheck_2].suspect_possibly_have)
 
         number_of_player = st.sidebar.number_input(
             "Enter number of player:",
@@ -97,6 +80,15 @@ def main():
             st.session_state.advisor_obj.otherAgent_Rebalance()
             st.session_state.advisor_obj.add_recent_row_to_all_player("otherTurn")
 
+        def callback_mag():
+            st.session_state.advisor_obj.magnifierCheck(st.session_state.mag_person_check, st.session_state.mag_card_got)
+            st.session_state.advisor_obj.secret_Infer_Rebalance()
+            st.session_state.advisor_obj.otherAgent_Rebalance()
+            st.session_state.advisor_obj.add_recent_row_to_all_player("magnifier")
+
+        
+        container_myhint = st.container()
+
         with st.form(key='my_form'):
             st.subheader("When it's your turn")
             col1, col2, col3, col4 = st.columns(4)
@@ -126,15 +118,30 @@ def main():
             col4.caption("Submit when confirmed")
             col4.form_submit_button(label='Submit', on_click = callback_oppTurn)
         
+        show_mag = st.checkbox('Show Hint for magnifier')
+        if show_mag:
+            st.write(st.session_state.advisor_obj.magnifier_recom())
 
         with st.form(key='magnifier'):
             st.subheader("When you have a chance to use Magnifier")
             col1, col2, col3, col4 = st.columns(4)
-            person_check = col1.selectbox("who to check", [] if st.session_state.advisor_obj is None else [x for x in st.session_state.advisor_obj.players.keys() if x != "secret" and x != "myself"])
-            card_get = col2.selectbox("card you get", LIST_SUSPECT + LIST_ROOM + LIST_WEAPON)
-            col4.form_submit_button(label="Confirm")
+            person_check = col1.selectbox("who to check", [] if st.session_state.advisor_obj is None else [x for x in st.session_state.advisor_obj.players.keys() if x != "secret" and x != "myself"], key = "mag_person_check")
+            card_get = col2.selectbox("card you get", LIST_SUSPECT + LIST_ROOM + LIST_WEAPON, key = "mag_card_got")
+            col4.form_submit_button(label="Confirm", on_click = callback_mag)
 
+        show_me = container_myhint.checkbox('Show Hint for my turn')
+        if show_me:
+            container_myhint.write(st.session_state.advisor_obj.turn_recommendation())
+
+        ## Unit of showing analytics and prompts
+        show_log = st.checkbox('Show Log')
+        if show_log:
+            st.dataframe(st.session_state.advisor_obj.log)
+
+        #player_graph = st.selectbox("Player possibly cards trend", [] if 'advisor_obj' not in st.session_state else st.session_state.advisor_obj.players.keys())
         
+        if st.checkbox("show player trend"):
+            st.line_chart(st.session_state.advisor_obj.players["Yuan"].score_table.iloc[2:31,])
 
         
     else:
