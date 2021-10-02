@@ -14,14 +14,11 @@ from advisor_mode import advisor_mode
 
 import sys
 sys.path.append("../utils/")
-from agentAIUtils import search_in_must_have, myself_turn_players_update, secret_infer_helper, otherAgent_infer_helper, otherAgent_turnUpdate_3cardsCase, otherAgent_turnUpdate_OneTwo_cardsCase, otherAgent_turnUpdate_0cardsCase
-from recommenderAIUtils import magnifier_recom_system, turn_recom_system
-from config_CONST import LIST_SUSPECT, LIST_WEAPON, LIST_ROOM, Total_Number_of_Card
+from config_CONST import LIST_SUSPECT, LIST_WEAPON, LIST_ROOM
 from analytics import export_csv_helper
 
-sys.path.append("../main/")
-from Player import Player
-from Player import Secret
+import altair as alt
+
 
 
 def main():
@@ -169,6 +166,19 @@ def main():
                 st.bar_chart(df.iloc[-1:].T)
                 st.write(df)
                 st.line_chart(df)
+                # demo_df = pd.DataFrame({
+                # 'timestamp': [0,1],
+                # 'value': df.iloc[:,0]
+                # })
+                # base = alt.Chart(demo_df).encode(
+                #     x='timestamp',
+                #     y='value:Q',
+                #     tooltip=['value', 'timestamp']
+                # )
+                # line = base.mark_line()
+                # points = base.mark_point(filled=True, size=40)
+                # chart = (line + points).interactive()
+                # st.altair_chart(chart, use_container_width=True)
 
             
         if st.checkbox("Show Player Summary"):
