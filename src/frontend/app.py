@@ -4,7 +4,10 @@ from numpy import empty
 import pandas as pd
 import numpy as np
 
-from PIL import Image
+import hvplot
+import hvplot.pandas
+import holoviews as hv
+hv.extension('bokeh', logo=False)
 
 
 from advisor_mode import advisor_mode
@@ -61,7 +64,7 @@ def main():
             for i in range(1, number_of_player):
                 input = st.text_area("Enter the name of the opponent_" + str(i) + " and number of card he/she has, i.e Mia, 6", key = "oppo_" + str(i))
 
-            container.form_submit_button(label='Start Game', on_click = init_advisor)
+            container.form_submit_button(label='Start Game', help = "surprise!", on_click = init_advisor)
 
 
         def callback_myTurn():
@@ -149,9 +152,6 @@ def main():
             card_get = col2.selectbox("card you get", LIST_SUSPECT + LIST_ROOM + LIST_WEAPON, key = "mag_card_got")
             col4.form_submit_button(label="Confirm", on_click = callback_mag)
 
-        # show_me = container_myhint.checkbox('Show Hint for my turn')
-        # if show_me:
-        #     container_myhint.write(st.session_state.advisor_obj.turn_recommendation())
 
         ## Unit of showing analytics and prompts
         show_log = st.checkbox('Show Log')
@@ -159,46 +159,49 @@ def main():
             st.dataframe(st.session_state.advisor_obj.log)
 
         ## show Graphic trends here
-        player_name = st.selectbox("Show player's score trend", None if 'advisor_obj' not in st.session_state else st.session_state.advisor_obj.players.keys())
-        if player_name is not None:
-            # col_names = [LIST_SUSPECT + LIST_WEAPON + LIST_ROOM]
-            st.write(st.session_state.advisor_obj.players[player_name].score_table.iloc[:,1:31])
-            df = st.session_state.advisor_obj.players[player_name].score_table.iloc[:,1:31]
-            st.line_chart(df)
-            # df = pd.DataFrame(np.random.randn(20, 3), columns=['a', 'b', 'c'])
-            # st.write(df)
+        if st.checkbox("Show Trends"):
+            player_name = None if 'advisor_obj' not in st.session_state else st.selectbox("Show player's score trend", st.session_state.advisor_obj.players.keys())
+            if player_name is not None:
+                #st.write(st.session_state.advisor_obj.players[player_name].score_table.iloc[:,1:31])
+                df = st.session_state.advisor_obj.players[player_name].score_table.iloc[:,1:31]
+                # nice_plot = df.hvplot(kind='line')
+                # st.write(hv.render(nice_plot, backend='bokeh'))
+                st.bar_chart(df.iloc[-1:].T)
+                st.write(df)
+                st.line_chart(df)
+
             
-        
-        col1, col2, col3 = st.columns(3)
-        player_name = col1.selectbox("Player's suspect must have", None if 'advisor_obj' not in st.session_state else st.session_state.advisor_obj.players.keys())
-        if player_name is not None:
-            col1.write(st.session_state.advisor_obj.players[player_name].suspect_must_have)
-        player_name = col1.selectbox("Player's suspect possibly have", None if 'advisor_obj' not in st.session_state else st.session_state.advisor_obj.players.keys())
-        if player_name is not None:
-            col1.write(st.session_state.advisor_obj.players[player_name].suspect_possibly_have)
-        player_name = col1.selectbox("Player's suspect must not have", None if 'advisor_obj' not in st.session_state else st.session_state.advisor_obj.players.keys())
-        if player_name is not None:
-            col1.write(st.session_state.advisor_obj.players[player_name].suspect_must_not_have)
+        if st.checkbox("Show Player Summary"):
+            col1, col2, col3 = st.columns(3)
+            player_name = col1.selectbox("Player's suspect must have", None if 'advisor_obj' not in st.session_state else st.session_state.advisor_obj.players.keys())
+            if player_name is not None:
+                col1.write(st.session_state.advisor_obj.players[player_name].suspect_must_have)
+            player_name = col1.selectbox("Player's suspect possibly have", None if 'advisor_obj' not in st.session_state else st.session_state.advisor_obj.players.keys())
+            if player_name is not None:
+                col1.write(st.session_state.advisor_obj.players[player_name].suspect_possibly_have)
+            player_name = col1.selectbox("Player's suspect must not have", None if 'advisor_obj' not in st.session_state else st.session_state.advisor_obj.players.keys())
+            if player_name is not None:
+                col1.write(st.session_state.advisor_obj.players[player_name].suspect_must_not_have)
 
-        player_name = col2.selectbox("Player's weapon must have", None if 'advisor_obj' not in st.session_state else st.session_state.advisor_obj.players.keys())
-        if player_name is not None:
-            col2.write(st.session_state.advisor_obj.players[player_name].weapon_must_have)
-        player_name = col2.selectbox("Player's weapon possibly have", None if 'advisor_obj' not in st.session_state else st.session_state.advisor_obj.players.keys())
-        if player_name is not None:
-            col2.write(st.session_state.advisor_obj.players[player_name].weapon_possibly_have)
-        player_name = col2.selectbox("Player's weapon must not have", None if 'advisor_obj' not in st.session_state else st.session_state.advisor_obj.players.keys())
-        if player_name is not None:
-            col2.write(st.session_state.advisor_obj.players[player_name].weapon_must_not_have)
+            player_name = col2.selectbox("Player's weapon must have", None if 'advisor_obj' not in st.session_state else st.session_state.advisor_obj.players.keys())
+            if player_name is not None:
+                col2.write(st.session_state.advisor_obj.players[player_name].weapon_must_have)
+            player_name = col2.selectbox("Player's weapon possibly have", None if 'advisor_obj' not in st.session_state else st.session_state.advisor_obj.players.keys())
+            if player_name is not None:
+                col2.write(st.session_state.advisor_obj.players[player_name].weapon_possibly_have)
+            player_name = col2.selectbox("Player's weapon must not have", None if 'advisor_obj' not in st.session_state else st.session_state.advisor_obj.players.keys())
+            if player_name is not None:
+                col2.write(st.session_state.advisor_obj.players[player_name].weapon_must_not_have)
 
-        player_name = col3.selectbox("Player's room must have", None if 'advisor_obj' not in st.session_state else st.session_state.advisor_obj.players.keys())
-        if player_name is not None:
-            col3.write(st.session_state.advisor_obj.players[player_name].room_must_have)
-        player_name = col3.selectbox("Player's room possibly have", None if 'advisor_obj' not in st.session_state else st.session_state.advisor_obj.players.keys())
-        if player_name is not None:
-            col3.write(st.session_state.advisor_obj.players[player_name].room_possibly_have)
-        player_name = col3.selectbox("Player's room must not have", None if 'advisor_obj' not in st.session_state else st.session_state.advisor_obj.players.keys())
-        if player_name is not None:
-            col3.write(st.session_state.advisor_obj.players[player_name].room_must_not_have)
+            player_name = col3.selectbox("Player's room must have", None if 'advisor_obj' not in st.session_state else st.session_state.advisor_obj.players.keys())
+            if player_name is not None:
+                col3.write(st.session_state.advisor_obj.players[player_name].room_must_have)
+            player_name = col3.selectbox("Player's room possibly have", None if 'advisor_obj' not in st.session_state else st.session_state.advisor_obj.players.keys())
+            if player_name is not None:
+                col3.write(st.session_state.advisor_obj.players[player_name].room_possibly_have)
+            player_name = col3.selectbox("Player's room must not have", None if 'advisor_obj' not in st.session_state else st.session_state.advisor_obj.players.keys())
+            if player_name is not None:
+                col3.write(st.session_state.advisor_obj.players[player_name].room_must_not_have)
         
     else:
         st.sidebar.header("Game Configuration")

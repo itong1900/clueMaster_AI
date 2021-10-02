@@ -4,7 +4,7 @@ import pandas as pd
 
 import sys
 sys.path.append("../utils/")
-from config_CONST import LIST_SUSPECT, LIST_WEAPON, LIST_ROOM, Total_Number_of_Card
+from config_CONST import LIST_SUSPECT, LIST_WEAPON, LIST_ROOM, WIN_SCORE
 
 
 class Player:
@@ -213,7 +213,7 @@ class Player:
         result = {}
         for ele in LIST_SUSPECT:
             if ele in self.suspect_must_have:
-                result[ele] = 2
+                result[ele] = WIN_SCORE
             elif ele in self.suspect_possibly_have.keys():
                 result[ele] = self.suspect_possibly_have[ele]
             else:  ## ele in must_have
@@ -221,7 +221,7 @@ class Player:
         
         for ele in LIST_WEAPON:
             if ele in self.weapon_must_have:
-                result[ele] = 2
+                result[ele] = WIN_SCORE
             elif ele in self.weapon_possibly_have.keys():
                 result[ele] = self.weapon_possibly_have[ele]
             else:  ## ele in must_have
@@ -229,7 +229,7 @@ class Player:
 
         for ele in LIST_ROOM:
             if ele in self.room_must_have:
-                result[ele] = 2
+                result[ele] = WIN_SCORE
             elif ele in self.room_possibly_have.keys():
                 result[ele] = self.room_possibly_have[ele]
             else:  ## ele in must_have
