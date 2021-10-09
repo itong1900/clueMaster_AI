@@ -22,21 +22,30 @@ class TestAdvisor2(unittest.TestCase):
     "Next turn", "Yuan", "Miss Peach, Revolver, Trophy Room", "myself",
     "Next turn", "myself", "Mrs White, Revolver, Library", "Nan, None, Michael",
     "Next turn", "Michael", "Miss Scarlet, Revolver, Studio", "Nan, myself",
+
     "Next turn", "Yuan", "Mme. Rose, Poison, Studio", "Nan, Michael, myself",
+        
+    "Query", "Player_Summary", "myself",
+    "Query", "Player_Summary", "secret",
+    "Query", "Player_Summary", "Yuan",
+    "Query", "Player_Summary", "Nan",
+    "Query", "Player_Summary", "Michael",
+
     "Next turn", "Nan", "Miss Peach, Knife, Billiard Room", "Michael, myself",
     "Next turn", "myself", "Miss Scarlet, Knife, Trophy Room", "None, Nan, None",
     "Next turn", "Michael", "Mrs White, Revolver, Conservatory", "Nan",
     "Next turn", "Yuan", "Sgt. Gray, Revolver, Conservatory", "Nan",
     "Magnifier", "Michael, Horseshoe",
-    "Next turn", "myself", "Miss Scarlet, Lead Pipe, Studio", "Nan, Michael, myself",
-    "Next turn", "Michael", "Mrs White, Knife, Drawing Room", "Nan, Yuan",
-    "Next turn", "Yuan", "Mrs Peacock, Knife, Drawing Room", "Nan, Michael",
-    "Next turn", "Nan", "Mrs White, Knife, Courtyard", "myself",
-    "Next turn", "myself", "Sgt. Gray, Candlestick, Drawing Room", "Nan, None, Yuan",
-    "Next turn", "Michael", "Mr. Green, Candlestick, Dinning Room", "myself, Yuan",
-    "Next turn", "Nan", "Mr. Green, Poison, Dinning Room", "myself",
-    "Suggestion", 
-    "Magnifier", "Michael, Library", "Exit"])
+    "Suggestion", "Exit"])
+    # "Next turn", "myself", "Miss Scarlet, Lead Pipe, Studio", "Nan, Michael, myself",
+    # "Next turn", "Michael", "Mrs White, Knife, Drawing Room", "Nan, Yuan",
+    # "Next turn", "Yuan", "Mrs Peacock, Knife, Drawing Room", "Nan, Michael",
+    # "Next turn", "Nan", "Mrs White, Knife, Courtyard", "myself",
+    # "Next turn", "myself", "Sgt. Gray, Candlestick, Drawing Room", "Nan, None, Yuan",
+    # "Next turn", "Michael", "Mr. Green, Candlestick, Dinning Room", "myself, Yuan",
+    # "Next turn", "Nan", "Mr. Green, Poison, Dinning Room", "myself",
+    # "Suggestion", 
+    # "Magnifier", "Michael, Library", "Exit"])
     #"ScoreExport", "Game17","Exit"])
     # "Next turn", "myself", "Mrs Peacock, Wrench, Fountain", "Michael, Yuan, Nan",
     # "Next turn", "Yuan", "Mr. Green, Lead Pipe, Dinning Room", "Michael, myself",

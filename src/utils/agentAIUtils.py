@@ -276,12 +276,15 @@ def otherAgent_turnUpdate_3cardsCase(claimer, claim_suspect, claim_weapon, claim
 
     ## check how many cards are in the must-have of these 3 agents already
     SuspectMustHavePlayer, WeaponMustHavePlayer, RoomMustHavePlayer = None, None, None
+
     isSuspectInMustHave = [playerHashmap[x].check_in_must_have(claim_suspect) for x in card_givers]
     if sum(isSuspectInMustHave) == 1:
         SuspectMustHavePlayer = card_givers[first_True(isSuspectInMustHave)]
+    
     isWeaponInMustHave = [playerHashmap[x].check_in_must_have(claim_weapon) for x in card_givers]
     if sum(isWeaponInMustHave) == 1:
         WeaponMustHavePlayer = card_givers[first_True(isWeaponInMustHave)]
+
     isRoomInMustHave = [playerHashmap[x].check_in_must_have(claim_room) for x in card_givers]
     if sum(isRoomInMustHave) == 1:
         RoomMustHavePlayer = card_givers[first_True(isRoomInMustHave)]
@@ -328,8 +331,8 @@ def otherAgent_turnUpdate_3cardsCase(claimer, claim_suspect, claim_weapon, claim
                 playerHashmap[related_player].update_room_possibly_have(claim_room, 1/2)
         elif RoomMustHavePlayer != None:
             for related_player in [x for x in card_givers if x != RoomMustHavePlayer]:
-                playerHashmap[related_player].update_weapon_possibly_have(claim_suspect, 1/2)
-                playerHashmap[related_player].update_room_possibly_have(claim_weapon, 1/2)
+                playerHashmap[related_player].update_suspect_possibly_have(claim_suspect, 1/2)
+                playerHashmap[related_player].update_weapon_possibly_have(claim_weapon, 1/2)
     elif cardsInMustHave == 0:
         for related_player in card_givers:
             playerHashmap[related_player].update_suspect_possibly_have(claim_suspect, 1/3)

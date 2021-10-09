@@ -88,9 +88,9 @@ def main():
             st.session_state.advisor_obj.add_recent_row_to_all_player("otherTurn")
             if st.session_state.advisor_obj.alertWin():
                 st.balloons()
-                st.write(st.session_state.advisor_obj.players["serect"].suspect_must_have)
-                st.write(st.session_state.advisor_obj.players["serect"].weapon_must_have)
-                st.write(st.session_state.advisor_obj.players["serect"].room_must_have)
+                st.write(st.session_state.advisor_obj.players["secret"].suspect_must_have)
+                st.write(st.session_state.advisor_obj.players["secret"].weapon_must_have)
+                st.write(st.session_state.advisor_obj.players["secret"].room_must_have)
 
         def callback_mag():
             st.session_state.advisor_obj.magnifierCheck(st.session_state.mag_person_check, st.session_state.mag_card_got)
@@ -99,9 +99,9 @@ def main():
             st.session_state.advisor_obj.add_recent_row_to_all_player("magnifier")
             if st.session_state.advisor_obj.alertWin():
                 st.balloons()
-                st.write(st.session_state.advisor_obj.players["serect"].suspect_must_have)
-                st.write(st.session_state.advisor_obj.players["serect"].weapon_must_have)
-                st.write(st.session_state.advisor_obj.players["serect"].room_must_have)
+                st.write(st.session_state.advisor_obj.players["secret"].suspect_must_have)
+                st.write(st.session_state.advisor_obj.players["secret"].weapon_must_have)
+                st.write(st.session_state.advisor_obj.players["secret"].room_must_have)
 
         
         show_me = st.checkbox("show hint of my turn")
