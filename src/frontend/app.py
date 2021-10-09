@@ -164,7 +164,7 @@ def main():
                 # nice_plot = df.hvplot(kind='line')
                 # st.write(hv.render(nice_plot, backend='bokeh'))
                 st.bar_chart(df.iloc[-1:].T)
-                st.write(df)
+                #st.write(df)
                 st.line_chart(df)
                 # demo_df = pd.DataFrame({
                 # 'timestamp': [0,1],
