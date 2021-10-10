@@ -121,13 +121,3 @@ def turn_recom_system(playerHashmap):
         
     return suspect_rec + ", " + weapon_rec + ", " + room_rec
 
-
-
-## helper method, return highest score of ele among all players
-def get_ele_highest_score_helper(playerHashmap, ele):
-    if ele in LIST_SUSPECT:
-        pass
-    elif ele in LIST_WEAPON:
-        pass
-    elif ele in LIST_ROOM:
-        pass
