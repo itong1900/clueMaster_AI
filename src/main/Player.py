@@ -4,7 +4,7 @@ import pandas as pd
 
 import sys
 sys.path.append("../utils/")
-from config_CONST import LIST_SUSPECT, LIST_WEAPON, LIST_ROOM, Total_Number_of_Card
+from config_CONST import LIST_SUSPECT, LIST_WEAPON, LIST_ROOM, WIN_SCORE
 
 
 class Player:
@@ -31,21 +31,33 @@ class Player:
         self.base_value_general = general_value
 
     def update_suspect_must_have(self, ele_add):
+        if ele_add in self.suspect_possibly_have.keys():
+            del self.suspect_possibly_have[ele_add]
         self.suspect_must_have.add(ele_add)
 
     def update_weapon_must_have(self, ele_add):
+        if ele_add in self.weapon_possibly_have.keys():
+            del self.weapon_possibly_have[ele_add]
         self.weapon_must_have.add(ele_add)
     
     def update_room_must_have(self, ele_add):
+        if ele_add in self.room_possibly_have.keys():
+            del self.room_possibly_have[ele_add]
         self.room_must_have.add(ele_add)
 
     def update_suspect_must_not_have(self, ele_add):
+        if ele_add in self.suspect_possibly_have.keys():
+            del self.suspect_possibly_have[ele_add]
         self.suspect_must_not_have.add(ele_add)
 
     def update_weapon_must_not_have(self, ele_add):
+        if ele_add in self.weapon_possibly_have.keys():
+            del self.weapon_possibly_have[ele_add]
         self.weapon_must_not_have.add(ele_add)
     
     def update_room_must_not_have(self, ele_add):
+        if ele_add in self.room_possibly_have.keys():
+            del self.room_possibly_have[ele_add]
         self.room_must_not_have.add(ele_add)
     
     def update_suspect_possibly_have(self, ele, points_added):
@@ -201,7 +213,7 @@ class Player:
         result = {}
         for ele in LIST_SUSPECT:
             if ele in self.suspect_must_have:
-                result[ele] = 2
+                result[ele] = WIN_SCORE
             elif ele in self.suspect_possibly_have.keys():
                 result[ele] = self.suspect_possibly_have[ele]
             else:  ## ele in must_have
@@ -209,7 +221,7 @@ class Player:
         
         for ele in LIST_WEAPON:
             if ele in self.weapon_must_have:
-                result[ele] = 2
+                result[ele] = WIN_SCORE
             elif ele in self.weapon_possibly_have.keys():
                 result[ele] = self.weapon_possibly_have[ele]
             else:  ## ele in must_have
@@ -217,7 +229,7 @@ class Player:
 
         for ele in LIST_ROOM:
             if ele in self.room_must_have:
-                result[ele] = 2
+                result[ele] = WIN_SCORE
             elif ele in self.room_possibly_have.keys():
                 result[ele] = self.room_possibly_have[ele]
             else:  ## ele in must_have

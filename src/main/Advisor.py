@@ -445,34 +445,34 @@ class Advisor:
         if cardGot in LIST_SUSPECT:
             if cardGot in self.players[playerName].suspect_possibly_have.keys():
                 self.players[playerName].update_suspect_must_have(cardGot)
-                del self.players[playerName].suspect_possibly_have[cardGot]
+                #del self.players[playerName].suspect_possibly_have[cardGot]
                 ## put the cardGot in must-not-have in other agent, and remove from their possibly have as well
                 for other_agent in [x for x in self.players.keys() if x != playerName]:
                     if cardGot in self.players[other_agent].suspect_possibly_have.keys():
                         self.players[other_agent].update_suspect_must_not_have(cardGot)
-                        del self.players[other_agent].suspect_possibly_have[cardGot]
+                        #del self.players[other_agent].suspect_possibly_have[cardGot]
             elif cardGot in self.players[playerName].suspect_must_not_have:
                 raiseExceptions("impossible to catch a card in must-not-have class, set up wrong, or someone forgets to give a card")
         elif cardGot in LIST_WEAPON:
             if cardGot in self.players[playerName].weapon_possibly_have.keys():
                 self.players[playerName].update_weapon_must_have(cardGot)
-                del self.players[playerName].weapon_possibly_have[cardGot]
+                #del self.players[playerName].weapon_possibly_have[cardGot]
                 ## put the cardGot in must-not-have in other agent, and remove from their possibly have as well
                 for other_agent in [x for x in self.players.keys() if x != playerName]:
                     if cardGot in self.players[other_agent].weapon_possibly_have.keys():
                         self.players[other_agent].update_weapon_must_not_have(cardGot)
-                        del self.players[other_agent].weapon_possibly_have[cardGot]
+                        #del self.players[other_agent].weapon_possibly_have[cardGot]
             elif cardGot in self.players[playerName].weapon_must_not_have:
                 raiseExceptions("impossible to catch a card in must-not-have class, set up wrong, or someone forgets to give a card")
         elif cardGot in LIST_ROOM:
             if cardGot in self.players[playerName].room_possibly_have.keys():
                 self.players[playerName].update_room_must_have(cardGot)
-                del self.players[playerName].room_possibly_have[cardGot]
+                #del self.players[playerName].room_possibly_have[cardGot]
                 ## put the cardGot in must-not-have in other agent, and remove from their possibly have as well
                 for other_agent in [x for x in self.players.keys() if x != playerName]:
                     if cardGot in self.players[other_agent].room_possibly_have.keys():
                         self.players[other_agent].update_room_must_not_have(cardGot)
-                        del self.players[other_agent].room_possibly_have[cardGot]
+                        #del self.players[other_agent].room_possibly_have[cardGot]
             elif cardGot in self.players[playerName].room_must_not_have:
                 raiseExceptions("impossible to catch a card in must-not-have class, set up wrong, or someone forgets to give a card")
         else:

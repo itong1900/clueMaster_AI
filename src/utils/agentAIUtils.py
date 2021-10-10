@@ -44,15 +44,12 @@ def myself_turn_players_update(ObjectDealing ,not_in_must_have, card_giver, card
         if not_in_must_have:
             if card_giver != "None":
                 playersHashmap[card_giver].update_suspect_must_have(claim_object)
-                # remove the card from the possibly have of this giver
-                if claim_object in playersHashmap[card_giver].suspect_possibly_have.keys():
-                    del playersHashmap[card_giver].suspect_possibly_have[claim_object]
                 # add to must_not_have in other agents, remove from their probably have list, including secret agent
                 for other_agent in [x for x in playersHashmap.keys() if x != card_giver]:
                     # the claim object can only within must not have or possibly have,              
                     if claim_object in playersHashmap[other_agent].suspect_possibly_have:
                         playersHashmap[other_agent].update_suspect_must_not_have(claim_object)
-                        del playersHashmap[other_agent].suspect_possibly_have[claim_object]
+                        #del playersHashmap[other_agent].suspect_possibly_have[claim_object]
                     elif claim_object in playersHashmap[other_agent].suspect_must_have:
                         raiseExceptions("agent should not have this card in must have")
             else:
@@ -69,8 +66,8 @@ def myself_turn_players_update(ObjectDealing ,not_in_must_have, card_giver, card
                     if non_related_agent == "secret":
                         continue
                     playersHashmap[non_related_agent].update_suspect_must_not_have(claim_object)
-                    if claim_object in playersHashmap[non_related_agent].suspect_possibly_have:
-                        del playersHashmap[non_related_agent].suspect_possibly_have[claim_object]
+                    # if claim_object in playersHashmap[non_related_agent].suspect_possibly_have:
+                    #     del playersHashmap[non_related_agent].suspect_possibly_have[claim_object]
         else:
             # sanity check
             pass
@@ -80,14 +77,14 @@ def myself_turn_players_update(ObjectDealing ,not_in_must_have, card_giver, card
             if card_giver != "None":
                 playersHashmap[card_giver].update_weapon_must_have(claim_object)
                 # remove the card from the possibly have of this giver
-                if claim_object in playersHashmap[card_giver].weapon_possibly_have:
-                    del playersHashmap[card_giver].weapon_possibly_have[claim_object]
+                # if claim_object in playersHashmap[card_giver].weapon_possibly_have:
+                #     del playersHashmap[card_giver].weapon_possibly_have[claim_object]
                 # add to must_not_have in other agents, remove from their probably have list, including secret agent
                 for other_agent in [x for x in playersHashmap.keys() if x != card_giver]:
                     # add to must_not_have in other agents, remove from their probably have list, including secret agent
                     if claim_object in playersHashmap[other_agent].weapon_possibly_have:
                         playersHashmap[other_agent].update_weapon_must_not_have(claim_object)
-                        del playersHashmap[other_agent].weapon_possibly_have[claim_object]
+                        #del playersHashmap[other_agent].weapon_possibly_have[claim_object]
                     elif claim_object in playersHashmap[other_agent].weapon_must_have:
                         raiseExceptions("agent should not have this card in must have")
             else:
@@ -103,8 +100,8 @@ def myself_turn_players_update(ObjectDealing ,not_in_must_have, card_giver, card
                     if non_related_agent == "secret":
                         continue
                     playersHashmap[non_related_agent].update_weapon_must_not_have(claim_object)
-                    if claim_object in playersHashmap[non_related_agent].weapon_possibly_have:
-                        del playersHashmap[non_related_agent].weapon_possibly_have[claim_object]
+                    # if claim_object in playersHashmap[non_related_agent].weapon_possibly_have:
+                    #     del playersHashmap[non_related_agent].weapon_possibly_have[claim_object]
         else:
             # sanity check
             pass
@@ -113,14 +110,14 @@ def myself_turn_players_update(ObjectDealing ,not_in_must_have, card_giver, card
             if card_giver != "None":
                 playersHashmap[card_giver].update_room_must_have(claim_object)
                 # remove the card from the possibly have of this giver
-                if claim_object in playersHashmap[card_giver].room_possibly_have:
-                    del playersHashmap[card_giver].room_possibly_have[claim_object]
+                # if claim_object in playersHashmap[card_giver].room_possibly_have:
+                #     del playersHashmap[card_giver].room_possibly_have[claim_object]
                 # add to must_not_have in other agents, remove from their probably have list, including secret agent
                 for other_agent in [x for x in playersHashmap.keys() if x != card_giver]:
                     # add to must_not_have in other agents, remove from their probably have list, including secret agent
                     if claim_object in playersHashmap[other_agent].room_possibly_have:
                         playersHashmap[other_agent].update_room_must_not_have(claim_object)
-                        del playersHashmap[other_agent].room_possibly_have[claim_object]
+                        # del playersHashmap[other_agent].room_possibly_have[claim_object]
                     elif claim_object in playersHashmap[other_agent].suspect_must_have:
                         raiseExceptions("agent should not have this card in must have")
             else:
@@ -136,8 +133,8 @@ def myself_turn_players_update(ObjectDealing ,not_in_must_have, card_giver, card
                     if non_related_agent == "secret":
                         continue
                     playersHashmap[non_related_agent].update_room_must_not_have(claim_object)
-                    if claim_object in playersHashmap[non_related_agent].room_possibly_have:
-                        del playersHashmap[non_related_agent].room_possibly_have[claim_object]
+                    # if claim_object in playersHashmap[non_related_agent].room_possibly_have:
+                    #     del playersHashmap[non_related_agent].room_possibly_have[claim_object]
         else:
             # sanity check
             pass
@@ -161,14 +158,16 @@ def secret_infer_helper(ObjectDealing, LIST_XXX, playersHashmap, numberOfPlayers
             else:
                 ## update secret must have, delete the suspect_found from possibly set
                 playersHashmap["secret"].update_suspect_must_have(suspect_found)
-                del playersHashmap["secret"].suspect_possibly_have[suspect_found]
+                
                 ## clean up the rest of possibly set, and move them to must-not-have class
-                for ele in playersHashmap["secret"].suspect_possibly_have.keys():
+                deep_copy_list = [x for x in playersHashmap["secret"].suspect_possibly_have.keys()]
+                for ele in deep_copy_list:
                     playersHashmap["secret"].update_suspect_must_not_have(ele)
                 playersHashmap["secret"].suspect_possibly_have = {}
         else: ## when something is added to suspect_must_have in seceret, clean the possibly set
             if len(playersHashmap["secret"].suspect_possibly_have):
-                for ele in playersHashmap["secret"].suspect_possibly_have.keys():
+                deep_copy_list = [x for x in playersHashmap["secret"].suspect_possibly_have.keys()]
+                for ele in deep_copy_list:
                     playersHashmap["secret"].update_suspect_must_not_have(ele)
                 playersHashmap["secret"].suspect_possibly_have = {}
     elif ObjectDealing == "weapon":
@@ -185,14 +184,17 @@ def secret_infer_helper(ObjectDealing, LIST_XXX, playersHashmap, numberOfPlayers
             else:
                 ## update secret must have, delete the weapon_found from possibly set
                 playersHashmap["secret"].update_weapon_must_have(weapon_found)
-                del playersHashmap["secret"].weapon_possibly_have[weapon_found]
+                # if weapon_found in playersHashmap["secret"].weapon_possibly_have.keys():
+                #     del playersHashmap["secret"].weapon_possibly_have[weapon_found]
                 ## clean up the rest of possibly set, and move them to must-not-have class
-                for ele in playersHashmap["secret"].weapon_possibly_have.keys():
+                deep_copy_list = [x for x in playersHashmap["secret"].weapon_possibly_have.keys()]
+                for ele in deep_copy_list:
                     playersHashmap["secret"].update_weapon_must_not_have(ele)
                 playersHashmap["secret"].weapon_possibly_have = {}
         else: ## when something is added to weapon_must_have in seceret, clean the possibly set
             if len(playersHashmap["secret"].weapon_possibly_have):
-                for ele in playersHashmap["secret"].weapon_possibly_have.keys():
+                deep_copy_list = [x for x in playersHashmap["secret"].weapon_possibly_have.keys()]
+                for ele in deep_copy_list:
                     playersHashmap["secret"].update_weapon_must_not_have(ele)
                 playersHashmap["secret"].weapon_possibly_have = {}
     elif ObjectDealing == "room":
@@ -209,14 +211,16 @@ def secret_infer_helper(ObjectDealing, LIST_XXX, playersHashmap, numberOfPlayers
             else:
                 ## update secret must have, delete the room_found from possibly set
                 playersHashmap["secret"].update_room_must_have(room_found)
-                del playersHashmap["secret"].room_possibly_have[room_found]
+                # del playersHashmap["secret"].room_possibly_have[room_found]
                 ## clean up the rest of possibly set, and move them to must-not-have class
-                for ele in playersHashmap["secret"].room_possibly_have.keys():
+                deep_copy_list = [x for x in playersHashmap["secret"].room_possibly_have.keys()]
+                for ele in deep_copy_list:
                     playersHashmap["secret"].update_room_must_not_have(ele)
                 playersHashmap["secret"].room_possibly_have = {}
         else: ## when something is added to room_must_have in seceret, clean the possibly set
             if len(playersHashmap["secret"].room_possibly_have):
-                for ele in playersHashmap["secret"].room_possibly_have.keys():
+                deep_copy_list = [x for x in playersHashmap["secret"].room_possibly_have.keys()]
+                for ele in deep_copy_list:
                     playersHashmap["secret"].update_room_must_not_have(ele)
                 playersHashmap["secret"].room_possibly_have = {}
 
@@ -232,7 +236,7 @@ def otherAgent_infer_helper(ObjectDealing, playerHashmap, playerName, playerQuan
             ## move to must_have if this it's in all other players' must_not_have
             if sum(results) == playerQuantity:
                 playerHashmap[playerName].update_suspect_must_have(ele)
-                del playerHashmap[playerName].suspect_possibly_have[ele]
+                
     elif ObjectDealing == "weapon":
         elements_to_go_through_copy = [x for x in playerHashmap[playerName].suspect_possibly_have.keys()]  ## deep copy the ele to go through
         for ele in elements_to_go_through_copy:
@@ -240,7 +244,7 @@ def otherAgent_infer_helper(ObjectDealing, playerHashmap, playerName, playerQuan
             ## move to must_have if this it's in all other players' must_not_have
             if sum(results) == playerQuantity:
                 playerHashmap[playerName].update_weapon_must_have(ele)
-                del playerHashmap[playerName].weapon_possibly_have[ele]
+                # del playerHashmap[playerName].weapon_possibly_have[ele]
     elif ObjectDealing == "room":
         elements_to_go_through_copy = [x for x in playerHashmap[playerName].suspect_possibly_have.keys()]  ## deep copy the ele to go through
         for ele in elements_to_go_through_copy:
@@ -248,7 +252,7 @@ def otherAgent_infer_helper(ObjectDealing, playerHashmap, playerName, playerQuan
             ## move to must_have if this it's in all other players' must_not_have
             if sum(results) == playerQuantity:
                 playerHashmap[playerName].update_room_must_have(ele)
-                del playerHashmap[playerName].room_possibly_have[ele]
+                # del playerHashmap[playerName].room_possibly_have[ele]
 
 
 # ===============
@@ -260,24 +264,27 @@ def otherAgent_turnUpdate_3cardsCase(claimer, claim_suspect, claim_weapon, claim
     """
     ## These 3 cards must not in secret or non-cardgiver agents
     for otherAgent in [x for x in playerHashmap.keys() if x not in card_givers]:
-        if claim_suspect in playerHashmap[otherAgent].suspect_possibly_have.keys():
-            del playerHashmap[otherAgent].suspect_possibly_have[claim_suspect]
+        # if claim_suspect in playerHashmap[otherAgent].suspect_possibly_have.keys():
+        #     del playerHashmap[otherAgent].suspect_possibly_have[claim_suspect]
         playerHashmap[otherAgent].update_suspect_must_not_have(claim_suspect)
-        if claim_weapon in playerHashmap[otherAgent].weapon_possibly_have.keys():
-            del playerHashmap[otherAgent].weapon_possibly_have[claim_weapon]
+        # if claim_weapon in playerHashmap[otherAgent].weapon_possibly_have.keys():
+        #     del playerHashmap[otherAgent].weapon_possibly_have[claim_weapon]
         playerHashmap[otherAgent].update_weapon_must_not_have(claim_weapon)
-        if claim_room in playerHashmap[otherAgent].room_possibly_have.keys():
-            del playerHashmap[otherAgent].room_possibly_have[claim_room]
+        # if claim_room in playerHashmap[otherAgent].room_possibly_have.keys():
+        #     del playerHashmap[otherAgent].room_possibly_have[claim_room]
         playerHashmap[otherAgent].update_room_must_not_have(claim_room)
 
     ## check how many cards are in the must-have of these 3 agents already
     SuspectMustHavePlayer, WeaponMustHavePlayer, RoomMustHavePlayer = None, None, None
+
     isSuspectInMustHave = [playerHashmap[x].check_in_must_have(claim_suspect) for x in card_givers]
     if sum(isSuspectInMustHave) == 1:
         SuspectMustHavePlayer = card_givers[first_True(isSuspectInMustHave)]
+    
     isWeaponInMustHave = [playerHashmap[x].check_in_must_have(claim_weapon) for x in card_givers]
     if sum(isWeaponInMustHave) == 1:
         WeaponMustHavePlayer = card_givers[first_True(isWeaponInMustHave)]
+
     isRoomInMustHave = [playerHashmap[x].check_in_must_have(claim_room) for x in card_givers]
     if sum(isRoomInMustHave) == 1:
         RoomMustHavePlayer = card_givers[first_True(isRoomInMustHave)]
@@ -289,27 +296,27 @@ def otherAgent_turnUpdate_3cardsCase(claimer, claim_suspect, claim_weapon, claim
         if SuspectMustHavePlayer != None and WeaponMustHavePlayer != None:
             thePlayer = [x for x in card_givers if x!= SuspectMustHavePlayer and x!= WeaponMustHavePlayer][0]
             playerHashmap[thePlayer].update_room_must_have(claim_room)
-            del playerHashmap[thePlayer].room_possibly_have[claim_room]
+            # del playerHashmap[thePlayer].room_possibly_have[claim_room]
             for twoOther in [SuspectMustHavePlayer, WeaponMustHavePlayer]:
                 playerHashmap[twoOther].update_room_must_not_have(claim_room)
-                if claim_room in playerHashmap[twoOther].room_possibly_have.keys():
-                    del playerHashmap[twoOther].room_possibly_have[claim_room]
+                # if claim_room in playerHashmap[twoOther].room_possibly_have.keys():
+                #     del playerHashmap[twoOther].room_possibly_have[claim_room]
         elif SuspectMustHavePlayer != None and RoomMustHavePlayer != None:
             thePlayer = [x for x in card_givers if x!= SuspectMustHavePlayer and x!= RoomMustHavePlayer][0]
             playerHashmap[thePlayer].update_weapon_must_have(claim_weapon)
-            del playerHashmap[thePlayer].weapon_possibly_have[claim_weapon]
+            # del playerHashmap[thePlayer].weapon_possibly_have[claim_weapon]
             for twoOther in [SuspectMustHavePlayer, RoomMustHavePlayer]:
                 playerHashmap[twoOther].update_weapon_must_not_have(claim_weapon)
-                if claim_weapon in playerHashmap[twoOther].weapon_possibly_have.keys():
-                    del playerHashmap[twoOther].weapon_possibly_have[claim_weapon]
+                # if claim_weapon in playerHashmap[twoOther].weapon_possibly_have.keys():
+                #     del playerHashmap[twoOther].weapon_possibly_have[claim_weapon]
         elif WeaponMustHavePlayer != None and RoomMustHavePlayer != None:
             thePlayer = [x for x in card_givers if x!= WeaponMustHavePlayer and x!= RoomMustHavePlayer][0]
             playerHashmap[thePlayer].update_suspect_must_have(claim_suspect)
-            del playerHashmap[thePlayer].suspect_possibly_have[claim_suspect]
+            
             for twoOther in [WeaponMustHavePlayer, RoomMustHavePlayer]:
                 playerHashmap[twoOther].update_suspect_must_not_have(claim_suspect)
-                if claim_suspect in playerHashmap[twoOther].suspect_possibly_have.keys():
-                    del playerHashmap[twoOther].suspect_possibly_have[claim_suspect]
+                # if claim_suspect in playerHashmap[twoOther].suspect_possibly_have.keys():
+                #     del playerHashmap[twoOther].suspect_possibly_have[claim_suspect]
         
     elif cardsInMustHave == 1:
         ## figure out which card is the one in must-have
@@ -324,8 +331,8 @@ def otherAgent_turnUpdate_3cardsCase(claimer, claim_suspect, claim_weapon, claim
                 playerHashmap[related_player].update_room_possibly_have(claim_room, 1/2)
         elif RoomMustHavePlayer != None:
             for related_player in [x for x in card_givers if x != RoomMustHavePlayer]:
-                playerHashmap[related_player].update_weapon_possibly_have(claim_suspect, 1/2)
-                playerHashmap[related_player].update_room_possibly_have(claim_weapon, 1/2)
+                playerHashmap[related_player].update_suspect_possibly_have(claim_suspect, 1/2)
+                playerHashmap[related_player].update_weapon_possibly_have(claim_weapon, 1/2)
     elif cardsInMustHave == 0:
         for related_player in card_givers:
             playerHashmap[related_player].update_suspect_possibly_have(claim_suspect, 1/3)
