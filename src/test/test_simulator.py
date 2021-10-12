@@ -12,8 +12,11 @@ import math
 
 
 class TestSimulator(unittest.TestCase):
-    # Advisor 1
-    #@patch("builtins.input", side_effect = [5])
-    def test_Game1_setup(self):
-        print()
-        Simulator1 = Simulator()
+
+    def test_Game2_setup(self):
+        Simulator1 = Simulator(5)
+
+
+
+if __name__ == '__main__':
+    unittest.main()
