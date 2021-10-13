@@ -11,10 +11,11 @@ from config_CONST import LIST_SUSPECT, LIST_WEAPON, LIST_ROOM, Total_Number_of_C
 from analytics import export_csv_helper
 
 sys.path.append("../main/")
+from Advisor import Advisor
 from Player import Player
 from Player import Secret
 
-class advisor_mode:
+class advisor_mode(Advisor):
     def __init__(self, opponents_info, suspect_myself_have, weapon_myself_have, room_myself_have, number_of_player):
         self.numberOfPlayers = number_of_player
 
@@ -49,24 +50,7 @@ class advisor_mode:
             opponent_list_hashmap[name] = int(card_amount)
         return opponent_list_hashmap
 
-    def initPlayers(self, suspect_list, weapon_list, room_list, cardsIhave):
-        """
-        init myself Player Object
-        """
-        playerMyself = Player("myself", cardsIhave)
-        for ele in suspect_list:
-            playerMyself.update_suspect_must_have(ele)
-        for ele in weapon_list:
-            playerMyself.update_weapon_must_have(ele)
-        for ele in room_list:
-            playerMyself.update_room_must_have(ele)
-        for ele in [x for x in LIST_SUSPECT if x not in suspect_list]:
-            playerMyself.update_suspect_must_not_have(ele)
-        for ele in [x for x in LIST_WEAPON if x not in weapon_list]:
-            playerMyself.update_weapon_must_not_have(ele)
-        for ele in [x for x in LIST_ROOM if x not in room_list]:
-            playerMyself.update_room_must_not_have(ele)
-        return playerMyself
+
 
     def init_secret_agent(self):
         """
@@ -120,18 +104,6 @@ class advisor_mode:
         """
         return turn_recom_system(self.players)
 
-    def initialize_log(self):
-        """
-        initialize the log and return an empty dataframe with only column name row.
-        """
-        cols = ["player_makeQuery", 
-                "claim_suspect", 
-                "claim_weapon", 
-                "claim_room", 
-                "cards_received", 
-                "card_giver(s)"]
-        log = pd.DataFrame(index = range(0), columns = cols)
-        return log
 
 
     def magnifierCheck(self, playerName, cardGot):
@@ -206,114 +178,6 @@ class advisor_mode:
         self.update_log("myself", myQuery_suspect, myQuery_weapon, myQuery_room, cardsCollected, listOfGiver)
 
 
-    def AI_unit_myselfTurn_update(self):
-        # Retrieve info from log
-        player_makeQuery = self.log.iloc[-1,:]["player_makeQuery"]
-        claim_suspect = self.log.iloc[-1,:]["claim_suspect"]
-        claim_weapon = self.log.iloc[-1,:]["claim_weapon"]
-        claim_room = self.log.iloc[-1,:]["claim_room"]
-        cards_received = self.log.iloc[-1,:]["cards_received"]
-        card_givers = self.log.iloc[-1,:]["card_giver(s)"]
-
-        if player_makeQuery == "myself":
-            ## deal with suspect
-            not_in_must_have = search_in_must_have(self.players, claim_suspect, LIST_SUSPECT, LIST_WEAPON, LIST_ROOM) == "None"
-            myself_turn_players_update("suspect", not_in_must_have, card_givers[0], card_givers, self.players, claim_suspect, cards_received)
-            
-
-            ## deal with weapon
-            not_in_must_have = search_in_must_have(self.players, claim_weapon, LIST_SUSPECT, LIST_WEAPON, LIST_ROOM) == "None"
-            myself_turn_players_update("weapon", not_in_must_have, card_givers[1], card_givers, self.players, claim_weapon, cards_received)
-
-            ## deal with room
-            not_in_must_have = search_in_must_have(self.players, claim_room, LIST_SUSPECT, LIST_WEAPON, LIST_ROOM) == "None"
-            myself_turn_players_update("room", not_in_must_have, card_givers[2], card_givers, self.players, claim_room, cards_received)
-
-    def AI_unit_otherTurn_update(self):
-        # Retrieve info from log
-        player_makeQuery = self.log.iloc[-1,:]["player_makeQuery"]
-        claim_suspect = self.log.iloc[-1,:]["claim_suspect"]
-        claim_weapon = self.log.iloc[-1,:]["claim_weapon"]
-        claim_room = self.log.iloc[-1,:]["claim_room"]
-        cards_received = self.log.iloc[-1,:]["cards_received"]
-        card_givers = self.log.iloc[-1,:]["card_giver(s)"]
-
-        if cards_received == 3:
-            otherAgent_turnUpdate_3cardsCase(player_makeQuery, claim_suspect, claim_weapon, claim_room, card_givers, self.players)
-        elif cards_received == 2:
-            otherAgent_turnUpdate_OneTwo_cardsCase(player_makeQuery, claim_suspect, claim_weapon, claim_room, card_givers, self.players, "two")
-        elif cards_received == 1:
-            otherAgent_turnUpdate_OneTwo_cardsCase(player_makeQuery, claim_suspect, claim_weapon, claim_room, card_givers, self.players, "one")
-        elif cards_received == 0:
-            otherAgent_turnUpdate_0cardsCase(player_makeQuery, claim_suspect, claim_weapon, claim_room, self.players)
-
-
-    def secret_Infer_Rebalance(self):
-        """
-        This method make straight forward inferences after each round and rebalance the score of secret agent after each round.
-        """
-        secret_infer_helper("suspect", LIST_SUSPECT, self.players, self.numberOfPlayers)
-        secret_infer_helper("weapon", LIST_WEAPON, self.players, self.numberOfPlayers)
-        secret_infer_helper("room", LIST_ROOM, self.players, self.numberOfPlayers)
-
-        ## Rebalance here
-        base_value_suspect_secret = self.players["secret"].getSecretBaseValue_suspect()
-        for ele in self.players["secret"].suspect_possibly_have.keys():
-            self.players["secret"].suspect_possibly_have[ele] = max(self.players["secret"].suspect_possibly_have[ele], base_value_suspect_secret)
-
-        base_value_weapon_secret = self.players["secret"].getSecretBaseValue_weapon()
-        for ele in self.players["secret"].weapon_possibly_have.keys():
-            self.players["secret"].weapon_possibly_have[ele] = max(self.players["secret"].weapon_possibly_have[ele], base_value_weapon_secret)
-
-        base_value_room_secret = self.players["secret"].getSecretBaseValue_room()
-        for ele in self.players["secret"].room_possibly_have.keys():
-            self.players["secret"].room_possibly_have[ele] = max(self.players["secret"].room_possibly_have[ele], base_value_room_secret)
-
-        self.players["secret"].set_defaultBaseValue(suspect_value=base_value_suspect_secret,weapon_value=base_value_weapon_secret,room_value=base_value_room_secret)
-
-       
-    def otherAgent_Rebalance(self):
-        exemptPlayers = {"myself", "secret"}
-        for otherAgent in [x for x in self.players.keys() if x not in exemptPlayers]:
-            ## Reverse Impact 
-            otherAgent_infer_helper("suspect", self.players, otherAgent, self.numberOfPlayers)
-            otherAgent_infer_helper("weapon", self.players, otherAgent, self.numberOfPlayers)
-            otherAgent_infer_helper("room", self.players, otherAgent, self.numberOfPlayers)
-
-            base_value = self.players[otherAgent].getBaseValue()
-            prev_base_value = self.players[otherAgent].base_value_general
-            if base_value == 0:
-                continue
-            ## deal with suspect
-            for ele in self.players[otherAgent].suspect_possibly_have.keys():
-                if base_value >= prev_base_value:
-                    self.players[otherAgent].suspect_possibly_have[ele] = max(self.players[otherAgent].suspect_possibly_have[ele], base_value)
-                else:  ## base_value < prev_base_value
-                    if self.players[otherAgent].suspect_possibly_have[ele] <= prev_base_value:
-                        self.players[otherAgent].suspect_possibly_have[ele] = base_value
-                    else:
-                        pass
-            ## deal with weapon
-            for ele in self.players[otherAgent].weapon_possibly_have.keys():
-                if base_value >= prev_base_value:
-                    self.players[otherAgent].weapon_possibly_have[ele] = max(self.players[otherAgent].weapon_possibly_have[ele], base_value)
-                else:  ## base_value < prev_base_value
-                    if self.players[otherAgent].weapon_possibly_have[ele] <= prev_base_value:
-                        self.players[otherAgent].weapon_possibly_have[ele] = base_value
-                    else:
-                        pass
-            ## deal with room
-            for ele in self.players[otherAgent].room_possibly_have.keys():
-                if base_value >= prev_base_value:
-                    self.players[otherAgent].room_possibly_have[ele] = max(self.players[otherAgent].room_possibly_have[ele], base_value)
-                else:  ## base_value < prev_base_value
-                    if self.players[otherAgent].room_possibly_have[ele] <= prev_base_value:
-                        self.players[otherAgent].room_possibly_have[ele] = base_value
-                    else:
-                        pass
-
-            self.players[otherAgent].set_defaultBaseValue(general_value=base_value)
-
 
     def update_oppoTurn(self, whose_turn, cardGivers, oppoQuery_suspect, oppoQuery_weapon, oppoQuery_room):
         """
@@ -332,16 +196,8 @@ class advisor_mode:
         if len(self.players["secret"].suspect_must_have) and len(self.players["secret"].weapon_must_have) and len(self.players["secret"].room_must_have):
             return True
 
-    def update_log(self, playerName, claim_suspect, claim_weapon, claim_room, numberCards, cardGivers):
-        """
-        Attach the infomation collected in the new round to log table
-        """
-        self.log = self.log.append({"player_makeQuery": playerName, 
-                                    "claim_suspect": claim_suspect,
-                                    "claim_weapon": claim_weapon, 
-                                    "claim_room": claim_room,
-                                    "cards_received": numberCards, 
-                                    "card_giver(s)": cardGivers}, ignore_index=True)
+
+
 
 
 
