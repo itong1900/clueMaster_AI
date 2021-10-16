@@ -4,10 +4,10 @@ from numpy import empty
 import pandas as pd
 import numpy as np
 
-import hvplot
-import hvplot.pandas
-import holoviews as hv
-hv.extension('bokeh', logo=False)
+# import hvplot
+# import hvplot.pandas
+# import holoviews as hv
+# hv.extension('bokeh', logo=False)
 
 
 from advisor_mode import advisor_mode
@@ -58,7 +58,7 @@ def main():
             room_myself_have = st.multiselect("Room card(s) in your hand", LIST_ROOM, key = "room_in_myhand")
 
             # Enter name and number of cards of your opponents.
-            for i in range(1, number_of_player):
+            for i in range(1, int(number_of_player)):
                 input = st.text_area("Enter the name of the opponent_" + str(i) + " and number of card he/she has, i.e Mia, 6", key = "oppo_" + str(i))
 
             container.form_submit_button(label='Start Game', help = "surprise!", on_click = init_advisor)
