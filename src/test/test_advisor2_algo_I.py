@@ -1,7 +1,7 @@
 import unittest
 import sys
 sys.path.append("../main/")
-from Advisor import Advisor
+
 from backend_test_ingest import backend_test_ingest
 
 from unittest.mock import patch

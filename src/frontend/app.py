@@ -10,7 +10,7 @@ import numpy as np
 # hv.extension('bokeh', logo=False)
 
 
-from advisor_mode import advisor_mode
+from advisor_mode import advisor_modeI_frontend
 
 import sys
 sys.path.append("../utils/")
@@ -47,7 +47,7 @@ def main():
                 keyname = "oppo_" + str(j)
                 inputs.append(st.session_state[keyname])
             
-            st.session_state.advisor_obj = advisor_mode(inputs, st.session_state.suspect_in_myhand, st.session_state.weapon_in_myhand, 
+            st.session_state.advisor_obj = advisor_modeI_frontend(inputs, st.session_state.suspect_in_myhand, st.session_state.weapon_in_myhand, 
                                                         st.session_state.room_in_myhand, number_of_player)
 
         with st.sidebar.form(key = "advisor_mode"):
@@ -106,7 +106,10 @@ def main():
         
         show_me = st.checkbox("show hint of my turn")
         if show_me:
-            st.write(st.session_state.advisor_obj.myhint)
+            if st.session_state.advisor_obj == None:
+                pass
+            else:
+                st.write(st.session_state.advisor_obj.myhint)
         
         with st.form(key='my_form'):
             st.subheader("When it's your turn")

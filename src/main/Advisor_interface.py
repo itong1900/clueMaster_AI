@@ -8,7 +8,7 @@ import pandas as pd
 import sys
 
 sys.path.append("../utils/")
-from agentAIUtils import search_in_must_have, myself_turn_players_update, secret_infer_helper, otherAgent_infer_helper, otherAgent_turnUpdate_3cardsCase, otherAgent_turnUpdate_OneTwo_cardsCase, otherAgent_turnUpdate_0cardsCase
+# from agentAIUtils import search_in_must_have, myself_turn_players_update, secret_infer_helper, otherAgent_infer_helper, otherAgent_turnUpdate_3cardsCase, otherAgent_turnUpdate_OneTwo_cardsCase, otherAgent_turnUpdate_0cardsCase
 from recommenderAIUtils import magnifier_recom_system, turn_recom_system
 from config_CONST import LIST_SUSPECT, LIST_WEAPON, LIST_ROOM, Total_Number_of_Card
 from analytics import export_csv_helper
@@ -31,6 +31,8 @@ class Advisor_interface:
         ## init every player's score table
         self.add_recent_row_to_all_player("init")
 
+        self.myhint = turn_recom_system(self.players)
+
     # ===================    
     # methods that collect the basic info of the game
     # ===================
@@ -45,31 +47,6 @@ class Advisor_interface:
             elif card in LIST_ROOM:
                 rooms.append(card)
         return suspects, weapons, rooms
-
-    def init_secret_agent(self):
-        """
-        init secret and other players' Player Object
-        """
-        secret_suspect_prob_init = 1/len([x for x in LIST_SUSPECT if x not in self.suspects])
-        secret_weapon_prob_init = 1/len([x for x in LIST_WEAPON if x not in self.weapons])
-        secret_room_prob_init = 1/len([x for x in LIST_ROOM if x not in self.rooms])
-
-        ## add secret agent
-        secret = Secret("secret", 3)
-        self.players["secret"] = secret
-        for ele in self.suspects:
-            self.players["secret"].update_suspect_must_not_have(ele)
-        for ele in self.weapons:
-            self.players["secret"].update_weapon_must_not_have(ele)
-        for ele in self.rooms:
-            self.players["secret"].update_room_must_not_have(ele)
-        for ele in [x for x in LIST_SUSPECT if x not in self.suspects]:
-            self.players["secret"].update_suspect_possibly_have(ele, secret_suspect_prob_init)
-        for ele in [x for x in LIST_WEAPON if x not in self.weapons]:
-            self.players["secret"].update_weapon_possibly_have(ele, secret_weapon_prob_init)
-        for ele in [x for x in LIST_ROOM if x not in self.rooms]:
-            self.players["secret"].update_room_possibly_have(ele, secret_room_prob_init)
-        self.players["secret"].set_defaultBaseValue(suspect_value=secret_suspect_prob_init, weapon_value=secret_weapon_prob_init, room_value=secret_room_prob_init)
 
     def initPlayers(self, suspect_list, weapon_list, room_list, cardsIhave):
         """
@@ -158,6 +135,9 @@ class Advisor_interface:
 
         for player in self.players.keys():
             self.players[player].newScore_append(updateEvent)
+
+        ## update my hint everytime when table gets updated
+        self.myhint = turn_recom_system(self.players)
         
     def update_log(self, playerName, claim_suspect, claim_weapon, claim_room, numberCards, cardGivers):
         """
