@@ -16,8 +16,8 @@ import math
 class TestSimulator(unittest.TestCase):
 
     # check setup is ok
-    def test_Game2_setup(self):
-        Simulator1 = Simulator(5)
+    def test_Game1_setup(self):
+        Simulator1 = Simulator(5, 30)
 
         SET_SUSPECT = set(LIST_SUSPECT)
         SET_WEAPON = set(LIST_WEAPON)
@@ -57,18 +57,18 @@ class TestSimulator(unittest.TestCase):
         + Simulator1.agent_hashmap["Player_2"].numcardsIhave + Simulator1.agent_hashmap["Player_3"].numcardsIhave 
         + Simulator1.agent_hashmap["Player_4"].numcardsIhave, 27)
 
-        print(Simulator1.agent_hashmap["Player_0"].myhint)
-        print(Simulator1.agent_hashmap["Player_0"].suspects)
-        print(Simulator1.agent_hashmap["Player_0"].weapons)
-        print(Simulator1.agent_hashmap["Player_0"].rooms)
-        print(Simulator1.agent_hashmap["Player_0"].players["Player_1"].display_player_summary("Player_1"))
+        # print(Simulator1.agent_hashmap["Player_0"].myhint)
+        # print(Simulator1.agent_hashmap["Player_0"].suspects)
+        # print(Simulator1.agent_hashmap["Player_0"].weapons)
+        # print(Simulator1.agent_hashmap["Player_0"].rooms)
+        # print(Simulator1.agent_hashmap["Player_0"].players["Player_1"].display_player_summary("Player_1"))
 
 
-    def test_Game2_setup(self):
-        Simulator2 = Simulator(4, 8)
+    # def test_Game2_setup(self):
+    #     Simulator2 = Simulator(4, 8)
 
-        #Simulator2.agent_hashmap["Player_2"].players["Player_1"].display_suspect_must_have()
-        print(Simulator2.solutions)
+    #     #Simulator2.agent_hashmap["Player_2"].players["Player_1"].display_suspect_must_have()
+    #     #print(Simulator2.solutions)
 
 if __name__ == '__main__':
     unittest.main()

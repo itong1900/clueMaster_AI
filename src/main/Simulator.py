@@ -27,6 +27,7 @@ class Simulator:
         self.winner = None
         self.turncount = 0
         self.whose_turn = None
+        print(self.solutions)
         
         # main turn cycle
         while self.winner == None and self.turncount < maxRoundAllowed:
@@ -43,6 +44,10 @@ class Simulator:
                 self.agent_hashmap[self.whose_turn].otherAgent_Rebalance()
                 self.agent_hashmap[self.whose_turn].add_recent_row_to_all_player("magnifier")
                 print(f"{self.whose_turn} magnifier check {who_to_check}, and get {card_get}.")
+                if self.agent_hashmap[self.whose_turn].alertWin():
+                    print(f"{self.whose_turn} wins")
+                    self.agent_hashmap[self.whose_turn].players["secret"].display_player_summary("secret")
+                    return
             # have a chance to make a claim
             if True:
                 ## from the claim maker's perspective, 
@@ -62,25 +67,35 @@ class Simulator:
                 
                 print(f"{self.whose_turn} makes a claim {myQuery_suspect}, {myQuery_weapon}, {myQuery_room}, and get {suspect_giver_I_enter}, {weapon_giver_I_enter}, {room_giver_I_enter}")
 
+                if self.agent_hashmap[self.whose_turn].alertWin():
+                    print(f"{self.whose_turn} wins")
+                    self.agent_hashmap[self.whose_turn].players["secret"].display_player_summary("secret")
+                    return
                 ## from other players' perspective
 
                     ## common data to input for opponents
                 oppoQuery_suspect, oppoQuery_weapon, oppoQuery_room = myQuery_suspect, myQuery_weapon, myQuery_room
-                
-                threads = []
+    
                 
                 for i in range(self.number_of_players):
                     whose_perspective = "Player_" + str(i)
                     if whose_perspective == self.whose_turn:
                         continue
                     cardGivers_list = self.giver_convertor_to_others(suspect_giver_I_enter, weapon_giver_I_enter, room_giver_I_enter, whose_perspective)
+ 
                     self.agent_hashmap[whose_perspective].update_oppoTurn(self.whose_turn, cardGivers_list, oppoQuery_suspect, oppoQuery_weapon, oppoQuery_room)
                     self.agent_hashmap[whose_perspective].AI_unit_otherTurn_update()
                     self.agent_hashmap[whose_perspective].secret_Infer_Rebalance()
                     self.agent_hashmap[whose_perspective].otherAgent_Rebalance()
                     self.agent_hashmap[whose_perspective].add_recent_row_to_all_player("otherTurn")
 
+                    print(f"from {whose_perspective}'s perspective, {self.whose_turn} claims {oppoQuery_suspect}, {oppoQuery_weapon}, {oppoQuery_room}, and get {cardGivers_list}")
 
+                    if self.agent_hashmap[whose_perspective].alertWin():
+                        print(f"{self.whose_turn} wins")
+                        self.agent_hashmap[whose_perspective].players["secret"].display_player_summary("secret")
+                        return 
+                
             print("\n")
 
             ## if winalert is True, claim win, break
