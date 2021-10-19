@@ -75,27 +75,100 @@ class Simulator:
 
                     ## common data to input for opponents
                 oppoQuery_suspect, oppoQuery_weapon, oppoQuery_room = myQuery_suspect, myQuery_weapon, myQuery_room
-    
+
+                # for i in range(self.number_of_players):
+                #     whose_perspective = "Player_" + str(i)
+                #     if whose_perspective == self.whose_turn:
+                #         continue
+                #     cardGivers_list = self.giver_convertor_to_others(suspect_giver_I_enter, weapon_giver_I_enter, room_giver_I_enter, whose_perspective)
+                    
+                #     print(f"from {whose_perspective}'s perspective, {self.whose_turn} claims {oppoQuery_suspect}, {oppoQuery_weapon}, {oppoQuery_room}, and get {cardGivers_list}")
+
+                #     self.agent_hashmap[whose_perspective].update_oppoTurn(self.whose_turn, cardGivers_list, oppoQuery_suspect, oppoQuery_weapon, oppoQuery_room)
+                #     self.agent_hashmap[whose_perspective].AI_unit_otherTurn_update()
+                #     self.agent_hashmap[whose_perspective].secret_Infer_Rebalance()
+                #     self.agent_hashmap[whose_perspective].otherAgent_Rebalance()
+                #     self.agent_hashmap[whose_perspective].add_recent_row_to_all_player("otherTurn")
+                    
+                #     if self.agent_hashmap[whose_perspective].alertWin():
+                #         print(f"{self.whose_turn} wins")
+                #         self.agent_hashmap[whose_perspective].players["secret"].display_player_summary("secret")
+                #         return 
                 
+                #print(f"from {whose_perspective}'s perspective, {self.whose_turn} claims {oppoQuery_suspect}, {oppoQuery_weapon}, {oppoQuery_room}, and get {cardGivers_list_multi[i]}")
+
+                cardGivers_list_multi = {}
                 for i in range(self.number_of_players):
                     whose_perspective = "Player_" + str(i)
                     if whose_perspective == self.whose_turn:
                         continue
-                    cardGivers_list = self.giver_convertor_to_others(suspect_giver_I_enter, weapon_giver_I_enter, room_giver_I_enter, whose_perspective)
- 
-                    self.agent_hashmap[whose_perspective].update_oppoTurn(self.whose_turn, cardGivers_list, oppoQuery_suspect, oppoQuery_weapon, oppoQuery_room)
-                    self.agent_hashmap[whose_perspective].AI_unit_otherTurn_update()
-                    self.agent_hashmap[whose_perspective].secret_Infer_Rebalance()
-                    self.agent_hashmap[whose_perspective].otherAgent_Rebalance()
-                    self.agent_hashmap[whose_perspective].add_recent_row_to_all_player("otherTurn")
+                    cardGivers_list_multi[i] = self.giver_convertor_to_others(suspect_giver_I_enter, weapon_giver_I_enter, room_giver_I_enter, whose_perspective)
+                    print(f"from {whose_perspective}'s perspective, {self.whose_turn} claims {oppoQuery_suspect}, {oppoQuery_weapon}, {oppoQuery_room}, and get {cardGivers_list_multi[i]}")
 
-                    print(f"from {whose_perspective}'s perspective, {self.whose_turn} claims {oppoQuery_suspect}, {oppoQuery_weapon}, {oppoQuery_room}, and get {cardGivers_list}")
+                threads_1 = []
+                for i in range(self.number_of_players):
+                    whose_perspective = "Player_" + str(i)
+                    if whose_perspective == self.whose_turn:
+                        continue
+                    t1 = threading.Thread(target=self.agent_hashmap[whose_perspective].update_oppoTurn, args=[self.whose_turn, cardGivers_list_multi[i], oppoQuery_suspect, oppoQuery_weapon, oppoQuery_room])
+                    t1.start()
+                    threads_1.append(t1)
+                for thread in threads_1:
+                    thread.join() 
+                
+                threads_2 = []
+                for i in range(self.number_of_players):
+                    whose_perspective = "Player_" + str(i)
+                    if whose_perspective == self.whose_turn:
+                        continue
+                    t2 = threading.Thread(target=self.agent_hashmap[whose_perspective].AI_unit_otherTurn_update)
+                    t2.start()
+                    threads_2.append(t2)
+                for thread in threads_2:
+                    thread.join()
 
+                threads_3 = []
+                for i in range(self.number_of_players):
+                    whose_perspective = "Player_" + str(i)
+                    if whose_perspective == self.whose_turn:
+                        continue
+                    t3 = threading.Thread(target=self.agent_hashmap[whose_perspective].secret_Infer_Rebalance)
+                    t3.start()
+                    threads_3.append(t3)
+                for thread in threads_3:
+                    thread.join()
+                   
+                threads_4 = []
+                for i in range(self.number_of_players):
+                    whose_perspective = "Player_" + str(i)
+                    if whose_perspective == self.whose_turn:
+                        continue
+                    t4 = threading.Thread(target=self.agent_hashmap[whose_perspective].otherAgent_Rebalance)
+                    t4.start()
+                    threads_4.append(t4)
+                for thread in threads_4:
+                    thread.join()
+
+                threads_5 = []
+                for i in range(self.number_of_players):
+                    whose_perspective = "Player_" + str(i)
+                    if whose_perspective == self.whose_turn:
+                        continue
+                    t5 = threading.Thread(target=self.agent_hashmap[whose_perspective].add_recent_row_to_all_player, args=["otherTurn"])
+                    t5.start()
+                    threads_5.append(t5)
+                for thread in threads_5:
+                    thread.join()
+                    
+                    
+
+                for i in range(self.number_of_players):
+                    whose_perspective = "Player_" + str(i)
                     if self.agent_hashmap[whose_perspective].alertWin():
                         print(f"{self.whose_turn} wins")
                         self.agent_hashmap[whose_perspective].players["secret"].display_player_summary("secret")
                         return 
-                
+
             print("\n")
 
             ## if winalert is True, claim win, break
