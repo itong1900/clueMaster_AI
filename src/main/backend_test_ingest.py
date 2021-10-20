@@ -30,12 +30,8 @@ class backend_test_ingest:
                     response = input("Player who provides the suspect, weapon, room, enter None if nobody, enter myself if you claim a card you own: ")
                     suspect_giver, weapon_giver, room_giver = response.split(",")[0].strip(), response.split(",")[1].strip(), response.split(",")[2].strip() 
 
-                    self.algo_this_advisor.update_myturn(suspect_giver, weapon_giver, room_giver, myQuery_suspect, myQuery_weapon, myQuery_room)
-                    self.algo_this_advisor.AI_unit_myselfTurn_update()
-                    self.algo_this_advisor.secret_Infer_Rebalance()
-                    self.algo_this_advisor.otherAgent_Rebalance()
-                    self.algo_this_advisor.add_recent_row_to_all_player("selfTurn")
-                    #break
+                    self.algo_this_advisor.everything_myturn(suspect_giver, weapon_giver, room_giver, myQuery_suspect, myQuery_weapon, myQuery_room)
+
                 elif whose_turn in self.algo_this_advisor.players:
                     oppoQuery = input(whose_turn + "'s Claim:  ")
                     oppoQuery_suspect, oppoQuery_weapon, oppoQuery_room = oppoQuery.split(",")[0].strip(), oppoQuery.split(",")[1].strip(), oppoQuery.split(",")[2].strip()
@@ -43,12 +39,8 @@ class backend_test_ingest:
                     cardGivers = input("Player(s) who give a card(including yourself, Enter None if no ones) : ")
                     cardGivers_list = [] if cardGivers == "None" else [x.strip() for x in cardGivers.split(",")]
 
-                    self.algo_this_advisor.update_oppoTurn(whose_turn, cardGivers_list, oppoQuery_suspect, oppoQuery_weapon, oppoQuery_room)
-                    self.algo_this_advisor.AI_unit_otherTurn_update()
-                    self.algo_this_advisor.secret_Infer_Rebalance()
-                    self.algo_this_advisor.otherAgent_Rebalance()
-                    self.algo_this_advisor.add_recent_row_to_all_player("otherTurn")
-                    #break
+                    self.algo_this_advisor.everything_otherTurn(whose_turn, cardGivers_list, oppoQuery_suspect, oppoQuery_weapon, oppoQuery_room)
+
                 else:
                     print("Wrong name, enter again: ")
                 ## Alert feature, when secret is fully hacked, send notifications.
@@ -77,10 +69,8 @@ class backend_test_ingest:
                 self.algo_this_advisor.magnifier_recom()
                 magnifierResult = input("Enter player you check and the card you get, separated by ,\n")
                 playerName, cardGot = magnifierResult.split(",")[0].strip(), magnifierResult.split(",")[1].strip() 
-                self.algo_this_advisor.magnifierCheck(playerName, cardGot)
-                self.algo_this_advisor.secret_Infer_Rebalance()
-                self.algo_this_advisor.otherAgent_Rebalance()
-                self.algo_this_advisor.add_recent_row_to_all_player("magnifier")
+                self.algo_this_advisor.everything_magnifier(playerName, cardGot)
+
             else:
                 print("Invalid input, enter again")
             print("\n")

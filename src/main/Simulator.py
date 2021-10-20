@@ -39,10 +39,8 @@ class Simulator:
                 who_to_check = self.agent_hashmap[self.whose_turn].magnifier_recom()
                 list_of_card_might_get = self.agent_hashmap[who_to_check].suspects + self.agent_hashmap[who_to_check].weapons + self.agent_hashmap[who_to_check].rooms
                 card_get = random.choice(list_of_card_might_get)
-                self.agent_hashmap[self.whose_turn].magnifierCheck(who_to_check, card_get)
-                self.agent_hashmap[self.whose_turn].secret_Infer_Rebalance()
-                self.agent_hashmap[self.whose_turn].otherAgent_Rebalance()
-                self.agent_hashmap[self.whose_turn].add_recent_row_to_all_player("magnifier")
+                self.agent_hashmap[self.whose_turn].everything_magnifier(who_to_check, card_get)
+
                 print(f"{self.whose_turn} magnifier check {who_to_check}, and get {card_get}.")
                 if self.agent_hashmap[self.whose_turn].alertWin():
                     print(f"{self.whose_turn} wins")
@@ -56,14 +54,10 @@ class Simulator:
 
                 # hard part here
                 suspect_giver_include_self_secret, weapon_giver_include_self_secret, room_giver_include_self_secret = self.get_card_givers_helper(myQuery_suspect, myQuery_weapon, myQuery_room)
-
                 suspect_giver_I_enter, weapon_giver_I_enter, room_giver_I_enter = self.giver_convertor_to_me(self.whose_turn ,suspect_giver_include_self_secret, weapon_giver_include_self_secret, room_giver_include_self_secret)
 
-                self.agent_hashmap[self.whose_turn].update_myturn(suspect_giver_I_enter, weapon_giver_I_enter, room_giver_I_enter, myQuery_suspect, myQuery_weapon, myQuery_room)
-                self.agent_hashmap[self.whose_turn].AI_unit_myselfTurn_update()
-                self.agent_hashmap[self.whose_turn].secret_Infer_Rebalance()
-                self.agent_hashmap[self.whose_turn].otherAgent_Rebalance()
-                self.agent_hashmap[self.whose_turn].add_recent_row_to_all_player("selfTurn")
+                self.agent_hashmap[self.whose_turn].everything_myturn(suspect_giver_I_enter, weapon_giver_I_enter, room_giver_I_enter, myQuery_suspect, myQuery_weapon, myQuery_room)
+
                 
                 print(f"{self.whose_turn} makes a claim {myQuery_suspect}, {myQuery_weapon}, {myQuery_room}, and get {suspect_giver_I_enter}, {weapon_giver_I_enter}, {room_giver_I_enter}")
 
@@ -110,58 +104,12 @@ class Simulator:
                     whose_perspective = "Player_" + str(i)
                     if whose_perspective == self.whose_turn:
                         continue
-                    t1 = threading.Thread(target=self.agent_hashmap[whose_perspective].update_oppoTurn, args=[self.whose_turn, cardGivers_list_multi[i], oppoQuery_suspect, oppoQuery_weapon, oppoQuery_room])
+                    t1 = threading.Thread(target=self.agent_hashmap[whose_perspective].everything_otherTurn, args=[self.whose_turn, cardGivers_list_multi[i], oppoQuery_suspect, oppoQuery_weapon, oppoQuery_room])
                     t1.start()
                     threads_1.append(t1)
                 for thread in threads_1:
                     thread.join() 
                 
-                threads_2 = []
-                for i in range(self.number_of_players):
-                    whose_perspective = "Player_" + str(i)
-                    if whose_perspective == self.whose_turn:
-                        continue
-                    t2 = threading.Thread(target=self.agent_hashmap[whose_perspective].AI_unit_otherTurn_update)
-                    t2.start()
-                    threads_2.append(t2)
-                for thread in threads_2:
-                    thread.join()
-
-                threads_3 = []
-                for i in range(self.number_of_players):
-                    whose_perspective = "Player_" + str(i)
-                    if whose_perspective == self.whose_turn:
-                        continue
-                    t3 = threading.Thread(target=self.agent_hashmap[whose_perspective].secret_Infer_Rebalance)
-                    t3.start()
-                    threads_3.append(t3)
-                for thread in threads_3:
-                    thread.join()
-                   
-                threads_4 = []
-                for i in range(self.number_of_players):
-                    whose_perspective = "Player_" + str(i)
-                    if whose_perspective == self.whose_turn:
-                        continue
-                    t4 = threading.Thread(target=self.agent_hashmap[whose_perspective].otherAgent_Rebalance)
-                    t4.start()
-                    threads_4.append(t4)
-                for thread in threads_4:
-                    thread.join()
-
-                threads_5 = []
-                for i in range(self.number_of_players):
-                    whose_perspective = "Player_" + str(i)
-                    if whose_perspective == self.whose_turn:
-                        continue
-                    t5 = threading.Thread(target=self.agent_hashmap[whose_perspective].add_recent_row_to_all_player, args=["otherTurn"])
-                    t5.start()
-                    threads_5.append(t5)
-                for thread in threads_5:
-                    thread.join()
-                    
-                    
-
                 for i in range(self.number_of_players):
                     whose_perspective = "Player_" + str(i)
                     if self.agent_hashmap[whose_perspective].alertWin():

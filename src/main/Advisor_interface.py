@@ -180,6 +180,8 @@ class Advisor_interface:
     def exportAllTables(self):
         nameOfGame = input("Enter the name id of the Game")
         export_csv_helper(self.players, nameOfGame)
+    
+    
     # ===================    
     # abstract functions
     # ===================
@@ -204,7 +206,26 @@ class Advisor_interface:
     def turn_recommendation(self):
         pass
 
+    def everything_myturn(self, suspect_giver, weapon_giver, room_giver, myQuery_suspect, myQuery_weapon, myQuery_room):
+        self.update_myturn(suspect_giver, weapon_giver, room_giver, myQuery_suspect, myQuery_weapon, myQuery_room)
+        self.AI_unit_myselfTurn_update()
+        self.secret_Infer_Rebalance()
+        self.otherAgent_Rebalance()
+        self.add_recent_row_to_all_player("selfTurn")
 
+
+    def everything_otherTurn(self, whose_turn, cardGivers_list, oppoQuery_suspect, oppoQuery_weapon, oppoQuery_room):
+        self.update_oppoTurn(whose_turn, cardGivers_list, oppoQuery_suspect, oppoQuery_weapon, oppoQuery_room)
+        self.AI_unit_otherTurn_update()
+        self.secret_Infer_Rebalance()
+        self.otherAgent_Rebalance()
+        self.add_recent_row_to_all_player("otherTurn")
+
+    def everything_magnifier(self, playerName, cardGot):
+        self.magnifierCheck(playerName, cardGot)
+        self.secret_Infer_Rebalance()
+        self.otherAgent_Rebalance()
+        self.add_recent_row_to_all_player("magnifier")
 
 
     
