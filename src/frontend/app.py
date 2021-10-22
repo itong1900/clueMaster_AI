@@ -1,4 +1,7 @@
 import streamlit as st
+
+import plotly.graph_objects as go
+
 from logging import raiseExceptions
 from numpy import empty
 import pandas as pd
@@ -19,6 +22,21 @@ from analytics import export_csv_helper
 
 import altair as alt
 
+class app:
+    def __init__(self):
+        pass
+
+    def plot_trend(self):
+        fig = go.Figure()
+        x = None
+        y = None
+        fig.add_trace(go.Scatter(x, y, "line"))
+        fig.add_shape(
+            type = "line",
+            yref = 'y',
+            xref = 'x',
+            x0 = self.mean
+        )
 
 
 def main():
@@ -65,13 +83,13 @@ def main():
 
 
         def callback_myTurn():
-            st.session_state.advisor_obj.update_myturn(st.session_state.mySuspectClaim_get, st.session_state.myWeaponClaim_get, 
-                                                      st.session_state.myRoomClaim_get, st.session_state.mySuspect_claim, 
-                                                      st.session_state.myWeapon_claim, st.session_state.myRoom_claim)
-            st.session_state.advisor_obj.AI_unit_myselfTurn_update()
-            st.session_state.advisor_obj.secret_Infer_Rebalance()
-            st.session_state.advisor_obj.otherAgent_Rebalance()
-            st.session_state.advisor_obj.add_recent_row_to_all_player("selfTurn")
+            st.session_state.advisor_obj.everything_myturn(st.session_state.mySuspectClaim_get, st.session_state.myWeaponClaim_get, 
+                                                    st.session_state.myRoomClaim_get, st.session_state.mySuspect_claim, 
+                                                    st.session_state.myWeapon_claim, st.session_state.myRoom_claim)
+            # st.session_state.advisor_obj.AI_unit_myselfTurn_update()
+            # st.session_state.advisor_obj.secret_Infer_Rebalance()
+            # st.session_state.advisor_obj.otherAgent_Rebalance()
+            # st.session_state.advisor_obj.add_recent_row_to_all_player("selfTurn")
             if st.session_state.advisor_obj.alertWin():
                 st.balloons()
                 st.write(st.session_state.advisor_obj.players["serect"].suspect_must_have)
@@ -79,13 +97,13 @@ def main():
                 st.write(st.session_state.advisor_obj.players["serect"].room_must_have)
 
         def callback_oppTurn():
-            st.session_state.advisor_obj.update_oppoTurn(st.session_state.which_oppo_turn, st.session_state.oppo_turn_cardgivers,
+            st.session_state.advisor_obj.everything_otherTurn(st.session_state.which_oppo_turn, st.session_state.oppo_turn_cardgivers,
                                                         st.session_state.opponent_sus_claim, st.session_state.opponent_wea_claim,
                                                         st.session_state.opponent_room_claim)
-            st.session_state.advisor_obj.AI_unit_otherTurn_update()
-            st.session_state.advisor_obj.secret_Infer_Rebalance()
-            st.session_state.advisor_obj.otherAgent_Rebalance()
-            st.session_state.advisor_obj.add_recent_row_to_all_player("otherTurn")
+            # st.session_state.advisor_obj.AI_unit_otherTurn_update()
+            # st.session_state.advisor_obj.secret_Infer_Rebalance()
+            # st.session_state.advisor_obj.otherAgent_Rebalance()
+            # st.session_state.advisor_obj.add_recent_row_to_all_player("otherTurn")
             if st.session_state.advisor_obj.alertWin():
                 st.balloons()
                 st.write(st.session_state.advisor_obj.players["secret"].suspect_must_have)
@@ -93,10 +111,10 @@ def main():
                 st.write(st.session_state.advisor_obj.players["secret"].room_must_have)
 
         def callback_mag():
-            st.session_state.advisor_obj.magnifierCheck(st.session_state.mag_person_check, st.session_state.mag_card_got)
-            st.session_state.advisor_obj.secret_Infer_Rebalance()
-            st.session_state.advisor_obj.otherAgent_Rebalance()
-            st.session_state.advisor_obj.add_recent_row_to_all_player("magnifier")
+            st.session_state.advisor_obj.everything_magnifier(st.session_state.mag_person_check, st.session_state.mag_card_got)
+            # st.session_state.advisor_obj.secret_Infer_Rebalance()
+            # st.session_state.advisor_obj.otherAgent_Rebalance()
+            # st.session_state.advisor_obj.add_recent_row_to_all_player("magnifier")
             if st.session_state.advisor_obj.alertWin():
                 st.balloons()
                 st.write(st.session_state.advisor_obj.players["secret"].suspect_must_have)
@@ -164,24 +182,10 @@ def main():
             if player_name is not None:
                 #st.write(st.session_state.advisor_obj.players[player_name].score_table.iloc[:,1:31])
                 df = st.session_state.advisor_obj.players[player_name].score_table.iloc[:,1:31]
-                # nice_plot = df.hvplot(kind='line')
-                # st.write(hv.render(nice_plot, backend='bokeh'))
                 st.bar_chart(df.iloc[-1:].T)
                 #st.write(df)
                 st.line_chart(df)
-                # demo_df = pd.DataFrame({
-                # 'timestamp': [0,1],
-                # 'value': df.iloc[:,0]
-                # })
-                # base = alt.Chart(demo_df).encode(
-                #     x='timestamp',
-                #     y='value:Q',
-                #     tooltip=['value', 'timestamp']
-                # )
-                # line = base.mark_line()
-                # points = base.mark_point(filled=True, size=40)
-                # chart = (line + points).interactive()
-                # st.altair_chart(chart, use_container_width=True)
+
 
             
         if st.checkbox("Show Player Summary"):

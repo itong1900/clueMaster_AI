@@ -17,7 +17,7 @@ class TestSimulator(unittest.TestCase):
 
     # check setup is ok
     def test_Game1_setup(self):
-        Simulator1 = Simulator(5, 30)
+        Simulator1 = Simulator(5, 40)
 
         SET_SUSPECT = set(LIST_SUSPECT)
         SET_WEAPON = set(LIST_WEAPON)

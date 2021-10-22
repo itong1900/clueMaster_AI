@@ -1,6 +1,6 @@
 from logging import raiseExceptions
 
-from numpy import empty, number
+import numpy as np
 import random
 import threading
 
@@ -12,7 +12,7 @@ from Player import Secret
 import sys
 
 sys.path.append("../utils/")
-from config_CONST import LIST_SUSPECT, LIST_WEAPON, LIST_ROOM, Total_Number_of_Card, SECRET_HOLDING
+from config_CONST import LIST_SUSPECT, LIST_WEAPON, LIST_ROOM, Total_Number_of_Card, SECRET_HOLDING, CHANCE_GET_MAGNIFIER, CHANCE_MAKE_CLAIM
 
 
 class Simulator:
@@ -35,7 +35,7 @@ class Simulator:
             print(f"Round {self.turncount}")
             self.whose_turn = self.get_whose_turn_helper()
             ## have a chance to make a magnifier
-            if True: ## need a further edit here
+            if np.random.binomial(1, CHANCE_GET_MAGNIFIER, 1)[0]: ## need a further edit here
                 who_to_check = self.agent_hashmap[self.whose_turn].magnifier_recom()
                 list_of_card_might_get = self.agent_hashmap[who_to_check].suspects + self.agent_hashmap[who_to_check].weapons + self.agent_hashmap[who_to_check].rooms
                 card_get = random.choice(list_of_card_might_get)
@@ -47,7 +47,7 @@ class Simulator:
                     self.agent_hashmap[self.whose_turn].players["secret"].display_player_summary("secret")
                     return
             # have a chance to make a claim
-            if True:
+            if np.random.binomial(1, CHANCE_MAKE_CLAIM, 1)[0]:
                 ## from the claim maker's perspective, 
                 claim = self.agent_hashmap[self.whose_turn].turn_recommendation()
                 myQuery_suspect, myQuery_weapon, myQuery_room = claim.split(",")[0].strip(), claim.split(",")[1].strip(), claim.split(",")[2].strip()
