@@ -1,6 +1,7 @@
 import streamlit as st
 
 import plotly.graph_objects as go
+import plotly.express as px
 
 from logging import raiseExceptions
 from numpy import empty
@@ -21,22 +22,6 @@ from config_CONST import LIST_SUSPECT, LIST_WEAPON, LIST_ROOM
 from analytics import export_csv_helper
 
 import altair as alt
-
-class app:
-    def __init__(self):
-        pass
-
-    def plot_trend(self):
-        fig = go.Figure()
-        x = None
-        y = None
-        fig.add_trace(go.Scatter(x, y, "line"))
-        fig.add_shape(
-            type = "line",
-            yref = 'y',
-            xref = 'x',
-            x0 = self.mean
-        )
 
 
 def main():
@@ -181,10 +166,11 @@ def main():
             player_name = None if 'advisor_obj' not in st.session_state else st.selectbox("Show player's score trend", st.session_state.advisor_obj.players.keys())
             if player_name is not None:
                 #st.write(st.session_state.advisor_obj.players[player_name].score_table.iloc[:,1:31])
-                df = st.session_state.advisor_obj.players[player_name].score_table.iloc[:,1:31]
-                st.bar_chart(df.iloc[-1:].T)
+                df = st.session_state.advisor_obj.players[player_name].score_table.iloc[:,2:31]
+                st.plotly_chart(plot_bar(df, player_name))
                 #st.write(df)
-                st.line_chart(df)
+                #st.line_chart(df)
+                st.plotly_chart(plot_trend(df, player_name))
 
 
             
@@ -223,6 +209,28 @@ def main():
     else:
         st.sidebar.header("Game Configuration")
         st.sidebar.caption("Simulation Mode")
+
+
+def plot_trend(df, playerName):
+    fig = go.Figure()
+    for col in range(df.shape[1]):
+        y = df.iloc[:,col]
+        x = np.array(range(df.shape[0]))
+        fig.add_trace(go.Scatter(x=x, y=y, name=df.columns[col],
+                        line_shape='vhv'))
+        fig.update_traces(hoverinfo='text+name', mode='lines+markers')
+        fig.update_layout(title=f"Trend graph of {playerName}",
+                          xaxis_title="Turns go",
+                          yaxis_title="Score",
+                          hovermode = "closest",
+                          legend=dict(y=0.5, font_size=16))
+    return fig
+
+
+def plot_bar(df, playerName):
+    data = df.iloc[-1:].T.reset_index().rename(columns={df.shape[0]-1:'score', "index": "Card"})
+    fig = px.bar(data, x='Card', y='score', color="Card", title=f"Bar plot of {playerName}")
+    return fig
 
 if __name__ == '__main__':
     main()
