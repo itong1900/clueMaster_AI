@@ -27,7 +27,7 @@ import altair as alt
 def main():
 
     st.title("""Welcome to the Game of Clue """)
-    game_mode = st.radio('START HERE: Select Game Mode', ["Advisor", "Simulator(not Deployed)"])
+    game_mode = st.radio('START HERE: Select Game Mode', ["Advisor", "Simulator"])
     st.image("https://vividmaps.com/wp-content/uploads/2020/10/Clue-master.jpg", width = 600)
 
     if game_mode == "Advisor":    
@@ -37,7 +37,7 @@ def main():
 
         number_of_player = st.sidebar.number_input(
             "Enter number of player:",
-            min_value = 2, max_value = 20, value = 4, step=1,
+            min_value = 2, max_value = 10, value = 4, step=1,
         )
 
         if "advisor_obj" not in st.session_state:
@@ -50,12 +50,14 @@ def main():
                 keyname = "oppo_" + str(j)
                 inputs.append(st.session_state[keyname])
             
-            st.session_state.advisor_obj = advisor_modeI_frontend(inputs, st.session_state.suspect_in_myhand, st.session_state.weapon_in_myhand, 
-                                                        st.session_state.room_in_myhand, number_of_player)
+            if st.session_state.typeOfAI == "AI_ALGO_I":
+                st.session_state.advisor_obj = advisor_modeI_frontend(inputs, st.session_state.suspect_in_myhand, st.session_state.weapon_in_myhand, 
+                                                                    st.session_state.room_in_myhand, number_of_player)
 
         with st.sidebar.form(key = "advisor_mode"):
             container = st.container()
 
+            st.radio("AI AGENT: ", ["AI_ALGO_I", "AI_ALGO_II (Not Deployed)"], key = "typeOfAI")
             suspect_myself_have = st.multiselect("Suspect card(s) in your hand", LIST_SUSPECT, key = "suspect_in_myhand")
             weapon_myself_have = st.multiselect("Weapon card(s) in your hand", LIST_WEAPON, key = "weapon_in_myhand")
             room_myself_have = st.multiselect("Room card(s) in your hand", LIST_ROOM, key = "room_in_myhand")
