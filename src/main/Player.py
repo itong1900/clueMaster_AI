@@ -145,7 +145,10 @@ class Player:
         return len(self.suspect_must_have) + len(self.room_must_have) + len(self.weapon_must_have)
     
     def getBaseValue(self):
-        return (self.numberOfCards - self.getTotal_Musthave())/self.getTotal_Unknown()
+        total_unknown = self.getTotal_Unknown()
+        if total_unknown > 0: # not fully hacked
+            return (self.numberOfCards - self.getTotal_Musthave())/total_unknown
+        return WIN_SCORE
         
 
     ## check if in must_not_have

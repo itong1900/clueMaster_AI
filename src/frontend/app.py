@@ -1,16 +1,20 @@
 import streamlit as st
+
+import plotly.graph_objects as go
+import plotly.express as px
+
 from logging import raiseExceptions
 from numpy import empty
 import pandas as pd
 import numpy as np
 
-import hvplot
-import hvplot.pandas
-import holoviews as hv
-hv.extension('bokeh', logo=False)
+# import hvplot
+# import hvplot.pandas
+# import holoviews as hv
+# hv.extension('bokeh', logo=False)
 
 
-from advisor_mode import advisor_mode
+from advisor_mode import advisor_modeI_frontend
 
 import sys
 sys.path.append("../utils/")
@@ -20,11 +24,10 @@ from analytics import export_csv_helper
 import altair as alt
 
 
-
 def main():
 
     st.title("""Welcome to the Game of Clue """)
-    game_mode = st.radio('START HERE: Select Game Mode', ["Advisor", "Simulator(not Deployed)"])
+    game_mode = st.radio('START HERE: Select Game Mode', ["Advisor", "Simulator"])
     st.image("https://vividmaps.com/wp-content/uploads/2020/10/Clue-master.jpg", width = 600)
 
     if game_mode == "Advisor":    
@@ -34,7 +37,7 @@ def main():
 
         number_of_player = st.sidebar.number_input(
             "Enter number of player:",
-            min_value = 2, max_value = 20, value = 4, step=1,
+            min_value = 2, max_value = 10, value = 4, step=1,
         )
 
         if "advisor_obj" not in st.session_state:
@@ -47,31 +50,33 @@ def main():
                 keyname = "oppo_" + str(j)
                 inputs.append(st.session_state[keyname])
             
-            st.session_state.advisor_obj = advisor_mode(inputs, st.session_state.suspect_in_myhand, st.session_state.weapon_in_myhand, 
-                                                        st.session_state.room_in_myhand, number_of_player)
+            if st.session_state.typeOfAI == "AI_ALGO_I":
+                st.session_state.advisor_obj = advisor_modeI_frontend(inputs, st.session_state.suspect_in_myhand, st.session_state.weapon_in_myhand, 
+                                                                    st.session_state.room_in_myhand, number_of_player)
 
         with st.sidebar.form(key = "advisor_mode"):
             container = st.container()
 
+            st.radio("AI AGENT: ", ["AI_ALGO_I", "AI_ALGO_II (Not Deployed)"], key = "typeOfAI")
             suspect_myself_have = st.multiselect("Suspect card(s) in your hand", LIST_SUSPECT, key = "suspect_in_myhand")
             weapon_myself_have = st.multiselect("Weapon card(s) in your hand", LIST_WEAPON, key = "weapon_in_myhand")
             room_myself_have = st.multiselect("Room card(s) in your hand", LIST_ROOM, key = "room_in_myhand")
 
             # Enter name and number of cards of your opponents.
-            for i in range(1, number_of_player):
+            for i in range(1, int(number_of_player)):
                 input = st.text_area("Enter the name of the opponent_" + str(i) + " and number of card he/she has, i.e Mia, 6", key = "oppo_" + str(i))
 
             container.form_submit_button(label='Start Game', help = "surprise!", on_click = init_advisor)
 
 
         def callback_myTurn():
-            st.session_state.advisor_obj.update_myturn(st.session_state.mySuspectClaim_get, st.session_state.myWeaponClaim_get, 
-                                                      st.session_state.myRoomClaim_get, st.session_state.mySuspect_claim, 
-                                                      st.session_state.myWeapon_claim, st.session_state.myRoom_claim)
-            st.session_state.advisor_obj.AI_unit_myselfTurn_update()
-            st.session_state.advisor_obj.secret_Infer_Rebalance()
-            st.session_state.advisor_obj.otherAgent_Rebalance()
-            st.session_state.advisor_obj.add_recent_row_to_all_player("selfTurn")
+            st.session_state.advisor_obj.everything_myturn(st.session_state.mySuspectClaim_get, st.session_state.myWeaponClaim_get, 
+                                                    st.session_state.myRoomClaim_get, st.session_state.mySuspect_claim, 
+                                                    st.session_state.myWeapon_claim, st.session_state.myRoom_claim)
+            # st.session_state.advisor_obj.AI_unit_myselfTurn_update()
+            # st.session_state.advisor_obj.secret_Infer_Rebalance()
+            # st.session_state.advisor_obj.otherAgent_Rebalance()
+            # st.session_state.advisor_obj.add_recent_row_to_all_player("selfTurn")
             if st.session_state.advisor_obj.alertWin():
                 st.balloons()
                 st.write(st.session_state.advisor_obj.players["serect"].suspect_must_have)
@@ -79,13 +84,13 @@ def main():
                 st.write(st.session_state.advisor_obj.players["serect"].room_must_have)
 
         def callback_oppTurn():
-            st.session_state.advisor_obj.update_oppoTurn(st.session_state.which_oppo_turn, st.session_state.oppo_turn_cardgivers,
+            st.session_state.advisor_obj.everything_otherTurn(st.session_state.which_oppo_turn, st.session_state.oppo_turn_cardgivers,
                                                         st.session_state.opponent_sus_claim, st.session_state.opponent_wea_claim,
                                                         st.session_state.opponent_room_claim)
-            st.session_state.advisor_obj.AI_unit_otherTurn_update()
-            st.session_state.advisor_obj.secret_Infer_Rebalance()
-            st.session_state.advisor_obj.otherAgent_Rebalance()
-            st.session_state.advisor_obj.add_recent_row_to_all_player("otherTurn")
+            # st.session_state.advisor_obj.AI_unit_otherTurn_update()
+            # st.session_state.advisor_obj.secret_Infer_Rebalance()
+            # st.session_state.advisor_obj.otherAgent_Rebalance()
+            # st.session_state.advisor_obj.add_recent_row_to_all_player("otherTurn")
             if st.session_state.advisor_obj.alertWin():
                 st.balloons()
                 st.write(st.session_state.advisor_obj.players["secret"].suspect_must_have)
@@ -93,10 +98,10 @@ def main():
                 st.write(st.session_state.advisor_obj.players["secret"].room_must_have)
 
         def callback_mag():
-            st.session_state.advisor_obj.magnifierCheck(st.session_state.mag_person_check, st.session_state.mag_card_got)
-            st.session_state.advisor_obj.secret_Infer_Rebalance()
-            st.session_state.advisor_obj.otherAgent_Rebalance()
-            st.session_state.advisor_obj.add_recent_row_to_all_player("magnifier")
+            st.session_state.advisor_obj.everything_magnifier(st.session_state.mag_person_check, st.session_state.mag_card_got)
+            # st.session_state.advisor_obj.secret_Infer_Rebalance()
+            # st.session_state.advisor_obj.otherAgent_Rebalance()
+            # st.session_state.advisor_obj.add_recent_row_to_all_player("magnifier")
             if st.session_state.advisor_obj.alertWin():
                 st.balloons()
                 st.write(st.session_state.advisor_obj.players["secret"].suspect_must_have)
@@ -106,7 +111,10 @@ def main():
         
         show_me = st.checkbox("show hint of my turn")
         if show_me:
-            st.write(st.session_state.advisor_obj.myhint)
+            if st.session_state.advisor_obj == None:
+                pass
+            else:
+                st.write(st.session_state.advisor_obj.myhint)
         
         with st.form(key='my_form'):
             st.subheader("When it's your turn")
@@ -160,25 +168,12 @@ def main():
             player_name = None if 'advisor_obj' not in st.session_state else st.selectbox("Show player's score trend", st.session_state.advisor_obj.players.keys())
             if player_name is not None:
                 #st.write(st.session_state.advisor_obj.players[player_name].score_table.iloc[:,1:31])
-                df = st.session_state.advisor_obj.players[player_name].score_table.iloc[:,1:31]
-                # nice_plot = df.hvplot(kind='line')
-                # st.write(hv.render(nice_plot, backend='bokeh'))
-                st.bar_chart(df.iloc[-1:].T)
+                df = st.session_state.advisor_obj.players[player_name].score_table.iloc[:,2:31]
+                st.plotly_chart(plot_bar(df, player_name))
                 #st.write(df)
-                st.line_chart(df)
-                # demo_df = pd.DataFrame({
-                # 'timestamp': [0,1],
-                # 'value': df.iloc[:,0]
-                # })
-                # base = alt.Chart(demo_df).encode(
-                #     x='timestamp',
-                #     y='value:Q',
-                #     tooltip=['value', 'timestamp']
-                # )
-                # line = base.mark_line()
-                # points = base.mark_point(filled=True, size=40)
-                # chart = (line + points).interactive()
-                # st.altair_chart(chart, use_container_width=True)
+                #st.line_chart(df)
+                st.plotly_chart(plot_trend(df, player_name))
+
 
             
         if st.checkbox("Show Player Summary"):
@@ -216,6 +211,28 @@ def main():
     else:
         st.sidebar.header("Game Configuration")
         st.sidebar.caption("Simulation Mode")
+
+
+def plot_trend(df, playerName):
+    fig = go.Figure()
+    for col in range(df.shape[1]):
+        y = df.iloc[:,col]
+        x = np.array(range(df.shape[0]))
+        fig.add_trace(go.Scatter(x=x, y=y, name=df.columns[col],
+                        line_shape='vhv'))
+        fig.update_traces(hoverinfo='text+name', mode='lines+markers')
+        fig.update_layout(title=f"Trend graph of {playerName}",
+                          xaxis_title="Turns go",
+                          yaxis_title="Score",
+                          hovermode = "closest",
+                          legend=dict(y=0.5, font_size=16))
+    return fig
+
+
+def plot_bar(df, playerName):
+    data = df.iloc[-1:].T.reset_index().rename(columns={df.shape[0]-1:'score', "index": "Card"})
+    fig = px.bar(data, x='Card', y='score', color="Card", title=f"Bar plot of {playerName}")
+    return fig
 
 if __name__ == '__main__':
     main()

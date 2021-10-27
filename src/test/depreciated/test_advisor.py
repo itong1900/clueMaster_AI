@@ -208,6 +208,7 @@ class TestAdvisor(unittest.TestCase):
     "Next turn", "myself", "Mrs Peacock, Rope, Library", "Mia, Michael, Jane",
     "Next turn", "myself", "Miss Peach, Horseshoe ,Gazebo", "Michael, Jane, None",
     "Next turn", "myself", "Mme. Rose, Poison, Gazebo", "None, None, Michael", 
+    "Query", "Player_Summary", "secret",
     "Next turn", "myself", "Mme. Rose, Poison, Kitchen", "None, None, Mia",
     "Query", "Player_Summary", "secret", "Exit"])
     def test_Game5(self, mock_inputs):
@@ -267,7 +268,7 @@ class TestAdvisor(unittest.TestCase):
 
     
     # Advisor 6
-    # Parellel to Advisor5, last turn vary, test the one step forard and score changes
+    # Parellel to Advisor5, last turn vary, test the one step forward and score changes
     @patch("builtins.input", side_effect = ["7", "Miss Scarlet, Mr. Green, Mrs White", "Candlestick, Knife", "Carriage House, Conservatory","Mia, 7", "Michael, 6","Jane,7",
     "Next turn", "myself", "Mrs Peacock, Rope, Library", "Mia, Michael, Jane",
     "Next turn", "myself", "Miss Peach, Horseshoe ,Gazebo", "Michael, Jane, None",

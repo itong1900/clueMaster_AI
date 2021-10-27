@@ -158,7 +158,7 @@ def secret_infer_helper(ObjectDealing, LIST_XXX, playersHashmap, numberOfPlayers
             else:
                 ## update secret must have, delete the suspect_found from possibly set
                 playersHashmap["secret"].update_suspect_must_have(suspect_found)
-                
+                print("here",suspect_found)
                 ## clean up the rest of possibly set, and move them to must-not-have class
                 deep_copy_list = [x for x in playersHashmap["secret"].suspect_possibly_have.keys()]
                 for ele in deep_copy_list:
