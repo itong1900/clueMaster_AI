@@ -27,7 +27,7 @@ class Trophy_Room(locationObject):
     def __init__(self):
         self.name = "Trophy_Room"
         self.willStop = True
-        self.distance_others = {"Carriage_House": 2, "Kitchen": 2, "Magnifier_1": 4, "Cloak_Room_Entry": 6, "Studio": 7, "Conservatory": 6}
+        self.distance_others = {"Carriage_House": 2, "Kitchen": 2, "Magnifier_1": 4, "Cloak_Room_Entry": 6, "Studio": 7, "Conservatory": 6, "Magnifier_9": 4}
 
 class Dinning_Room(locationObject):
     def __init__(self):
@@ -81,14 +81,14 @@ class Magnifier_1(locationObject):
     def __init__(self):
         self.name = "Magnifier_1"
         self.willStop = False
-        self.distance_others = {"kitchen": 4, "Trophy_Room": 4, "Magnifier_2":7, "Cloak_Room_Entry": 6}
+        self.distance_others = {"Kitchen": 4, "Trophy_Room": 4, "Magnifier_2":7, "Cloak_Room_Entry": 6}
 
 
 class Magnifier_2(locationObject):
     def __init__(self):
         self.name = "Magnifier_2"
         self.willStop = False
-        self.distance_others = {"kitchen": 5, "Magnifier_1": 7, "Cloak_Room_Entry": 7, "Dinning_Room": 2}
+        self.distance_others = {"Kitchen": 5, "Magnifier_1": 7, "Cloak_Room_Entry": 7, "Dinning_Room": 2}
 
 
 class Magnifier_3(locationObject):

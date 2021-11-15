@@ -16,8 +16,9 @@ class TestMap(unittest.TestCase):
     # check setup is ok
     def test_map(self):
         the_map = map()
-        print(the_map.distance_map["Cloak_Room_Entry"].distance_others)
-        print(the_map.getReachableRoom(7, "Cloak_Room_Entry"))
+        #print(the_map.distance_map["Cloak_Room_Entry"].distance_others)
+        ##print(the_map.getReachableRoom(7, "Cloak_Room_Entry"))
+        print(the_map.getReachableRoom(12, "Trophy_Room"))
  
 if __name__ == '__main__':
     unittest.main()
