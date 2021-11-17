@@ -11,10 +11,10 @@ class map:
                              "Dinning_Room": graphicUtils.Dinning_Room(),
                              "Drawing_Room": graphicUtils.Drawing_Room(), 
                              "Gazebo": graphicUtils.Gazebo(),
-                             "Conservatory": graphicUtils.Conservatory(),
+                             "Courtyard": graphicUtils.Courtyard(),
                              "Fountain": graphicUtils.Fountain(),
                              "Library": graphicUtils.Library(),
-                             "Billiard Room": graphicUtils.Billiard_Room(), 
+                             "Billiard_Room": graphicUtils.Billiard_Room(), 
                              "Studio": graphicUtils.Studio(),
                              "Conservatory": graphicUtils.Conservatory(),
                              "Carriage_House": graphicUtils.Carriage_House(),
@@ -97,7 +97,47 @@ class map:
         """
         Using Dijkstra's Algorithm, get the shortest distance to all rooms on the board.
         """
-        pass
+        numberVertices = 13
+        edges = {start: self.distance_map[start].distance_others for start in self.distance_map.keys()}  # {'Trophy_Room': {'Carriage_House': 2, 'Kitchen': 2, 'Magnifier_1': 4, 'Cloak_Room_Entry': 6, 'Studio': 7, 'Conservatory': 6, 'Magnifier_9': 4}}
+
+        result = {room_name: float("inf") for room_name in edges.keys()}    # {"Trophy_Room": inf, "Carriage_House": inf, ...}
+        result[starting_point] = 0          # {"Trophy_Room": 0, "Carriage_House": inf, ...}
+
+        visited = set()
+        while len(visited) < numberVertices:
+            nextVertice, minDistance = getMinVerticeDistance(result, visited)
+            if minDistance == float("inf"):
+                break
+            visited.add(nextVertice)
+
+            updateVertices(nextVertice, minDistance, result, visited, edges)
+
+        return result
+
+    
+def getMinVerticeDistance(result, visited):
+    minDistance = float("inf")
+    nextVertice = None
+    for verticeName in result.keys():
+        if verticeName in visited:
+            continue
+        if result[verticeName] < minDistance:
+            nextVertice = verticeName
+            minDistance = result[verticeName]
+
+    return nextVertice, minDistance
+
+
+def updateVertices(vertice, minDistance, result, visited, edges):
+    for verticeToCheck in edges[vertice].keys():
+        distanceToVertice = edges[vertice][verticeToCheck]
+        if verticeToCheck in visited:
+            continue
+        newDistance = minDistance + distanceToVertice
+        oldDistance = result[verticeToCheck]
+        if newDistance < oldDistance:
+            result[verticeToCheck] = newDistance
+    return 
 
 
                              
