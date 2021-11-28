@@ -105,39 +105,39 @@ class map:
 
         visited = set()
         while len(visited) < numberVertices:
-            nextVertice, minDistance = getMinVerticeDistance(result, visited)
+            nextVertice, minDistance = self.__getMinVerticeDistance(result, visited)
             if minDistance == float("inf"):
                 break
             visited.add(nextVertice)
 
-            updateVertices(nextVertice, minDistance, result, visited, edges)
+            self.__updateVertices(nextVertice, minDistance, result, visited, edges)
 
         return result
 
     
-def getMinVerticeDistance(result, visited):
-    minDistance = float("inf")
-    nextVertice = None
-    for verticeName in result.keys():
-        if verticeName in visited:
-            continue
-        if result[verticeName] < minDistance:
-            nextVertice = verticeName
-            minDistance = result[verticeName]
+    def __getMinVerticeDistance(self, result, visited):
+        minDistance = float("inf")
+        nextVertice = None
+        for verticeName in result.keys():
+            if verticeName in visited:
+                continue
+            if result[verticeName] < minDistance:
+                nextVertice = verticeName
+                minDistance = result[verticeName]
 
-    return nextVertice, minDistance
+        return nextVertice, minDistance
 
 
-def updateVertices(vertice, minDistance, result, visited, edges):
-    for verticeToCheck in edges[vertice].keys():
-        distanceToVertice = edges[vertice][verticeToCheck]
-        if verticeToCheck in visited:
-            continue
-        newDistance = minDistance + distanceToVertice
-        oldDistance = result[verticeToCheck]
-        if newDistance < oldDistance:
-            result[verticeToCheck] = newDistance
-    return 
+    def __updateVertices(self, vertice, minDistance, result, visited, edges):
+        for verticeToCheck in edges[vertice].keys():
+            distanceToVertice = edges[vertice][verticeToCheck]
+            if verticeToCheck in visited:
+                continue
+            newDistance = minDistance + distanceToVertice
+            oldDistance = result[verticeToCheck]
+            if newDistance < oldDistance:
+                result[verticeToCheck] = newDistance
+        return 
 
 
                              
