@@ -95,7 +95,7 @@ class map:
 
     def getShortestDistanceToOtherRooms(self, starting_point):
         """
-        Using Dijkstra's Algorithm, get the shortest distance to all rooms on the board.
+        Get the shortest distance to all rooms on the board by Dijkstra's Algorithm.
         """
         numberVertices = 13
         edges = {start: self.distance_map[start].distance_others for start in self.distance_map.keys()}  # {'Trophy_Room': {'Carriage_House': 2, 'Kitchen': 2, 'Magnifier_1': 4, 'Cloak_Room_Entry': 6, 'Studio': 7, 'Conservatory': 6, 'Magnifier_9': 4}}
